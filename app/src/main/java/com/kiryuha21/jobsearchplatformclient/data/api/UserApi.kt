@@ -1,6 +1,6 @@
-package com.kiryuha21.jobsearchplatformclient.api
+package com.kiryuha21.jobsearchplatformclient.data.api
 
-import com.kiryuha21.jobsearchplatformclient.model.User
+import com.kiryuha21.jobsearchplatformclient.data.model.User
 
 import retrofit2.Response
 import retrofit2.http.GET
