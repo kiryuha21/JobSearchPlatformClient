@@ -23,16 +23,22 @@ fun NavigationController() {
                 route = route
             ) {
                 composable(LogIn) {
-                    LogInScreen(
-                        authViewModel = it.sharedViewModel(navController = navController),
-                        navController = navController
-                    )
+                    EnterAnimation {
+                        LogInScreen(
+                            authViewModel = it.sharedViewModel(navController = navController),
+                            navController = navController
+                        )
+                    }
                 }
                 composable(SignUp) {
-                    SignUpScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    EnterAnimation {
+                        SignUpScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    }
                 }
                 composable(ResetPassword) {
-                    ResetPasswordScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    EnterAnimation {
+                        ResetPasswordScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    }
                 }
             }
         }

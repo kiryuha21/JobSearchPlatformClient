@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Text
@@ -18,20 +17,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginForm(onLogin: () -> Unit, onResetPassword: () -> Unit, modifier: Modifier = Modifier) {
-    val placeholders = arrayOf("Имя", "Фамилия", "E-mail")
-    val icons = arrayOf(Icons.Filled.Abc, Icons.Filled.Abc, Icons.Filled.Email)
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        repeat(3) {
-            DefaultTextField(
-                icon = icons[it],
-                placeholder = placeholders[it],
-                modifier = Modifier.padding(5.dp)
-            )
-        }
+        DefaultTextField(
+            icon = Icons.Filled.Email,
+            placeholder = "E-mail",
+            modifier = Modifier.padding(5.dp)
+        )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
@@ -45,7 +39,7 @@ fun LoginForm(onLogin: () -> Unit, onResetPassword: () -> Unit, modifier: Modifi
             text = "Войти",
             onClick = { onLogin() },
             modifier = Modifier
-                .padding(top = 10.dp)
+                .padding(top = 20.dp)
                 .defaultMinSize(minWidth = 200.dp)
         )
     }
