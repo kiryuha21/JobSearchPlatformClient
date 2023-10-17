@@ -22,27 +22,21 @@ fun NavigationController() {
                 startDestination = LogIn,
                 route = route
             ) {
-                composable(LogIn) {
-                    EnterAnimation {
-                        LogInScreen(
-                            authViewModel = it.sharedViewModel(navController = navController),
-                            navController = navController
-                        )
-                    }
+                composable(LogIn, enterTransition = enterAnimation()) {
+                    LogInScreen(
+                        authViewModel = it.sharedViewModel(navController = navController),
+                        navController = navController
+                    )
                 }
-                composable(SignUp) {
-                    EnterAnimation {
-                        SignUpScreen(authViewModel = it.sharedViewModel(navController = navController))
-                    }
+                composable(SignUp, enterTransition = enterAnimation()) {
+                    SignUpScreen(authViewModel = it.sharedViewModel(navController = navController))
                 }
-                composable(ResetPassword) {
-                    EnterAnimation {
-                        ResetPasswordScreen(authViewModel = it.sharedViewModel(navController = navController))
-                    }
+                composable(ResetPassword, enterTransition = enterAnimation()) {
+                    ResetPasswordScreen(authViewModel = it.sharedViewModel(navController = navController))
                 }
             }
         }
-        with (NavigationGraph.MainApp) {
+        with(NavigationGraph.MainApp) {
             navigation(
                 startDestination = HomeScreen,
                 route = route
