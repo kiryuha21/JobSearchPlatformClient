@@ -19,9 +19,7 @@ inline fun<reified T : ViewModel> NavBackStackEntry.sharedViewModel(navControlle
 object NavigationGraph {
     object Authentication {
         const val route = "Authentication"
-        const val LogIn = "Log In"
-        const val SignUp = "Sign Up"
-        const val ResetPassword = "Reset Password"
+        const val CommonScreen = "Common Authentication"
     }
     object MainApp {
         const val route = "MainApp"

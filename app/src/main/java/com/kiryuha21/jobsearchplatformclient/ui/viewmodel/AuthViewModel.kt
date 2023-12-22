@@ -18,15 +18,14 @@ class AuthViewModel(private val navController: NavController) :
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is AuthContract.AuthIntent.NavigateToLogin -> {
-                navController.navigate(NavigationGraph.Authentication.LogIn)
                 _viewState.value = AuthContract.AuthState.OnLogIn
             }
+
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
-                navController.navigate(NavigationGraph.Authentication.ResetPassword)
                 _viewState.value = AuthContract.AuthState.OnResetPassword
             }
+
             is AuthContract.AuthIntent.NavigateToSignUp -> {
-                navController.navigate(NavigationGraph.Authentication.SignUp)
                 _viewState.value = AuthContract.AuthState.OnSignUp
             }
 
