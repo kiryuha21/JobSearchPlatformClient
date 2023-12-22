@@ -24,13 +24,13 @@ fun NavigationController() {
                 route = route
             ) {
                 val viewModel = AuthViewModel(navController)
-                composable(LogIn, enterTransition = enterAnimation()) {
+                composable(LogIn) {
                     LogInScreen(viewModel = viewModel)
                 }
-                composable(SignUp, enterTransition = enterAnimation()) {
+                composable(SignUp) {
                     SignUpScreen(viewModel = viewModel)
                 }
-                composable(ResetPassword, enterTransition = enterAnimation()) {
+                composable(ResetPassword) {
                     ResetPasswordScreen(viewModel = viewModel)
                 }
             }

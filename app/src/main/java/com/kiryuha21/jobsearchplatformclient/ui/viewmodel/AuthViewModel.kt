@@ -1,9 +1,18 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class AuthViewModel(private val navController: NavController) :
     BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
@@ -38,14 +47,28 @@ class AuthViewModel(private val navController: NavController) :
     }
 
     private fun tryLogIn(login: String, password: String) {
-
+        _viewState.value = AuthContract.AuthState.Loading
+        viewModelScope.launch {
+            val successfulLogin = async(Dispatchers.IO) {
+                // TODO: replace delay with real check
+                delay(500L)
+                true
+            }
+            if (successfulLogin.await()) {
+                navController.navigate(NavigationGraph.MainApp.HomeScreen) {
+                    popUpTo(NavigationGraph.Authentication.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
     }
 
     private fun createNewUser(login: String, password: String) {
-
+        // TODO: api call should be here
     }
 
     private fun resetPassword(login: String) {
-
+        // TODO: api call should be here
     }
 }

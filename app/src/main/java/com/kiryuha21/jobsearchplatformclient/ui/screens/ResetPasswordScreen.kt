@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kiryuha21.jobsearchplatformclient.ui.components.ErrorComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResetPasswordForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
@@ -43,11 +41,7 @@ fun ResetPasswordScreen(viewModel: AuthViewModel) {
                     .fillMaxWidth()
             )
 
-            else -> ErrorComponent(
-                image = Icons.Filled.Error,
-                text = "State machine error",
-                modifier = Modifier.fillMaxWidth()
-            )
+            is AuthContract.AuthState.Loading -> LoadingComponent()
         }
 
     }
