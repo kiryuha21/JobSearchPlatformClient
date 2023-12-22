@@ -7,9 +7,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.kiryuha21.jobsearchplatformclient.ui.screens.AuthenticationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 
 @Composable

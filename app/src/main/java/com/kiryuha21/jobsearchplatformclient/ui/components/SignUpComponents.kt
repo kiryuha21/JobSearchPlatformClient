@@ -37,7 +37,7 @@ fun SignUpForm(onRegister: () -> Unit, modifier: Modifier = Modifier) {
         }
         DefaultButton(
             text = "Зарегистрироваться",
-            onClick = { onRegister() },
+            onClick = onRegister,
             modifier = Modifier
                 .padding(top = 20.dp)
                 .defaultMinSize(minWidth = 200.dp)

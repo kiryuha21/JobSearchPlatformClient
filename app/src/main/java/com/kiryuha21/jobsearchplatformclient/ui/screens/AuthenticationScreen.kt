@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.kiryuha21.jobsearchplatformclient.R
+import com.kiryuha21.jobsearchplatformclient.ui.components.BackHandlerWithWarning
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
@@ -23,6 +24,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 @Composable
 fun AuthenticationScreen(viewModel: AuthViewModel) {
     val state by viewModel.viewState
+    BackHandlerWithWarning(message = "Нажмите снова для выхода", msDelay = 2000)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,11 +87,14 @@ fun AuthenticationScreen(viewModel: AuthViewModel) {
                 )
             }
 
-            is AuthContract.AuthState.InternetError -> Toast.makeText(
-                LocalContext.current,
-                R.string.no_internet_connection,
-                Toast.LENGTH_SHORT
-            ).show()
+            is AuthContract.AuthState.InternetError -> {
+                Toast.makeText(
+                    LocalContext.current,
+                    R.string.no_internet_connection,
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.processIntent(AuthContract.AuthIntent.NavigateToLogin)
+            }
 
             AuthContract.AuthState.Loading -> LoadingComponent()
         }
