@@ -34,7 +34,7 @@ fun ResetPasswordScreen(viewModel: AuthViewModel) {
                 .fillMaxHeight(0.3f)
         )
         when (state) {
-            AuthContract.AuthState.OnResetPassword -> ResetPasswordForm(
+            AuthContract.AuthState.PageDefault -> ResetPasswordForm(
                 onReset = {
                     viewModel.processIntent(
                         AuthContract.AuthIntent.ResetPassword(viewModel.email.value)
@@ -44,12 +44,6 @@ fun ResetPasswordScreen(viewModel: AuthViewModel) {
                     .fillMaxHeight()
                     .fillMaxWidth()
             )
-
-            AuthContract.AuthState.InternetError -> Toast.makeText(
-                LocalContext.current,
-                R.string.no_internet_connection,
-                Toast.LENGTH_SHORT
-            ).show()
 
             else -> ErrorComponent(
                 image = Icons.Filled.Error,

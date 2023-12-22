@@ -12,22 +12,22 @@ class AuthViewModel(private val navController: NavController) :
     var surname = mutableStateOf("")
     var password = mutableStateOf("")
     override fun initialState(): AuthContract.AuthState {
-        return AuthContract.AuthState.OnLogIn
+        return AuthContract.AuthState.PageDefault
     }
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is AuthContract.AuthIntent.NavigateToLogin -> {
                 navController.navigate(NavigationGraph.Authentication.LogIn)
-                _viewState.value = AuthContract.AuthState.OnLogIn
+                _viewState.value = AuthContract.AuthState.PageDefault
             }
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
                 navController.navigate(NavigationGraph.Authentication.ResetPassword)
-                _viewState.value = AuthContract.AuthState.OnResetPassword
+                _viewState.value = AuthContract.AuthState.PageDefault
             }
             is AuthContract.AuthIntent.NavigateToSignUp -> {
                 navController.navigate(NavigationGraph.Authentication.SignUp)
-                _viewState.value = AuthContract.AuthState.OnSignUp
+                _viewState.value = AuthContract.AuthState.PageDefault
             }
 
             is AuthContract.AuthIntent.LogIn -> tryLogIn(intent.login, intent.password)

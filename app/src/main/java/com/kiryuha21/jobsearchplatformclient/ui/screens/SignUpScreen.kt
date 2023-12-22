@@ -34,7 +34,7 @@ fun SignUpScreen(viewModel: AuthViewModel) {
                 .fillMaxHeight(0.3f)
         )
         when (state) {
-            AuthContract.AuthState.OnSignUp -> SignUpForm(
+            AuthContract.AuthState.PageDefault -> SignUpForm(
                 onRegister = {
                     viewModel.processIntent(
                         AuthContract.AuthIntent.SignUp(
@@ -45,12 +45,6 @@ fun SignUpScreen(viewModel: AuthViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
-
-            AuthContract.AuthState.InternetError -> Toast.makeText(
-                LocalContext.current,
-                R.string.no_internet_connection,
-                Toast.LENGTH_SHORT
-            ).show()
 
             else -> ErrorComponent(
                 image = Icons.Filled.Error,

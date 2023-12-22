@@ -37,7 +37,7 @@ fun LogInScreen(viewModel: AuthViewModel) {
                 .fillMaxHeight(0.4f)
         )
         when (state) {
-            is AuthContract.AuthState.OnLogIn -> {
+            is AuthContract.AuthState.PageDefault -> {
                 LoginForm(
                     onLogin = {
                         viewModel.processIntent(
@@ -55,12 +55,6 @@ fun LogInScreen(viewModel: AuthViewModel) {
                     modifier = Modifier.fillMaxHeight()
                 )
             }
-
-            is AuthContract.AuthState.InternetError -> Toast.makeText(
-                LocalContext.current,
-                R.string.no_internet_connection,
-                Toast.LENGTH_SHORT
-            ).show()
 
             else -> ErrorComponent(
                 image = Icons.Filled.Error,

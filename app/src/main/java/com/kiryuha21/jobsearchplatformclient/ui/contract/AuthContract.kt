@@ -6,10 +6,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 class AuthContract {
     sealed class AuthState: ViewState {
         object Loading: AuthState()
-        object InternetError: AuthState()
-        object OnLogIn: AuthState()
-        object OnSignUp: AuthState()
-        object OnResetPassword: AuthState()
+        object PageDefault: AuthState()
     }
 
     sealed class AuthIntent: ViewIntent {
