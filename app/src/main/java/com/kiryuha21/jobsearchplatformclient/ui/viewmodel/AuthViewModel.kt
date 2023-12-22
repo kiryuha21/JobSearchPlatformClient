@@ -1,20 +1,38 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
-import com.kiryuha21.jobsearchplatformclient.ui.intent.AuthIntent
-import com.kiryuha21.jobsearchplatformclient.ui.viewstate.AuthState
+import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 
-class AuthViewModel : ViewModel() {
-    private val _state = mutableStateOf<AuthState>(AuthState.OnLogIn)
-    val state: State<AuthState> = _state
+class AuthViewModel(private val navController: NavController) :
+    BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
+    var email = mutableStateOf("")
+    var name = mutableStateOf("")
+    var surname = mutableStateOf("")
+    var password = mutableStateOf("")
+    override fun initialState(): AuthContract.AuthState {
+        return AuthContract.AuthState.OnLogIn
+    }
 
-    fun processIntent(intent: AuthIntent) {
+    override fun processIntent(intent: ViewIntent) {
         when (intent) {
-            is AuthIntent.LogIn -> tryLogIn(intent.login, intent.password)
-            is AuthIntent.SignUp -> createNewUser(intent.login, intent.password)
-            is AuthIntent.ResetPassword -> resetPassword(intent.login)
+            is AuthContract.AuthIntent.NavigateToLogin -> {
+                navController.navigate(NavigationGraph.Authentication.LogIn)
+                _viewState.value = AuthContract.AuthState.OnLogIn
+            }
+            is AuthContract.AuthIntent.NavigateToResetPassword -> {
+                navController.navigate(NavigationGraph.Authentication.ResetPassword)
+                _viewState.value = AuthContract.AuthState.OnResetPassword
+            }
+            is AuthContract.AuthIntent.NavigateToSignUp -> {
+                navController.navigate(NavigationGraph.Authentication.SignUp)
+                _viewState.value = AuthContract.AuthState.OnSignUp
+            }
+
+            is AuthContract.AuthIntent.LogIn -> tryLogIn(intent.login, intent.password)
+            is AuthContract.AuthIntent.SignUp -> createNewUser(intent.login, intent.password)
+            is AuthContract.AuthIntent.ResetPassword -> resetPassword(intent.login)
         }
     }
 

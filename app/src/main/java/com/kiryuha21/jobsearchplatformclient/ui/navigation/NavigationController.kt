@@ -9,6 +9,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 
 @Composable
 fun NavigationController() {
@@ -22,17 +23,15 @@ fun NavigationController() {
                 startDestination = LogIn,
                 route = route
             ) {
+                val viewModel = AuthViewModel(navController)
                 composable(LogIn, enterTransition = enterAnimation()) {
-                    LogInScreen(
-                        authViewModel = it.sharedViewModel(navController = navController),
-                        navController = navController
-                    )
+                    LogInScreen(viewModel = viewModel)
                 }
                 composable(SignUp, enterTransition = enterAnimation()) {
-                    SignUpScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    SignUpScreen(viewModel = viewModel)
                 }
                 composable(ResetPassword, enterTransition = enterAnimation()) {
-                    ResetPasswordScreen(authViewModel = it.sharedViewModel(navController = navController))
+                    ResetPasswordScreen(viewModel = viewModel)
                 }
             }
         }
