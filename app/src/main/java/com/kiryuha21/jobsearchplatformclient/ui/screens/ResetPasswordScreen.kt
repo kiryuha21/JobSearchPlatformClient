@@ -37,6 +37,7 @@ fun ResetPasswordScreen(viewModel: AuthViewModel) {
                         AuthContract.AuthIntent.ResetPassword(viewModel.email.value)
                     )
                 },
+                emailState = viewModel.email,
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()

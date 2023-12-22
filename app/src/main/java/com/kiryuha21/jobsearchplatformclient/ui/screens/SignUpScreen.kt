@@ -40,6 +40,11 @@ fun SignUpScreen(viewModel: AuthViewModel) {
                         )
                     )
                 },
+                nameState = viewModel.name,
+                surnameState = viewModel.surname,
+                emailState = viewModel.email,
+                passwordState = viewModel.password,
+                passwordRepeatState = viewModel.passwordRepeat,
                 modifier = Modifier.fillMaxWidth()
             )
 

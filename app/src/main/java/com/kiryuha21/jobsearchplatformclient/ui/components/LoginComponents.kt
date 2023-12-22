@@ -11,12 +11,19 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginForm(onLogin: () -> Unit, onResetPassword: () -> Unit, modifier: Modifier = Modifier) {
+fun LoginForm(
+    onLogin: () -> Unit,
+    onResetPassword: () -> Unit,
+    emailState: MutableState<String>,
+    passwordState: MutableState<String>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -24,11 +31,13 @@ fun LoginForm(onLogin: () -> Unit, onResetPassword: () -> Unit, modifier: Modifi
         DefaultTextField(
             icon = Icons.Filled.Email,
             placeholder = "E-mail",
+            textState = emailState,
             modifier = Modifier.padding(5.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
+            textState = passwordState,
             modifier = Modifier.padding(5.dp)
         )
         ResetPasswordHelper(

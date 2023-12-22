@@ -8,33 +8,55 @@ import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SignUpForm(onRegister: () -> Unit, modifier: Modifier = Modifier) {
-    val placeholders = listOf("Имя", "Фамилия", "E-mail", "Пароль", "Повторите пароль")
-    val icons = listOf(Icons.Filled.Abc, Icons.Filled.Abc, Icons.Filled.Email, Icons.Filled.Password, Icons.Filled.Password)
-
+fun SignUpForm(
+    onRegister: () -> Unit,
+    nameState: MutableState<String>,
+    surnameState: MutableState<String>,
+    emailState: MutableState<String>,
+    passwordState: MutableState<String>,
+    passwordRepeatState: MutableState<String>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        (0..2).forEach {
-            DefaultTextField(
-                icon = icons[it],
-                placeholder = placeholders[it],
-                modifier = Modifier.padding(5.dp)
-            )
-        }
-        (3..4).forEach {
-            PasswordTextField(
-                icon = icons[it],
-                placeholder = placeholders[it],
-                modifier = Modifier.padding(5.dp)
-            )
-        }
+        DefaultTextField(
+            icon = Icons.Filled.Abc,
+            placeholder = "Имя",
+            textState = nameState,
+            modifier = Modifier.padding(5.dp)
+        )
+        DefaultTextField(
+            icon = Icons.Filled.Abc,
+            placeholder = "Фамилия",
+            textState = surnameState,
+            modifier = Modifier.padding(5.dp)
+        )
+        DefaultTextField(
+            icon = Icons.Filled.Email,
+            placeholder = "E-mail",
+            textState = emailState,
+            modifier = Modifier.padding(5.dp)
+        )
+        PasswordTextField(
+            icon = Icons.Filled.Password,
+            placeholder = "Пароль",
+            textState = passwordState,
+            modifier = Modifier.padding(5.dp)
+        )
+        PasswordTextField(
+            icon = Icons.Filled.Password,
+            placeholder = "Повторите пароль",
+            textState = passwordRepeatState,
+            modifier = Modifier.padding(5.dp)
+        )
         DefaultButton(
             text = "Зарегистрироваться",
             onClick = { onRegister() },

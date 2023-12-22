@@ -47,7 +47,9 @@ fun LogInScreen(viewModel: AuthViewModel) {
                     onResetPassword = {
                         viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword)
                     },
-                    email = viewModel.email)
+                    emailState = viewModel.email,
+                    passwordState = viewModel.password,
+                )
                 NotSignedUpHelper(
                     onClick = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
                     modifier = Modifier.fillMaxHeight()

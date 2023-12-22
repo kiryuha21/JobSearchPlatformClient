@@ -11,6 +11,7 @@ class AuthViewModel(private val navController: NavController) :
     var name = mutableStateOf("")
     var surname = mutableStateOf("")
     var password = mutableStateOf("")
+    var passwordRepeat = mutableStateOf("")
     override fun initialState(): AuthContract.AuthState {
         return AuthContract.AuthState.PageDefault
     }

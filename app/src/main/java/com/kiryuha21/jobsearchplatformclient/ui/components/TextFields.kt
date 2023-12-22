@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,10 +39,13 @@ fun Title(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DefaultTextField(icon: ImageVector, placeholder: String, modifier: Modifier = Modifier) {
-    var text by remember {
-        mutableStateOf("")
-    }
+fun DefaultTextField(
+    icon: ImageVector,
+    placeholder: String,
+    textState: MutableState<String>,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { textState }
 
     OutlinedTextField(
         value = text,
@@ -54,8 +58,13 @@ fun DefaultTextField(icon: ImageVector, placeholder: String, modifier: Modifier 
 }
 
 @Composable
-fun PasswordTextField(icon: ImageVector, placeholder: String, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("") }
+fun PasswordTextField(
+    icon: ImageVector,
+    placeholder: String,
+    textState: MutableState<String>,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { textState }
     var visible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
