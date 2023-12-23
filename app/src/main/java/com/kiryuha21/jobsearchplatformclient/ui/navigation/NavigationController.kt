@@ -10,6 +10,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
 @Composable
 fun NavigationController() {
@@ -40,8 +41,9 @@ fun NavigationController() {
                 startDestination = HomeScreen,
                 route = route
             ) {
+                val viewModel = HomePageViewModel(navController)
                 composable(HomeScreen) {
-                    HomeScreen()
+                    HomeScreen(viewModel)
                 }
             }
         }

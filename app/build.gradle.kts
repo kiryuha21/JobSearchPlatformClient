@@ -82,4 +82,7 @@ dependencies {
     val retrofitVersion = "2.9.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+
+    // shimmer animation effect
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.2.0")
 }
