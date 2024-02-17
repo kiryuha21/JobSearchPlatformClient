@@ -22,10 +22,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun Title(text: String, modifier: Modifier = Modifier) {
+fun Title(text: String, fontSize: TextUnit, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -33,7 +33,7 @@ fun Title(text: String, modifier: Modifier = Modifier) {
         Text(
             text = text,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 20.sp
+            fontSize = fontSize
         )
     }
 }

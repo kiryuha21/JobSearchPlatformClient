@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">JobSearchPlatformClient</string>
+    <string name="app_name">SkillSift</string>
+    <string name="subtitle">Платформа для поиска работы</string>
     <string name="no_internet_connection">Нет подключения к интернету!</string>
 </resources>

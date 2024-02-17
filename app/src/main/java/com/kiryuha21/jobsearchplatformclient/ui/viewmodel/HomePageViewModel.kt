@@ -1,6 +1,9 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.model.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
@@ -47,7 +50,19 @@ class HomePageViewModel(navController: NavController) :
                 ),
             )
             _viewState.value = HomePageContract.HomePageState.Success(vacancies)
-            println("here")
         }
+    }
+
+    companion object {
+        fun provideFactory(navController: NavController) =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    return HomePageViewModel(navController) as T
+                }
+            }
     }
 }

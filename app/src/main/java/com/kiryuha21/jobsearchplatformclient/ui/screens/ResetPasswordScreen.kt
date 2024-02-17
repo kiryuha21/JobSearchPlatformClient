@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResetPasswordForm
@@ -24,6 +25,7 @@ fun ResetPasswordScreen(viewModel: AuthViewModel) {
     ) {
         Title(
             text = "Восстановление пароля",
+            fontSize = 28.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.3f)
