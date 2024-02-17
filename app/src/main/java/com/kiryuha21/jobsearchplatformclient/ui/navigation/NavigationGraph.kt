@@ -6,14 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 
 @Composable
-inline fun<reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel()
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(navController: NavController): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel(
+        factory = AuthViewModel.provideFactory(navController)
+    )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry)
+    return viewModel(parentEntry, factory = AuthViewModel.provideFactory(navController))
 }
 
 object NavigationGraph {
@@ -23,6 +26,7 @@ object NavigationGraph {
         const val SignUp = "Sign Up"
         const val ResetPassword = "Reset Password"
     }
+
     object MainApp {
         const val route = "MainApp"
         const val HomeScreen = "Home Screen"

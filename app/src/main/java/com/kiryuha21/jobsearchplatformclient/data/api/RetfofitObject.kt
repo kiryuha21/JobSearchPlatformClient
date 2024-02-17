@@ -6,6 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitHelper {
     private const val baseUrl = "http://10.0.2.2:8010/api/"
 
+    // TODO: check if it's really singleton
     fun getInstance(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)

@@ -1,7 +1,10 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
@@ -27,10 +30,12 @@ class AuthViewModel(private val navController: NavController) :
                 navController.navigate(NavigationGraph.Authentication.LogIn)
                 _viewState.value = AuthContract.AuthState.PageDefault
             }
+
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
                 navController.navigate(NavigationGraph.Authentication.ResetPassword)
                 _viewState.value = AuthContract.AuthState.PageDefault
             }
+
             is AuthContract.AuthIntent.NavigateToSignUp -> {
                 navController.navigate(NavigationGraph.Authentication.SignUp)
                 _viewState.value = AuthContract.AuthState.PageDefault
@@ -66,5 +71,18 @@ class AuthViewModel(private val navController: NavController) :
 
     private fun resetPassword(login: String) {
         // TODO: api call should be here
+    }
+
+    companion object {
+        fun provideFactory(navController: NavController) =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    return AuthViewModel(navController) as T
+                }
+            }
     }
 }
