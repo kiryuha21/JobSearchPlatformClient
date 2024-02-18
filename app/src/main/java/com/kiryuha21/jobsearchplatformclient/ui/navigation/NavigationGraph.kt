@@ -30,5 +30,6 @@ object NavigationGraph {
     object MainApp {
         const val route = "MainApp"
         const val HomeScreen = "Home Screen"
+        const val Profile = "Profile"
     }
 }

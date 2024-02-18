@@ -17,14 +17,14 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomePageViewModel) {
+fun HomeScreen(viewModel: HomePageViewModel, navigateFunction: (String) -> Unit, login: String) {
     val state by viewModel.viewState
 
     LaunchedEffect(key1 = true) {
         viewModel.processIntent(HomePageContract.HomePageIntent.LoadVacancies)
     }
 
-    NavigationDrawer { onOpenDrawer ->
+    NavigationDrawer(login, navigateFunction) { onOpenDrawer ->
         Scaffold(
             topBar = { AppBar(onClick = onOpenDrawer) }
         ) { paddingValues ->

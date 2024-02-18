@@ -16,6 +16,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserViewModel
 
+// TODO: split into build-functions
 @Composable
 fun NavigationController() {
     val userVM: UserViewModel = viewModel()
@@ -37,47 +38,33 @@ fun NavigationController() {
                         onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
                         onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
                         onLogin = {
-                            viewModel.processIntent(AuthContract.AuthIntent.LogIn {
-                                with(viewModel.userData) {
-                                    userVM.processIntent(
-                                        UserContract.UserIntent.TryLogIn(login.value, password.value)
-                                    )
-                                }
-                            })
+                            viewModel.processIntent(AuthContract.AuthIntent.LogIn(userVM::processIntent))
                         }
                     )
                 }
                 composable(SignUp) {
-                    val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
+                    val viewModel =
+                        it.sharedAuthViewModel(navController = navController) as AuthViewModel
                     SignUpScreen(
                         viewState = viewModel.viewState,
-                        userData = viewModel.userData
-                    ) {
-                        viewModel.processIntent(
-                            AuthContract.AuthIntent.SignUp {
-                                userVM.processIntent(
-                                    with (viewModel.userData) {
-                                        UserContract.UserIntent.TrySignUp(login.value, email.value, password.value)
-                                    }
-                                )
-                            }
-                        )
-                    }
+                        userData = viewModel.userData,
+                        onRegister = {
+                            viewModel.processIntent(
+                                AuthContract.AuthIntent.SignUp(userVM::processIntent)
+                            )
+                        })
                 }
                 composable(ResetPassword) {
                     val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
                     ResetPasswordScreen(
                         viewState = viewModel.viewState,
-                        userData = viewModel.userData
-                    ) {
-                        viewModel.processIntent(
-                            AuthContract.AuthIntent.ResetPassword {
-                                userVM.processIntent(
-                                    UserContract.UserIntent.TryResetPassword(viewModel.userData.email.value)
-                                )
-                            }
-                        )
-                    }
+                        userData = viewModel.userData,
+                        onReset = {
+                            viewModel.processIntent(
+                                AuthContract.AuthIntent.ResetPassword(userVM::processIntent)
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -87,8 +74,16 @@ fun NavigationController() {
                 route = route
             ) {
                 composable(HomeScreen) {
-                    val viewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.provideFactory(navController))
-                    HomeScreen(viewModel)
+                    val viewModel: HomePageViewModel =
+                        viewModel(factory = HomePageViewModel.provideFactory(navController))
+                    HomeScreen(
+                        viewModel,
+                        navController::navigate,
+                        (userVM.viewState as UserContract.UserState.Authorized).user.login
+                    )
+                }
+                composable(Profile) {
+
                 }
             }
         }

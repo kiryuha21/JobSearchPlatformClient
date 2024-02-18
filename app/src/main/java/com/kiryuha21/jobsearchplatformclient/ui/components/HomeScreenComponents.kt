@@ -31,12 +31,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
-import com.kiryuha21.jobsearchplatformclient.data.model.navigationDrawerItems
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
 import kotlinx.coroutines.launch
 
 // TODO: make real user info loading
 @Composable
-fun DrawerMiniProfile(modifier: Modifier = Modifier) {
+fun DrawerMiniProfile(login: String, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -47,12 +47,17 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(120.dp)
         )
-        Text("Hello, user!")
+        Text("Hello, $login!")
     }
 }
 
 @Composable
-fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (() -> Unit) -> Unit) {
+fun NavigationDrawer(
+    login: String,
+    navigateFunction: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (() -> Unit) -> Unit
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedItemIndex by rememberSaveable {
@@ -62,7 +67,7 @@ fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (() -> 
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                DrawerMiniProfile()
+                DrawerMiniProfile(login)
                 Spacer(modifier = Modifier.height(20.dp))
                 navigationDrawerItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -78,6 +83,7 @@ fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (() -> 
                             scope.launch {
                                 drawerState.close()
                             }
+                            navigateFunction(item.navigationRoute)
                         })
                 }
             }
