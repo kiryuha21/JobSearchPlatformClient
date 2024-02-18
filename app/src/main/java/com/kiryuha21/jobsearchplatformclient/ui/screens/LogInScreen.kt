@@ -1,29 +1,32 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserDataStates
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 @Composable
-fun LogInScreen(viewModel: AuthViewModel) {
-    val state by viewModel.viewState
+fun LogInScreen(viewState: State<ViewState>, userData: UserDataStates, onLogin: () -> Unit, onResetPassword: () -> Unit, onSignUp: () -> Unit) {
+    val state by viewState
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,22 +54,13 @@ fun LogInScreen(viewModel: AuthViewModel) {
         when (state) {
             is AuthContract.AuthState.PageDefault -> {
                 LoginForm(
-                    onLogin = {
-                        viewModel.processIntent(
-                            AuthContract.AuthIntent.LogIn(
-                                viewModel.email.value,
-                                viewModel.password.value
-                            )
-                        )
-                    },
-                    onResetPassword = {
-                        viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword)
-                    },
-                    emailState = viewModel.email,
-                    passwordState = viewModel.password,
+                    onLogin = onLogin,
+                    onResetPassword = onResetPassword,
+                    emailState = userData.email,
+                    passwordState = userData.password,
                 )
                 NotSignedUpHelper(
-                    onClick = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
+                    onClick = onSignUp,
                     modifier = Modifier.fillMaxHeight()
                 )
             }
@@ -76,8 +70,9 @@ fun LogInScreen(viewModel: AuthViewModel) {
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LogInScreen(viewModel = viewModel())
+    LogInScreen(mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>, UserDataStates(), {}, {}, {})
 }

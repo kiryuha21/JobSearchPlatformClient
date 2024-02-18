@@ -1,11 +1,14 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -15,10 +18,12 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.SignUpForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserDataStates
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 @Composable
-fun SignUpScreen(viewModel: AuthViewModel) {
-    val state by viewModel.viewState
+fun SignUpScreen(viewState: State<ViewState>, userData: UserDataStates, onRegister: () -> Unit) {
+    val state by viewState
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -32,19 +37,11 @@ fun SignUpScreen(viewModel: AuthViewModel) {
         )
         when (state) {
             AuthContract.AuthState.PageDefault -> SignUpForm(
-                onRegister = {
-                    viewModel.processIntent(
-                        AuthContract.AuthIntent.SignUp(
-                            viewModel.email.value,
-                            viewModel.password.value
-                        )
-                    )
-                },
-                nameState = viewModel.name,
-                surnameState = viewModel.surname,
-                emailState = viewModel.email,
-                passwordState = viewModel.password,
-                passwordRepeatState = viewModel.passwordRepeat,
+                onRegister = onRegister,
+                loginState = userData.login,
+                emailState = userData.email,
+                passwordState = userData.password,
+                passwordRepeatState = userData.passwordRepeat,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -54,8 +51,9 @@ fun SignUpScreen(viewModel: AuthViewModel) {
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen(viewModel = viewModel())
+    SignUpScreen(mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>, UserDataStates()) {}
 }

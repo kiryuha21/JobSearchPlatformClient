@@ -37,23 +37,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@Composable
-fun Users() {
-    var users by remember { mutableStateOf(emptyList<User>()) }
-    val retrofit = RetrofitHelper.getInstance().create(UserApi::class.java)
-    LaunchedEffect(users) {
-        try {
-            users = retrofit.getUsers().body() ?: emptyList()
-        } catch (_: Exception) {
-
-        }
-    }
-    LazyColumn {
-        itemsIndexed(
-            users
-        ) { _: Int, user: User ->
-            Text(text = user.name)
-        }
-    }
-}

@@ -16,8 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SignUpForm(
     onRegister: () -> Unit,
-    nameState: MutableState<String>,
-    surnameState: MutableState<String>,
+    loginState: MutableState<String>,
     emailState: MutableState<String>,
     passwordState: MutableState<String>,
     passwordRepeatState: MutableState<String>,
@@ -29,14 +28,8 @@ fun SignUpForm(
     ) {
         DefaultTextField(
             icon = Icons.Filled.Abc,
-            placeholder = "Имя",
-            textState = nameState,
-            modifier = Modifier.padding(5.dp)
-        )
-        DefaultTextField(
-            icon = Icons.Filled.Abc,
-            placeholder = "Фамилия",
-            textState = surnameState,
+            placeholder = "Логин",
+            textState = loginState,
             modifier = Modifier.padding(5.dp)
         )
         DefaultTextField(

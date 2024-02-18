@@ -7,19 +7,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.UserContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val navController: NavController) :
-    BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
+class UserDataStates {
     var email = mutableStateOf("")
-    var name = mutableStateOf("")
-    var surname = mutableStateOf("")
+    var login = mutableStateOf("")
     var password = mutableStateOf("")
     var passwordRepeat = mutableStateOf("")
+}
+
+class AuthViewModel(private val navController: NavController) :
+    BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
+    var userData = UserDataStates()
     override fun initialState(): AuthContract.AuthState {
         return AuthContract.AuthState.PageDefault
     }
@@ -41,13 +45,13 @@ class AuthViewModel(private val navController: NavController) :
                 _viewState.value = AuthContract.AuthState.PageDefault
             }
 
-            is AuthContract.AuthIntent.LogIn -> tryLogIn(intent.login, intent.password)
-            is AuthContract.AuthIntent.SignUp -> createNewUser(intent.login, intent.password)
-            is AuthContract.AuthIntent.ResetPassword -> resetPassword(intent.login)
+            is AuthContract.AuthIntent.LogIn -> tryLogIn(intent.userDelegate)
+            is AuthContract.AuthIntent.SignUp -> createNewUser(intent.userDelegate)
+            is AuthContract.AuthIntent.ResetPassword -> resetPassword(intent.userDelegate)
         }
     }
 
-    private fun tryLogIn(login: String, password: String) {
+    private fun tryLogIn(userDelegate: (UserContract.UserIntent.TryLogIn) -> Unit) {
         _viewState.value = AuthContract.AuthState.Loading
         viewModelScope.launch {
             val successfulLogin = async(Dispatchers.IO) {
@@ -65,11 +69,11 @@ class AuthViewModel(private val navController: NavController) :
         }
     }
 
-    private fun createNewUser(login: String, password: String) {
+    private fun createNewUser(userDelegate: (UserContract.UserIntent.TrySignUp) -> Unit) {
         // TODO: api call should be here
     }
 
-    private fun resetPassword(login: String) {
+    private fun resetPassword(userDelegate: (UserContract.UserIntent.TryResetPassword) -> Unit) {
         // TODO: api call should be here
     }
 

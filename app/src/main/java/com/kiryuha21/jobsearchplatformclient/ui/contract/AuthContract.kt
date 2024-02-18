@@ -11,12 +11,12 @@ class AuthContract {
 
     sealed class AuthIntent: ViewIntent {
         data object NavigateToLogin: AuthIntent()
-        data class LogIn(val login: String, val password: String) : AuthIntent()
+        data class LogIn(val userDelegate: (UserContract.UserIntent.TryLogIn) -> Unit) : AuthIntent()
 
         data object NavigateToResetPassword: AuthIntent()
-        data class ResetPassword(val login: String) : AuthIntent()
+        data class ResetPassword(val userDelegate: (UserContract.UserIntent.TryResetPassword) -> Unit) : AuthIntent()
 
         data object NavigateToSignUp: AuthIntent()
-        data class SignUp(val login: String, val password: String) : AuthIntent()
+        data class SignUp(val userDelegate: (UserContract.UserIntent.TrySignUp) -> Unit) : AuthIntent()
     }
 }
