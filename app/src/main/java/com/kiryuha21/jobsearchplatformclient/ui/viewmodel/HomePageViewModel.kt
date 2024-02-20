@@ -7,11 +7,12 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.model.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(navController: NavController) :
+class HomePageViewModel(private val navController: NavController) :
     BaseViewModel<HomePageContract.HomePageIntent, HomePageContract.HomePageState>() {
     override fun initialState(): HomePageContract.HomePageState {
         return HomePageContract.HomePageState.Loading
@@ -20,6 +21,7 @@ class HomePageViewModel(navController: NavController) :
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is HomePageContract.HomePageIntent.LoadVacancies -> loadVacancies()
+            is HomePageContract.HomePageIntent.LogOut -> logOut()
         }
     }
 
@@ -50,6 +52,14 @@ class HomePageViewModel(navController: NavController) :
                 ),
             )
             _viewState.value = HomePageContract.HomePageState.Success(vacancies)
+        }
+    }
+
+    private fun logOut() {
+        navController.navigate(NavigationGraph.Authentication.LogIn) {
+            popUpTo(NavigationGraph.MainApp.route) {
+                inclusive = true
+            }
         }
     }
 

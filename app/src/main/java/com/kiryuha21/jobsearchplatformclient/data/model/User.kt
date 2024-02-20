@@ -1,14 +1,37 @@
 package com.kiryuha21.jobsearchplatformclient.data.model
 
-import com.google.gson.annotations.SerializedName
+object User {
+    var userInfo: UserDTO? = null
+        private set
 
-data class User(
-    @SerializedName("id")
-    val id: Int,
-    @SerializedName("email")
-    val email: String,
-    @SerializedName("login")
-    val login: String,
-    @SerializedName("resumes")
-    val resumes: List<Resume>
-)
+    suspend fun tryLogIn(login: String, password: String): Boolean {
+        // TODO: make real api call
+        userInfo = UserDTO(
+            id = 1,
+            "test",
+            "roflanchik",
+            listOf(Resume(
+                "John",
+                "Smit",
+                "12909483",
+                "hey@gmail.com",
+                listOf(Skill(
+                    "c++ development",
+                    SkillLevel.HasCommercialProjects
+                )),
+                listOf(WorkExperience(
+                    Company(
+                        "yandex",
+                        CompanySize.Big
+                    ),
+                    "c++ developer",
+                    PositionLevel.Lead,
+                    100500,
+                    420
+                ))
+            ))
+        )
+
+        return true
+    }
+}

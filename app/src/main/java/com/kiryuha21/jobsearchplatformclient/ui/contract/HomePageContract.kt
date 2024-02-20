@@ -12,5 +12,6 @@ sealed class HomePageContract {
 
     sealed class HomePageIntent : ViewIntent {
         data object LoadVacancies: HomePageIntent()
+        data object LogOut: HomePageIntent()
     }
 }

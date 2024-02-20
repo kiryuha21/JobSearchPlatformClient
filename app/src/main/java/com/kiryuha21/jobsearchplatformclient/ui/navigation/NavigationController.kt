@@ -6,20 +6,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.kiryuha21.jobsearchplatformclient.data.model.User
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.UserContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserViewModel
 
 // TODO: split into build-functions
 @Composable
 fun NavigationController() {
-    val userVM: UserViewModel = viewModel()
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -38,7 +36,7 @@ fun NavigationController() {
                         onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
                         onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
                         onLogin = {
-                            viewModel.processIntent(AuthContract.AuthIntent.LogIn(userVM::processIntent))
+                            viewModel.processIntent(AuthContract.AuthIntent.LogIn)
                         }
                     )
                 }
@@ -50,7 +48,7 @@ fun NavigationController() {
                         userData = viewModel.userData,
                         onRegister = {
                             viewModel.processIntent(
-                                AuthContract.AuthIntent.SignUp(userVM::processIntent)
+                                AuthContract.AuthIntent.SignUp
                             )
                         })
                 }
@@ -61,7 +59,7 @@ fun NavigationController() {
                         userData = viewModel.userData,
                         onReset = {
                             viewModel.processIntent(
-                                AuthContract.AuthIntent.ResetPassword(userVM::processIntent)
+                                AuthContract.AuthIntent.ResetPassword
                             )
                         }
                     )
@@ -79,7 +77,7 @@ fun NavigationController() {
                     HomeScreen(
                         viewModel,
                         navController::navigate,
-                        (userVM.viewState as UserContract.UserState.Authorized).user.login
+                        User.userInfo?.login ?: "Unknown user"
                     )
                 }
                 composable(Profile) {

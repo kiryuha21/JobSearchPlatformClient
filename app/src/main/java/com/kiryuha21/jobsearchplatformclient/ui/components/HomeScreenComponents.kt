@@ -1,12 +1,16 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +43,7 @@ import kotlinx.coroutines.launch
 fun DrawerMiniProfile(login: String, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier.padding(start=15.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.default_avatar),
@@ -52,9 +56,32 @@ fun DrawerMiniProfile(login: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun LogOutNavigationItem(selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(bottom = 20.dp),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        NavigationDrawerItem(
+            label = {
+                Row {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "log out")
+                    Text(text = "Выйти")
+                }
+            },
+            selected = selected,
+            onClick = onClick
+        )
+    }
+
+}
+
+@Composable
 fun NavigationDrawer(
     login: String,
     navigateFunction: (String) -> Unit,
+    onLogOut: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit) -> Unit
 ) {
@@ -86,6 +113,12 @@ fun NavigationDrawer(
                             navigateFunction(item.navigationRoute)
                         })
                 }
+
+                val logOutIndex = navigationDrawerItems.size
+                LogOutNavigationItem(
+                    selected = selectedItemIndex == logOutIndex,
+                    onClick = onLogOut
+                )
             }
         },
         drawerState = drawerState,

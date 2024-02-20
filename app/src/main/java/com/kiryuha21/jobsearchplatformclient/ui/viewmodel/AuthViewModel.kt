@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.data.model.User
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.UserContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -45,19 +45,19 @@ class AuthViewModel(private val navController: NavController) :
                 _viewState.value = AuthContract.AuthState.PageDefault
             }
 
-            is AuthContract.AuthIntent.LogIn -> tryLogIn(intent.userDelegate)
-            is AuthContract.AuthIntent.SignUp -> createNewUser(intent.userDelegate)
-            is AuthContract.AuthIntent.ResetPassword -> resetPassword(intent.userDelegate)
+            is AuthContract.AuthIntent.LogIn -> tryLogIn()
+            is AuthContract.AuthIntent.SignUp -> createNewUser()
+            is AuthContract.AuthIntent.ResetPassword -> resetPassword()
         }
     }
 
-    private fun tryLogIn(userDelegate: (UserContract.UserIntent.TryLogIn) -> Unit) {
+    private fun tryLogIn() {
         _viewState.value = AuthContract.AuthState.Loading
         viewModelScope.launch {
             val successfulLogin = async(Dispatchers.IO) {
                 // TODO: replace delay with real check
                 delay(500L)
-                true
+                User.tryLogIn(userData.login.value, userData.password.value)
             }
             if (successfulLogin.await()) {
                 navController.navigate(NavigationGraph.MainApp.HomeScreen) {
@@ -69,11 +69,11 @@ class AuthViewModel(private val navController: NavController) :
         }
     }
 
-    private fun createNewUser(userDelegate: (UserContract.UserIntent.TrySignUp) -> Unit) {
+    private fun createNewUser() {
         // TODO: api call should be here
     }
 
-    private fun resetPassword(userDelegate: (UserContract.UserIntent.TryResetPassword) -> Unit) {
+    private fun resetPassword() {
         // TODO: api call should be here
     }
 

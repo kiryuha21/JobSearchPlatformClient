@@ -24,7 +24,11 @@ fun HomeScreen(viewModel: HomePageViewModel, navigateFunction: (String) -> Unit,
         viewModel.processIntent(HomePageContract.HomePageIntent.LoadVacancies)
     }
 
-    NavigationDrawer(login, navigateFunction) { onOpenDrawer ->
+    NavigationDrawer(
+        login = login,
+        navigateFunction = navigateFunction,
+        onLogOut = { viewModel.processIntent(HomePageContract.HomePageIntent.LogOut) }
+    ) { onOpenDrawer ->
         Scaffold(
             topBar = { AppBar(onClick = onOpenDrawer) }
         ) { paddingValues ->
