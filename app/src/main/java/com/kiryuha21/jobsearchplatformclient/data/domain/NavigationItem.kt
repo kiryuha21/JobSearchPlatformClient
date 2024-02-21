@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.data.model
+package com.kiryuha21.jobsearchplatformclient.data.domain
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

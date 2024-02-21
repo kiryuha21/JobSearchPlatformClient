@@ -1,6 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.contract
 
-import com.kiryuha21.jobsearchplatformclient.data.model.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewIntent
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 

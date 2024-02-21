@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
+import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
 import kotlinx.coroutines.launch
 
@@ -79,7 +80,6 @@ fun LogOutNavigationItem(selected: Boolean, onClick: () -> Unit, modifier: Modif
 
 @Composable
 fun NavigationDrawer(
-    login: String,
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
     modifier: Modifier = Modifier,
@@ -94,7 +94,7 @@ fun NavigationDrawer(
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                DrawerMiniProfile(login)
+                DrawerMiniProfile(CurrentUser.userInfo!!.login)
                 Spacer(modifier = Modifier.height(20.dp))
                 navigationDrawerItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(

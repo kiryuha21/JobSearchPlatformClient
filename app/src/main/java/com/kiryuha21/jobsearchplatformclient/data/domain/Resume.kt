@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.data.model
+package com.kiryuha21.jobsearchplatformclient.data.domain
 
 data class Resume(
     val firstName: String,

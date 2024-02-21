@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
-import com.kiryuha21.jobsearchplatformclient.data.model.User
+import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +57,7 @@ class AuthViewModel(private val navController: NavController) :
             val successfulLogin = async(Dispatchers.IO) {
                 // TODO: replace delay with real check
                 delay(500L)
-                User.tryLogIn(userData.login.value, userData.password.value)
+                CurrentUser.tryLogIn(userData.login.value, userData.password.value)
             }
             if (successfulLogin.await()) {
                 navController.navigate(NavigationGraph.MainApp.HomeScreen) {

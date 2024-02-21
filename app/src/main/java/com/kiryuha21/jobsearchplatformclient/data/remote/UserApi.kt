@@ -1,6 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.data.api
-
-import com.kiryuha21.jobsearchplatformclient.data.model.UserDTO
+package com.kiryuha21.jobsearchplatformclient.data.remote
 
 import retrofit2.Response
 import retrofit2.http.GET

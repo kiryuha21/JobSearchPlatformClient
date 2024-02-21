@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.kiryuha21.jobsearchplatformclient.data.model.User
+import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
@@ -77,7 +77,7 @@ fun NavigationController() {
                     HomeScreen(
                         viewModel,
                         navController::navigate,
-                        User.userInfo?.login ?: "Unknown user"
+                        CurrentUser.userInfo?.login ?: "Unknown user"
                     )
                 }
                 composable(Profile) {

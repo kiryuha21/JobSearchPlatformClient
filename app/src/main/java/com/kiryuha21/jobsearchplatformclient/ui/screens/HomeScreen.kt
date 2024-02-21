@@ -25,7 +25,6 @@ fun HomeScreen(viewModel: HomePageViewModel, navigateFunction: (String) -> Unit,
     }
 
     NavigationDrawer(
-        login = login,
         navigateFunction = navigateFunction,
         onLogOut = { viewModel.processIntent(HomePageContract.HomePageIntent.LogOut) }
     ) { onOpenDrawer ->
