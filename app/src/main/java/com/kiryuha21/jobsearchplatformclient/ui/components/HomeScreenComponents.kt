@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 
 // TODO: make real user info loading
 @Composable
-fun DrawerMiniProfile(login: String, modifier: Modifier = Modifier) {
+fun DrawerMiniProfile(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(start=15.dp)
@@ -52,7 +52,7 @@ fun DrawerMiniProfile(login: String, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(120.dp)
         )
-        Text("Hello, $login!")
+        Text("Hello, ${CurrentUser.userInfo.login}!")
     }
 }
 
@@ -94,7 +94,7 @@ fun NavigationDrawer(
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                DrawerMiniProfile(CurrentUser.userInfo!!.login)
+                DrawerMiniProfile()
                 Spacer(modifier = Modifier.height(20.dp))
                 navigationDrawerItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
@@ -123,6 +123,7 @@ fun NavigationDrawer(
         },
         drawerState = drawerState,
         gesturesEnabled = true,
+        modifier = modifier,
         content = {
             content {
                 scope.launch {

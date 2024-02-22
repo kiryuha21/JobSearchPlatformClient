@@ -1,7 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
 object CurrentUser {
-    var userInfo: User? = null
+    var userInfo: User = User(-1, "", "", emptyList())
         private set
 
     suspend fun tryLogIn(login: String, password: String): Boolean {
