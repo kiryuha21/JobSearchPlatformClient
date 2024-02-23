@@ -25,7 +25,13 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserDataStates
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 @Composable
-fun LogInScreen(viewState: State<ViewState>, userData: UserDataStates, onLogin: () -> Unit, onResetPassword: () -> Unit, onSignUp: () -> Unit) {
+fun LogInScreen(
+    viewState: State<ViewState>,
+    userData: UserDataStates,
+    onLogin: () -> Unit,
+    onResetPassword: () -> Unit,
+    onSignUp: () -> Unit
+) {
     val state by viewState
 
     Column(
@@ -74,5 +80,10 @@ fun LogInScreen(viewState: State<ViewState>, userData: UserDataStates, onLogin: 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LogInScreen(mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>, UserDataStates(), {}, {}, {})
+    LogInScreen(
+        mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>,
+        UserDataStates(),
+        {},
+        {},
+        {})
 }

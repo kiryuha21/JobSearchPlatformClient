@@ -1,8 +1,9 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
@@ -36,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
+import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import kotlinx.coroutines.launch
 
 // TODO: make real user info loading
@@ -44,7 +46,7 @@ import kotlinx.coroutines.launch
 fun DrawerMiniProfile(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(start=15.dp)
+        modifier = modifier.padding(start = 15.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.default_avatar),
@@ -52,7 +54,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(120.dp)
         )
-        Text("Hello, ${CurrentUser.userInfo.login}!")
+        Text("Hello, ${CurrentUser.userInfo.value.login}!")
     }
 }
 
@@ -67,7 +69,10 @@ fun LogOutNavigationItem(selected: Boolean, onClick: () -> Unit, modifier: Modif
         NavigationDrawerItem(
             label = {
                 Row {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = "log out")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "log out"
+                    )
                     Text(text = "Выйти")
                 }
             },
@@ -82,6 +87,7 @@ fun LogOutNavigationItem(selected: Boolean, onClick: () -> Unit, modifier: Modif
 fun NavigationDrawer(
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
+    gesturesEnabled: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit) -> Unit
 ) {
@@ -106,23 +112,31 @@ fun NavigationDrawer(
                         },
                         selected = index == selectedItemIndex,
                         onClick = {
-                            selectedItemIndex = index
+                            if (index != selectedItemIndex) {
+                                selectedItemIndex = index
+                                navigateFunction(item.navigationRoute)
+                            }
+
                             scope.launch {
                                 drawerState.close()
                             }
-                            navigateFunction(item.navigationRoute)
                         })
                 }
 
                 val logOutIndex = navigationDrawerItems.size
                 LogOutNavigationItem(
                     selected = selectedItemIndex == logOutIndex,
-                    onClick = onLogOut
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                            onLogOut()
+                        }
+                    }
                 )
             }
         },
         drawerState = drawerState,
-        gesturesEnabled = true,
+        gesturesEnabled = gesturesEnabled,
         modifier = modifier,
         content = {
             content {
@@ -152,5 +166,28 @@ fun AppBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
         },
         modifier = modifier
     )
+}
+
+@Composable
+fun MainAppScaffold(
+    navigateFunction: (String) -> Unit,
+    onLogOut: () -> Unit,
+    shouldShowTopBar: Boolean,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    NavigationDrawer(
+        navigateFunction = navigateFunction,
+        onLogOut = onLogOut,
+        gesturesEnabled = shouldShowTopBar
+    ) { onOpenDrawer ->
+        Scaffold(
+            topBar = {
+                if (shouldShowTopBar) {
+                    AppBar(onClick = onOpenDrawer)
+                }
+            },
+            content = content
+        )
+    }
 }
 

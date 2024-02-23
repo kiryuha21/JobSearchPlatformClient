@@ -1,12 +1,15 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+
 object CurrentUser {
-    var userInfo: User = User(-1, "", "", emptyList())
+    var userInfo: MutableState<User> = mutableStateOf(User(-1, "", "", emptyList()))
         private set
 
     suspend fun tryLogIn(login: String, password: String): Boolean {
         // TODO: make real api call
-        userInfo = User(
+        userInfo.value = User(
             1,
             "test",
             "roflanchik",
@@ -16,9 +19,14 @@ object CurrentUser {
                     "Smit",
                     "12909483",
                     "hey@gmail.com",
+                    "Senior C++ developer",
                     listOf(
                         Skill(
-                            "c++ development",
+                            "C++ development",
+                            SkillLevel.HasCommercialProjects
+                        ),
+                        Skill(
+                            "Git workflows",
                             SkillLevel.HasCommercialProjects
                         )
                     ),

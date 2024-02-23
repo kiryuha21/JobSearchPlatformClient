@@ -5,6 +5,9 @@ data class Resume(
     val lastName: String,
     val phoneNumber: String,
     val contactEmail: String,
-    val skills: List<Skill>,
-    val workExperience: List<WorkExperience>
-)
+    val applyPosition: String,
+    val skills: List<Skill> = emptyList(),
+    val workExperience: List<WorkExperience> = emptyList()
+) {
+    fun fullName() = "$lastName $firstName"
+}
