@@ -19,6 +19,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
@@ -89,6 +90,9 @@ fun NavGraphBuilder.addMainApp(navController: NavController, shouldShowAppBar: M
         }
         composable(Profile) {
             ProfileScreen()
+        }
+        composable(Settings) {
+            SettingsScreen()
         }
     }
 }
