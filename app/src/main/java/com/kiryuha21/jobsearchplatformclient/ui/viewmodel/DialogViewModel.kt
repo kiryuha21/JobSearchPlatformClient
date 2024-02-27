@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.kiryuha21.jobsearchplatformclient.ui.contract.DialogContract
 import kotlinx.coroutines.launch
@@ -9,7 +8,7 @@ class DialogViewModel: BaseViewModel<DialogContract.DialogIntent, DialogContract
     override fun initialState(): DialogContract.DialogState {
         return DialogContract.DialogState(
             isLoading = false,
-            passwordState = mutableStateOf("")
+            password = ""
         )
     }
 
@@ -20,16 +19,8 @@ class DialogViewModel: BaseViewModel<DialogContract.DialogIntent, DialogContract
     }
 
     private fun checkPassword(password: String) {
-        _viewState.value = _viewState.value.copy(
-            isLoading = true
-        )
-
         viewModelScope.launch {
             // TODO
         }
-
-        _viewState.value = _viewState.value.copy(
-            isLoading = false
-        )
     }
 }

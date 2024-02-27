@@ -14,13 +14,14 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.DialogContract
 fun SecureConfirmAlertDialogue(
     title: String,
     state: DialogContract.DialogState,
+    onPasswordUpdate: (String) -> Unit,
     onConfirmRequest: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
         onDismissRequest = { },
         confirmButton = {
-            Button(onClick = { onConfirmRequest(state.passwordState.value) }) {
+            Button(onClick = { onConfirmRequest(state.password) }) {
                 Text(text = "Подтвердить")
             }
         },
@@ -33,7 +34,8 @@ fun SecureConfirmAlertDialogue(
                    PasswordTextField(
                        icon = Icons.Rounded.Password,
                        placeholder = "Ваш пароль",
-                       textState = state.passwordState
+                       initString = state.password,
+                       onUpdate = onPasswordUpdate
                    )
                }
         },

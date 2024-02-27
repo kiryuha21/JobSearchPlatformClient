@@ -10,7 +10,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,18 +41,22 @@ fun Title(text: String, fontSize: TextUnit, modifier: Modifier = Modifier) {
 fun DefaultTextField(
     icon: ImageVector,
     placeholder: String,
-    textState: MutableState<String>,
+    initString: String,
+    onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var text by remember { textState }
+    var text by remember { mutableStateOf(initString) }
 
     OutlinedTextField(
         value = text,
         modifier = modifier,
         label = { Text(placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
-        onValueChange = { text = it },
         placeholder = { Text(text = placeholder) },
+        onValueChange = {
+            text = it
+            onUpdate(text)
+        }
     )
 }
 
@@ -61,17 +64,21 @@ fun DefaultTextField(
 fun PasswordTextField(
     icon: ImageVector,
     placeholder: String,
-    textState: MutableState<String>,
+    initString: String,
+    onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var text by remember { textState }
+    var text by remember { mutableStateOf(initString) }
     var visible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = text,
         modifier = modifier,
         label = { Text(placeholder) },
-        onValueChange = { text = it },
+        onValueChange = {
+            text = it
+            onUpdate(text)
+        },
         placeholder = { Text(text = placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

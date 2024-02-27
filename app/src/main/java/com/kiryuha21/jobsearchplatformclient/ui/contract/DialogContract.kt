@@ -7,10 +7,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 class DialogContract {
     data class DialogState(
         val isLoading: Boolean,
-        val passwordState: MutableState<String>
+        val password: String
     ): ViewState
 
     sealed class DialogIntent: ViewIntent {
         data class ApplyDialog(val password: String): DialogIntent()
+        data class EditPassword(val newPassword: String): DialogIntent()
     }
 }

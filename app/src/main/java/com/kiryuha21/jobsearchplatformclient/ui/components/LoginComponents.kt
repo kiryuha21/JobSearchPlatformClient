@@ -20,8 +20,10 @@ import androidx.compose.ui.unit.dp
 fun LoginForm(
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
-    emailState: MutableState<String>,
-    passwordState: MutableState<String>,
+    onEmailFieldEdited: (String) -> Unit,
+    onPasswordFieldEdited: (String) -> Unit,
+    initEmail: String,
+    initPassword: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -31,13 +33,15 @@ fun LoginForm(
         DefaultTextField(
             icon = Icons.Filled.Email,
             placeholder = "E-mail",
-            textState = emailState,
+            onUpdate = onEmailFieldEdited,
+            initString = initEmail,
             modifier = Modifier.padding(5.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
-            textState = passwordState,
+            onUpdate = onPasswordFieldEdited,
+            initString = initPassword,
             modifier = Modifier.padding(5.dp)
         )
         ResetPasswordHelper(

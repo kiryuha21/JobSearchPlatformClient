@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +22,8 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 @Composable
 fun LogInScreen(
     state: AuthContract.AuthState,
+    onEmailFieldEdited: (String) -> Unit,
+    onPasswordFieldEdited: (String) -> Unit,
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
     onSignUp: () -> Unit
@@ -57,8 +58,10 @@ fun LogInScreen(
                 LoginForm(
                     onLogin = onLogin,
                     onResetPassword = onResetPassword,
-                    emailState = state.email,
-                    passwordState = state.email,
+                    onEmailFieldEdited = onEmailFieldEdited,
+                    onPasswordFieldEdited = onPasswordFieldEdited,
+                    initEmail = state.email,
+                    initPassword = state.password
                 )
                 NotSignedUpHelper(
                     onClick = onSignUp,
@@ -76,11 +79,13 @@ fun LoginScreenPreview() {
     LogInScreen(
         AuthContract.AuthState(
             false,
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf("")
+            "",
+            "",
+            "",
+            ""
         ),
+        {},
+        {},
         {},
         {},
         {})

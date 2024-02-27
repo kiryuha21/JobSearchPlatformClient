@@ -7,10 +7,10 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 class AuthContract {
     data class AuthState(
         val isLoading: Boolean,
-        val email: MutableState<String>,
-        val login: MutableState<String>,
-        val password: MutableState<String>,
-        val passwordRepeat: MutableState<String>
+        val email: String,
+        val login: String,
+        val password: String,
+        val passwordRepeat: String
     ): ViewState
 
     sealed class AuthIntent: ViewIntent {
@@ -22,5 +22,10 @@ class AuthContract {
 
         data object NavigateToSignUp: AuthIntent()
         data object SignUp : AuthIntent()
+
+        data class EditLogin(val newLogin: String) : AuthIntent()
+        data class EditEmail(val newEmail: String) : AuthIntent()
+        data class EditPassword(val newPassword: String) : AuthIntent()
+        data class EditPasswordRepeat(val newPasswordRepeat: String) : AuthIntent()
     }
 }

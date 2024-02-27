@@ -17,7 +17,11 @@ import kotlinx.coroutines.launch
 class HomePageViewModel(private val navController: NavController) :
     BaseViewModel<HomePageContract.HomePageIntent, HomePageContract.HomePageState>() {
     override fun initialState(): HomePageContract.HomePageState {
-        return HomePageContract.HomePageState.Loading
+        return HomePageContract.HomePageState(
+            isLoading = true,
+            vacancies = null,
+            resumes = null
+        )
     }
 
     override fun processIntent(intent: ViewIntent) {
@@ -53,7 +57,7 @@ class HomePageViewModel(private val navController: NavController) :
                     maxSalary = 20000
                 ),
             )
-            _viewState.value = HomePageContract.HomePageState.Success(vacancies)
+            setState { copy(vacancies = vacancies, isLoading = false) }
         }
     }
 

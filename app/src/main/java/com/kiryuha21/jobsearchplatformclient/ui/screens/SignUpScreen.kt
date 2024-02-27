@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -18,6 +17,10 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 @Composable
 fun SignUpScreen(
     state: AuthContract.AuthState,
+    onLoginFieldUpdated: (String) -> Unit,
+    onEmailFieldUpdated: (String) -> Unit,
+    onPasswordFieldUpdated: (String) -> Unit,
+    onPasswordRepeatFieldUpdated: (String) -> Unit,
     onRegister: () -> Unit
 ) {
     Column(
@@ -33,10 +36,14 @@ fun SignUpScreen(
         when (state.isLoading) {
             false -> SignUpForm(
                 onRegister = onRegister,
-                loginState = state.login,
-                emailState = state.email,
-                passwordState = state.password,
-                passwordRepeatState = state.passwordRepeat,
+                onLoginFieldUpdated = onLoginFieldUpdated,
+                onEmailFieldUpdated = onEmailFieldUpdated,
+                onPasswordFieldUpdated = onPasswordFieldUpdated,
+                onPasswordRepeatFieldUpdated = onPasswordRepeatFieldUpdated,
+                initLogin = state.login,
+                initEmail = state.email,
+                initPassword = state.password,
+                initPasswordRepeat = state.passwordRepeat,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -53,10 +60,11 @@ fun SignUpScreenPreview() {
     SignUpScreen(
         AuthContract.AuthState(
             false,
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf("")
+            "",
+            "",
+            "",
+            ""
         ),
+        {}, {}, {}, {},
     ) {}
 }

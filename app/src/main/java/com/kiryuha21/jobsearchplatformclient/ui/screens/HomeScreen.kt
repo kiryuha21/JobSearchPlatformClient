@@ -21,16 +21,19 @@ fun HomeScreen(viewModel: HomePageViewModel) {
     }
 
     LazyColumn {
-        when (state) {
-            is HomePageContract.HomePageState.Loading -> {
+        when (state.isLoading) {
+            true -> {
                 items(10) {
                     ShimmeringVacancyListItem(modifier = Modifier.fillMaxWidth())
                 }
             }
 
-            is HomePageContract.HomePageState.Success -> {
-                items((state as HomePageContract.HomePageState.Success).vacancies) {
-                    LoadedVacancyItem(vacancy = it, modifier = Modifier.fillMaxWidth())
+            false -> {
+                val vacancies = state.vacancies
+                if (vacancies != null) {
+                    items(vacancies) {
+                        LoadedVacancyItem(vacancy = it, modifier = Modifier.fillMaxWidth())
+                    }
                 }
             }
         }

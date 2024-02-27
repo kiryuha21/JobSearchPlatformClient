@@ -24,20 +24,29 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
-fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAppBar: MutableState<Boolean>) =
-    with(NavigationGraph.Authentication) {
+fun NavGraphBuilder.addAuthentication(
+    navController: NavController,
+    shouldShowAppBar: MutableState<Boolean>
+) = with(NavigationGraph.Authentication) {
         navigation(
             startDestination = LogIn,
             route = route
         ) {
             composable(LogIn) {
-                val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
+                val viewModel =
+                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
                 LaunchedEffect(key1 = Unit) {
                     shouldShowAppBar.value = false
                 }
 
                 LogInScreen(
                     state = viewModel.viewState.value,
+                    onEmailFieldEdited = { newEmail ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                    },
+                    onPasswordFieldEdited = { newPassword ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+                    },
                     onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
                     onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
                     onLogin = {
@@ -46,10 +55,23 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
                 )
             }
             composable(SignUp) {
-                val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
+                val viewModel =
+                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
                 SignUpScreen(
                     state = viewModel.viewState.value,
+                    onLoginFieldUpdated = { newLogin ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
+                    },
+                    onEmailFieldUpdated = { newEmail ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                    },
+                    onPasswordFieldUpdated = { newPassword ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+                    },
+                    onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
+                    },
                     onRegister = {
                         viewModel.processIntent(
                             AuthContract.AuthIntent.SignUp
@@ -57,10 +79,14 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
                     })
             }
             composable(ResetPassword) {
-                val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
+                val viewModel =
+                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
                 ResetPasswordScreen(
                     state = viewModel.viewState.value,
+                    onEmailFieldEdited = { newEmail ->
+                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                    },
                     onReset = {
                         viewModel.processIntent(
                             AuthContract.AuthIntent.ResetPassword
@@ -71,28 +97,31 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
         }
     }
 
-fun NavGraphBuilder.addMainApp(navController: NavController, shouldShowAppBar: MutableState<Boolean>) =
-    with(NavigationGraph.MainApp) {
-    navigation(
-        startDestination = HomeScreen,
-        route = route
-    ) {
-        composable(HomeScreen) {
-            val viewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.provideFactory(navController))
-            LaunchedEffect(key1 = Unit) {
-                shouldShowAppBar.value = true
-            }
+fun NavGraphBuilder.addMainApp(
+    navController: NavController,
+    shouldShowAppBar: MutableState<Boolean>
+) = with(NavigationGraph.MainApp) {
+        navigation(
+            startDestination = HomeScreen,
+            route = route
+        ) {
+            composable(HomeScreen) {
+                val viewModel: HomePageViewModel =
+                    viewModel(factory = HomePageViewModel.provideFactory(navController))
+                LaunchedEffect(key1 = Unit) {
+                    shouldShowAppBar.value = true
+                }
 
-            HomeScreen(viewModel)
-        }
-        composable(Profile) {
-            ProfileScreen()
-        }
-        composable(Settings) {
-            SettingsScreen()
+                HomeScreen(viewModel)
+            }
+            composable(Profile) {
+                ProfileScreen()
+            }
+            composable(Settings) {
+                SettingsScreen()
+            }
         }
     }
-}
 
 @Composable
 fun NavigationController() {

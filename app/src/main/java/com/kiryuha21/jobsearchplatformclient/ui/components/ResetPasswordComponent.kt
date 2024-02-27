@@ -14,7 +14,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ResetPasswordForm(
     onReset: () -> Unit,
-    emailState: MutableState<String>,
+    onEmailFieldEdited: (String) -> Unit,
+    initEmail: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -25,7 +26,8 @@ fun ResetPasswordForm(
         DefaultTextField(
             icon = Icons.Filled.Email,
             placeholder = "Ваша почта",
-            textState = emailState
+            initString = initEmail,
+            onUpdate = onEmailFieldEdited
         )
         DefaultButton(
             text = "Восстановить пароль",

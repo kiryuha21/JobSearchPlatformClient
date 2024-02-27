@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -18,7 +15,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable
-fun ResetPasswordScreen(state: AuthContract.AuthState, onReset: () -> Unit) {
+fun ResetPasswordScreen(
+    state: AuthContract.AuthState,
+    onEmailFieldEdited: (String) -> Unit,
+    onReset: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -32,7 +33,8 @@ fun ResetPasswordScreen(state: AuthContract.AuthState, onReset: () -> Unit) {
         when (state.isLoading) {
             false -> ResetPasswordForm(
                 onReset = onReset,
-                emailState = state.email,
+                onEmailFieldEdited = onEmailFieldEdited,
+                initEmail = state.email,
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
@@ -51,10 +53,10 @@ fun ResetPasswordScreenPreview() {
     ResetPasswordScreen(
         AuthContract.AuthState(
             false,
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf(""),
-            mutableStateOf("")
-        )
+            "",
+            "",
+            "",
+            ""
+        ), {}
     ) {}
 }

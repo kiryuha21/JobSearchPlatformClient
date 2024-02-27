@@ -1,6 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,10 +19,10 @@ class AuthViewModel(private val navController: NavController) :
     override fun initialState(): AuthContract.AuthState {
         return AuthContract.AuthState(
             isLoading = false,
-            email = mutableStateOf(""),
-            login = mutableStateOf(""),
-            password = mutableStateOf(""),
-            passwordRepeat = mutableStateOf("")
+            email = "",
+            login = "",
+            password = "",
+            passwordRepeat = ""
         )
     }
 
@@ -40,6 +40,11 @@ class AuthViewModel(private val navController: NavController) :
                 navController.navigate(NavigationGraph.Authentication.SignUp)
             }
 
+            is AuthContract.AuthIntent.EditLogin -> setState { copy(login = intent.newLogin) }
+            is AuthContract.AuthIntent.EditEmail -> setState { copy(email = intent.newEmail)  }
+            is AuthContract.AuthIntent.EditPassword -> setState { copy(password = intent.newPassword) }
+            is AuthContract.AuthIntent.EditPasswordRepeat -> setState { copy(passwordRepeat = intent.newPasswordRepeat) }
+
             is AuthContract.AuthIntent.LogIn -> tryLogIn()
             is AuthContract.AuthIntent.SignUp -> createNewUser()
             is AuthContract.AuthIntent.ResetPassword -> resetPassword()
@@ -52,7 +57,7 @@ class AuthViewModel(private val navController: NavController) :
             val successfulLogin = async(Dispatchers.IO) {
                 // TODO: replace delay with real check
                 delay(500L)
-                CurrentUser.tryLogIn(_viewState.value.login.value, _viewState.value.password.value)
+                CurrentUser.tryLogIn(_viewState.value.login, _viewState.value.password)
             }
             if (successfulLogin.await()) {
                 navController.navigate(NavigationGraph.MainApp.HomeScreen) {

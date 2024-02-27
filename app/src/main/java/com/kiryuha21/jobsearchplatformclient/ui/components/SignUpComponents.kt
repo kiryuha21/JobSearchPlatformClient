@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,10 +15,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SignUpForm(
     onRegister: () -> Unit,
-    loginState: MutableState<String>,
-    emailState: MutableState<String>,
-    passwordState: MutableState<String>,
-    passwordRepeatState: MutableState<String>,
+    onLoginFieldUpdated: (String) -> Unit,
+    onEmailFieldUpdated: (String) -> Unit,
+    onPasswordFieldUpdated: (String) -> Unit,
+    onPasswordRepeatFieldUpdated: (String) -> Unit,
+    initLogin: String,
+    initEmail: String,
+    initPassword: String,
+    initPasswordRepeat: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -29,25 +32,29 @@ fun SignUpForm(
         DefaultTextField(
             icon = Icons.Filled.Abc,
             placeholder = "Логин",
-            textState = loginState,
+            onUpdate = onLoginFieldUpdated,
+            initString = initLogin,
             modifier = Modifier.padding(5.dp)
         )
         DefaultTextField(
             icon = Icons.Filled.Email,
             placeholder = "E-mail",
-            textState = emailState,
+            onUpdate = onEmailFieldUpdated,
+            initString = initEmail,
             modifier = Modifier.padding(5.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
-            textState = passwordState,
+            onUpdate = onPasswordFieldUpdated,
+            initString = initPassword,
             modifier = Modifier.padding(5.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Повторите пароль",
-            textState = passwordRepeatState,
+            onUpdate = onPasswordRepeatFieldUpdated,
+            initString = initPasswordRepeat,
             modifier = Modifier.padding(5.dp)
         )
         DefaultButton(
