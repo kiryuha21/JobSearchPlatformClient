@@ -38,8 +38,9 @@ fun Title(text: String, fontSize: TextUnit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DefaultTextField(
+fun SecuredTextField(
     icon: ImageVector,
+    enabled: Boolean,
     placeholder: String,
     initString: String,
     onUpdate: (String) -> Unit,
@@ -50,6 +51,7 @@ fun DefaultTextField(
     OutlinedTextField(
         value = text,
         modifier = modifier,
+        enabled = enabled,
         label = { Text(placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
         placeholder = { Text(text = placeholder) },
@@ -61,8 +63,27 @@ fun DefaultTextField(
 }
 
 @Composable
-fun PasswordTextField(
+fun DefaultTextField(
     icon: ImageVector,
+    placeholder: String,
+    initString: String,
+    onUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SecuredTextField(
+        icon = icon,
+        enabled = true,
+        placeholder = placeholder,
+        initString = initString,
+        onUpdate = onUpdate,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SecuredPasswordTextField(
+    icon: ImageVector,
+    enabled: Boolean,
     placeholder: String,
     initString: String,
     onUpdate: (String) -> Unit,
@@ -79,6 +100,7 @@ fun PasswordTextField(
             text = it
             onUpdate(text)
         },
+        enabled = enabled,
         placeholder = { Text(text = placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -94,5 +116,23 @@ fun PasswordTextField(
                 )
             }
         }
+    )
+}
+
+@Composable
+fun PasswordTextField(
+    icon: ImageVector,
+    placeholder: String,
+    initString: String,
+    onUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SecuredPasswordTextField(
+        icon = icon,
+        enabled = true,
+        placeholder = placeholder,
+        initString = initString,
+        onUpdate = onUpdate,
+        modifier = modifier
     )
 }

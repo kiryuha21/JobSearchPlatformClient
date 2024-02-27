@@ -34,7 +34,12 @@ fun ProfileScreen() {
                 if (resumes != null) {
                     LazyColumn {
                         items(resumes) {
-                            ResumeCardWrapper(resume = it, modifier = Modifier.fillMaxWidth())
+                            ResumeCardWrapper(
+                                resume = it,
+                                onEdit = {},
+                                onDelete = {},
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 } else {

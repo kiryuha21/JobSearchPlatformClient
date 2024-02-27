@@ -18,7 +18,12 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 
 
 @Composable
-fun ResumeCardWrapper(resume: Resume, modifier: Modifier = Modifier) {
+fun ResumeCardWrapper(
+    resume: Resume,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
     ) {
@@ -30,7 +35,7 @@ fun ResumeCardWrapper(resume: Resume, modifier: Modifier = Modifier) {
                 .padding(horizontal = 10.dp)
         ) {
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = onEdit,
                 colors = ButtonColors(
                     containerColor = Color.White,
                     disabledContainerColor = Color.White,
@@ -42,7 +47,7 @@ fun ResumeCardWrapper(resume: Resume, modifier: Modifier = Modifier) {
                 Text(text = "Редактировать")
             }
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = onDelete,
                 colors = ButtonColors(
                     containerColor = Color.White,
                     disabledContainerColor = Color.White,
