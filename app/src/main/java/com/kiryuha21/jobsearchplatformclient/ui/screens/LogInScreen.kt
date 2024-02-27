@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,19 +19,14 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserDataStates
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 @Composable
 fun LogInScreen(
-    viewState: State<ViewState>,
-    userData: UserDataStates,
+    state: AuthContract.AuthState,
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
     onSignUp: () -> Unit
 ) {
-    val state by viewState
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -57,21 +50,21 @@ fun LogInScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        when (state) {
-            is AuthContract.AuthState.PageDefault -> {
+        when (state.isLoading) {
+            true -> LoadingComponent()
+
+            false -> {
                 LoginForm(
                     onLogin = onLogin,
                     onResetPassword = onResetPassword,
-                    emailState = userData.email,
-                    passwordState = userData.password,
+                    emailState = state.email,
+                    passwordState = state.email,
                 )
                 NotSignedUpHelper(
                     onClick = onSignUp,
                     modifier = Modifier.fillMaxHeight()
                 )
             }
-
-            is AuthContract.AuthState.Loading -> LoadingComponent()
         }
     }
 }
@@ -81,8 +74,13 @@ fun LogInScreen(
 @Composable
 fun LoginScreenPreview() {
     LogInScreen(
-        mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>,
-        UserDataStates(),
+        AuthContract.AuthState(
+            false,
+            mutableStateOf(""),
+            mutableStateOf(""),
+            mutableStateOf(""),
+            mutableStateOf("")
+        ),
         {},
         {},
         {})

@@ -15,4 +15,9 @@ abstract class BaseViewModel<UserIntent: ViewIntent, UiState: ViewState> : ViewM
     private val initialState: UiState by lazy { initialState() }
     protected val _viewState: MutableState<UiState> = mutableStateOf(initialState)
     val viewState: State<UiState> = _viewState
+
+    protected fun setState(reducer: UiState.() -> UiState) {
+        val newState = viewState.value.reducer()
+        _viewState.value = newState
+    }
 }

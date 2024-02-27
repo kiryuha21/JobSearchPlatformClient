@@ -37,8 +37,7 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
                 }
 
                 LogInScreen(
-                    viewState = viewModel.viewState,
-                    userData = viewModel.userData,
+                    state = viewModel.viewState.value,
                     onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
                     onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
                     onLogin = {
@@ -50,8 +49,7 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
                 val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
                 SignUpScreen(
-                    viewState = viewModel.viewState,
-                    userData = viewModel.userData,
+                    state = viewModel.viewState.value,
                     onRegister = {
                         viewModel.processIntent(
                             AuthContract.AuthIntent.SignUp
@@ -62,8 +60,7 @@ fun NavGraphBuilder.addAuthentication(navController: NavController, shouldShowAp
                 val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
                 ResetPasswordScreen(
-                    viewState = viewModel.viewState,
-                    userData = viewModel.userData,
+                    state = viewModel.viewState.value,
                     onReset = {
                         viewModel.processIntent(
                             AuthContract.AuthIntent.ResetPassword

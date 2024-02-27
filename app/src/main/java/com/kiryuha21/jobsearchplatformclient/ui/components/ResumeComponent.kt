@@ -1,12 +1,9 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -16,10 +13,8 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Work
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,22 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
-import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
-import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
-import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
-import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import kotlin.text.Typography.bullet
 
 @Composable
 fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
@@ -102,7 +88,7 @@ fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
                     Text(
                         buildAnnotatedString {
                             withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 19.sp))) {
-                                append(bullet)
+                                append(Typography.bullet)
                                 append("\t\t")
                                 append(skill.toString())
                             }
@@ -123,7 +109,7 @@ fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
                     Text(
                         buildAnnotatedString {
                             withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 19.sp))) {
-                                append(bullet)
+                                append(Typography.bullet)
                                 append("\t\t")
                                 append(experience.workMonthsFormatted())
                                 append(" в ${experience.company.name} как ${experience.positionFormatted()}")
@@ -140,76 +126,4 @@ fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
             }
         }
     }
-}
-
-@Composable
-fun ResumeCardWrapper(resume: Resume, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-    ) {
-        ResumeCard(resume = resume, modifier = Modifier.fillMaxWidth())
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)
-        ) {
-            OutlinedButton(
-                onClick = { /*TODO*/ },
-                colors = ButtonColors(
-                    containerColor = Color.White,
-                    disabledContainerColor = Color.White,
-                    contentColor = Color.Red,
-                    disabledContentColor = Color.Red
-                ),
-                border = BorderStroke(width = 1.dp, color = Color.Red)
-            ) {
-                Text(text = "Редактировать")
-            }
-            OutlinedButton(
-                onClick = { /*TODO*/ },
-                colors = ButtonColors(
-                    containerColor = Color.White,
-                    disabledContainerColor = Color.White,
-                    contentColor = Color.hsl(49.6F, 1F, 0.4412F),
-                    disabledContentColor = Color.hsl(49.6F, 1F, 0.4412F)
-                ),
-                border = BorderStroke(width = 1.dp, color = Color.hsl(49.6F, 1F, 0.4412F))
-            ) {
-                Text(text = "Удалить")
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardPreview() {
-    ResumeCard(
-        resume = Resume(
-            "John",
-            "Smit",
-            "12909483",
-            "hey@gmail.com",
-            "Senior C++ developer",
-            listOf(
-                Skill(
-                    "C++ development",
-                    SkillLevel.HasCommercialProjects
-                )
-            ),
-            listOf(
-                WorkExperience(
-                    Company(
-                        "yandex",
-                        CompanySize.Big
-                    ),
-                    "C++ developer",
-                    PositionLevel.Lead,
-                    100500,
-                    420
-                )
-            )
-        )
-    )
 }

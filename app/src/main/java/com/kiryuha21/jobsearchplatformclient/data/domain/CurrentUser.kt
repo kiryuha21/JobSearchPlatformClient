@@ -4,12 +4,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
 object CurrentUser {
-    var userInfo: MutableState<User> = mutableStateOf(User(-1, "", "", emptyList()))
+    var userInfo: MutableState<BaseUser> = mutableStateOf(BaseUser(-1, "", ""))
         private set
 
     suspend fun tryLogIn(login: String, password: String): Boolean {
         // TODO: make real api call
-        userInfo.value = User(
+        userInfo.value = Worker(
             1,
             "test",
             "roflanchik",

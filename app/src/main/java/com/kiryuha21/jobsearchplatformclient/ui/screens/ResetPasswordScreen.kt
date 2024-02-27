@@ -16,13 +16,9 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResetPasswordForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.UserDataStates
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 @Composable
-fun ResetPasswordScreen(viewState: State<ViewState>, userData: UserDataStates, onReset: () -> Unit) {
-    val state by viewState
-
+fun ResetPasswordScreen(state: AuthContract.AuthState, onReset: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -33,16 +29,16 @@ fun ResetPasswordScreen(viewState: State<ViewState>, userData: UserDataStates, o
                 .fillMaxWidth()
                 .fillMaxHeight(0.3f)
         )
-        when (state) {
-            AuthContract.AuthState.PageDefault -> ResetPasswordForm(
+        when (state.isLoading) {
+            false -> ResetPasswordForm(
                 onReset = onReset,
-                emailState = userData.email,
+                emailState = state.email,
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
             )
 
-            is AuthContract.AuthState.Loading -> LoadingComponent()
+            true -> LoadingComponent()
         }
 
     }
@@ -52,5 +48,13 @@ fun ResetPasswordScreen(viewState: State<ViewState>, userData: UserDataStates, o
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun ResetPasswordScreenPreview() {
-    ResetPasswordScreen(mutableStateOf(AuthContract.AuthState.PageDefault) as State<ViewState>, UserDataStates()) {}
+    ResetPasswordScreen(
+        AuthContract.AuthState(
+            false,
+            mutableStateOf(""),
+            mutableStateOf(""),
+            mutableStateOf(""),
+            mutableStateOf("")
+        )
+    ) {}
 }

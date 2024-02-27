@@ -28,9 +28,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
+import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
+import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -66,7 +74,7 @@ fun LoadedVacancyItem(vacancy: Vacancy, modifier: Modifier = Modifier) {
                     imageVector = Icons.Rounded.Work,
                     contentDescription = "work",
                 )
-                Text(text = vacancy.company, modifier = Modifier.padding(start = 20.dp))
+                Text(text = vacancy.company.name, modifier = Modifier.padding(start = 20.dp))
             }
 
             TextButton(onClick = { isExpanded = !isExpanded }) {
@@ -139,4 +147,36 @@ fun ShimmeringVacancyListItem(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardPreview() {
+    ResumeCard(
+        resume = Resume(
+            "John",
+            "Smit",
+            "12909483",
+            "hey@gmail.com",
+            "Senior C++ developer",
+            listOf(
+                Skill(
+                    "C++ development",
+                    SkillLevel.HasCommercialProjects
+                )
+            ),
+            listOf(
+                WorkExperience(
+                    Company(
+                        "yandex",
+                        CompanySize.Big
+                    ),
+                    "C++ developer",
+                    PositionLevel.Lead,
+                    100500,
+                    420
+                )
+            )
+        )
+    )
 }

@@ -1,13 +1,17 @@
 package com.kiryuha21.jobsearchplatformclient.ui.contract
 
+import androidx.compose.runtime.MutableState
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewIntent
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 class AuthContract {
-    sealed class AuthState: ViewState {
-        data object Loading: AuthState()
-        data object PageDefault: AuthState()
-    }
+    data class AuthState(
+        val isLoading: Boolean,
+        val email: MutableState<String>,
+        val login: MutableState<String>,
+        val password: MutableState<String>,
+        val passwordRepeat: MutableState<String>
+    ): ViewState
 
     sealed class AuthIntent: ViewIntent {
         data object NavigateToLogin: AuthIntent()

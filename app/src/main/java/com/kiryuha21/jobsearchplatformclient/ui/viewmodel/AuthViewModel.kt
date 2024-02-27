@@ -14,35 +14,30 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class UserDataStates {
-    var email = mutableStateOf("")
-    var login = mutableStateOf("")
-    var password = mutableStateOf("")
-    var passwordRepeat = mutableStateOf("")
-}
-
 class AuthViewModel(private val navController: NavController) :
     BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
-    var userData = UserDataStates()
     override fun initialState(): AuthContract.AuthState {
-        return AuthContract.AuthState.PageDefault
+        return AuthContract.AuthState(
+            isLoading = false,
+            email = mutableStateOf(""),
+            login = mutableStateOf(""),
+            password = mutableStateOf(""),
+            passwordRepeat = mutableStateOf("")
+        )
     }
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is AuthContract.AuthIntent.NavigateToLogin -> {
                 navController.navigate(NavigationGraph.Authentication.LogIn)
-                _viewState.value = AuthContract.AuthState.PageDefault
             }
 
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
                 navController.navigate(NavigationGraph.Authentication.ResetPassword)
-                _viewState.value = AuthContract.AuthState.PageDefault
             }
 
             is AuthContract.AuthIntent.NavigateToSignUp -> {
                 navController.navigate(NavigationGraph.Authentication.SignUp)
-                _viewState.value = AuthContract.AuthState.PageDefault
             }
 
             is AuthContract.AuthIntent.LogIn -> tryLogIn()
@@ -52,12 +47,12 @@ class AuthViewModel(private val navController: NavController) :
     }
 
     private fun tryLogIn() {
-        _viewState.value = AuthContract.AuthState.Loading
         viewModelScope.launch {
+            setState { copy(isLoading = true) }
             val successfulLogin = async(Dispatchers.IO) {
                 // TODO: replace delay with real check
                 delay(500L)
-                CurrentUser.tryLogIn(userData.login.value, userData.password.value)
+                CurrentUser.tryLogIn(_viewState.value.login.value, _viewState.value.password.value)
             }
             if (successfulLogin.await()) {
                 navController.navigate(NavigationGraph.MainApp.HomeScreen) {
@@ -66,6 +61,7 @@ class AuthViewModel(private val navController: NavController) :
                     }
                 }
             }
+            setState { copy(isLoading = false) }
         }
     }
 

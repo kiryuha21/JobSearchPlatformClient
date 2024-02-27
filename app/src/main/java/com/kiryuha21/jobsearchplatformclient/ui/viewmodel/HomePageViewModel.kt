@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
@@ -32,21 +34,21 @@ class HomePageViewModel(private val navController: NavController) :
                 Vacancy(
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
-                    company = "Gold rocks",
+                    company = Company("Gold rocks", CompanySize.Big),
                     minSalary = 15000,
                     maxSalary = 20000
                 ),
                 Vacancy(
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
-                    company = "Gold rocks",
+                    company = Company("Gold rocks", CompanySize.Big),
                     minSalary = 15000,
                     maxSalary = 20000
                 ),
                 Vacancy(
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
-                    company = "Gold rocks",
+                    company = Company("Gold rocks", CompanySize.Big),
                     minSalary = 15000,
                     maxSalary = 20000
                 ),
