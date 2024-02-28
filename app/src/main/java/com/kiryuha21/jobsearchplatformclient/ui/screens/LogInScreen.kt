@@ -78,11 +78,12 @@ fun LogInScreen(
 fun LoginScreenPreview() {
     LogInScreen(
         AuthContract.AuthState(
-            false,
-            "",
-            "",
-            "",
-            ""
+            isLoading = false,
+            isError = false,
+            email = "",
+            login = "",
+            password ="",
+            passwordRepeat = ""
         ),
         {},
         {},

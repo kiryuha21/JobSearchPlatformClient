@@ -1,12 +1,12 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.kiryuha21.jobsearchplatformclient.ui.contract.DialogContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import kotlinx.coroutines.launch
 
-class DialogViewModel: BaseViewModel<DialogContract.DialogIntent, DialogContract.DialogState>() {
-    override fun initialState(): DialogContract.DialogState {
-        return DialogContract.DialogState(
+class SettingsViewModel: BaseViewModel<SettingsContract.SettingsIntent, SettingsContract.SettingsState>() {
+    override fun initialState(): SettingsContract.SettingsState {
+        return SettingsContract.SettingsState(
             isLoading = false,
             password = ""
         )
@@ -14,7 +14,7 @@ class DialogViewModel: BaseViewModel<DialogContract.DialogIntent, DialogContract
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
-            is DialogContract.DialogIntent.ApplyDialog -> checkPassword(intent.password)
+            is SettingsContract.SettingsIntent.ApplyDialog -> checkPassword(intent.password)
         }
     }
 

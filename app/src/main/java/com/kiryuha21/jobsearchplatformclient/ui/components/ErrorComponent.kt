@@ -10,7 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun ErrorComponent(image: ImageVector, text: String, modifier: Modifier = Modifier) {
+fun ErrorComponent(
+    image: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(imageVector = image, contentDescription = text)
         Text(text = text)

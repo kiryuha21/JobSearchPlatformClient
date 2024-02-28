@@ -11,12 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.kiryuha21.jobsearchplatformclient.ui.contract.DialogContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 
 @Composable
 fun SecureConfirmAlertDialogue(
     title: String,
-    state: DialogContract.DialogState,
+    state: SettingsContract.SettingsState,
     onPasswordUpdate: (String) -> Unit,
     onConfirmRequest: (String) -> Unit,
     modifier: Modifier = Modifier

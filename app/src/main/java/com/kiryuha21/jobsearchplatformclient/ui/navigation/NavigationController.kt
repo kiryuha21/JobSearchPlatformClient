@@ -72,6 +72,7 @@ fun NavGraphBuilder.addAuthentication(
                     onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
                         viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
                     },
+                    onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
                     onRegister = {
                         viewModel.processIntent(
                             AuthContract.AuthIntent.SignUp
@@ -118,7 +119,7 @@ fun NavGraphBuilder.addMainApp(
                 ProfileScreen()
             }
             composable(Settings) {
-                SettingsScreen()
+                SettingsScreen({},{},{})
             }
         }
     }

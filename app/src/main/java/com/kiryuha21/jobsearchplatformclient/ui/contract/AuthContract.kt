@@ -7,6 +7,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 class AuthContract {
     data class AuthState(
         val isLoading: Boolean,
+        val isError: Boolean,
         val email: String,
         val login: String,
         val password: String,
@@ -27,5 +28,7 @@ class AuthContract {
         data class EditEmail(val newEmail: String) : AuthIntent()
         data class EditPassword(val newPassword: String) : AuthIntent()
         data class EditPasswordRepeat(val newPasswordRepeat: String) : AuthIntent()
+
+        data object FixError : AuthIntent()
     }
 }

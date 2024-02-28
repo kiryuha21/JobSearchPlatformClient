@@ -52,11 +52,12 @@ fun ResetPasswordScreen(
 fun ResetPasswordScreenPreview() {
     ResetPasswordScreen(
         AuthContract.AuthState(
-            false,
-            "",
-            "",
-            "",
-            ""
+            isLoading = false,
+            isError = false,
+            email = "",
+            login = "",
+            password ="",
+            passwordRepeat = ""
         ), {}
     ) {}
 }
