@@ -7,8 +7,8 @@ import retrofit2.http.POST
 
 interface UserApi {
     @GET("users")
-    suspend fun getUsers() : Call<List<UserDTO>>
+    suspend fun getUsers() : List<UserDTO>
 
     @POST("users")
-    suspend fun createNewUser(@Body user: UserDTO) : Call<UserDTO>
+    suspend fun createNewUser(@Body user: UserDTO) : UserDTO
 }

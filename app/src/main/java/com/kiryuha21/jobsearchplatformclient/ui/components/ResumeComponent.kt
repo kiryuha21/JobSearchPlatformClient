@@ -1,9 +1,11 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -27,12 +29,23 @@ import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
+import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
+import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
+import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 
 @Composable
-fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
+fun ResumeCard(
+    resume: Resume,
+    modifier: Modifier = Modifier
+) {
     var isExpanded by remember { mutableStateOf(false) }
     Card(
         onClick = { isExpanded = !isExpanded },
@@ -119,11 +132,51 @@ fun ResumeCard(resume: Resume, modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             } else {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "Нажмите чтобы посмотреть полностью")
+                Box(
+                    contentAlignment = Alignment.BottomCenter,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    Text(
+                        text = "Нажмите чтобы раскрыть",
+                        fontSize = 12.sp,
+                        fontFamily = interFontFamily
+                    )
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardPreview() {
+    ResumeCard(
+        resume = Resume(
+            "John",
+            "Smit",
+            "12909483",
+            "hey@gmail.com",
+            "Senior C++ developer",
+            listOf(
+                Skill(
+                    "C++ development",
+                    SkillLevel.HasCommercialProjects
+                )
+            ),
+            listOf(
+                WorkExperience(
+                    Company(
+                        "yandex",
+                        CompanySize.Big
+                    ),
+                    "C++ developer",
+                    PositionLevel.Lead,
+                    100500,
+                    420
+                )
+            )
+        ), modifier = Modifier.fillMaxWidth()
+    )
 }

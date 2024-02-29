@@ -71,3 +71,10 @@ fun VacancyCardWrapper(vacancy: Vacancy, modifier: Modifier = Modifier) {
 fun NoItemsCard(modifier: Modifier = Modifier) {
 
 }
+
+@Composable
+fun ProfileTitle(
+
+) {
+
+}

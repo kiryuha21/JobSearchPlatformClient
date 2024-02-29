@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -35,14 +37,14 @@ fun LoginForm(
             placeholder = "E-mail",
             onUpdate = onEmailFieldEdited,
             initString = initEmail,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(5.dp).testTag("login_email")
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
             onUpdate = onPasswordFieldEdited,
             initString = initPassword,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(5.dp).testTag("login_password")
         )
         ResetPasswordHelper(
             onClick = onResetPassword,

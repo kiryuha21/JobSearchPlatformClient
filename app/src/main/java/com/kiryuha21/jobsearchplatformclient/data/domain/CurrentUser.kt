@@ -9,9 +9,6 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.UserApi
 import com.kiryuha21.jobsearchplatformclient.data.remote.UserDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.io.IOException
-import java.util.Date
 
 object CurrentUser {
     private val userRetrofit = RetrofitEntity.retrofit.create(UserApi::class.java)
@@ -62,19 +59,16 @@ object CurrentUser {
     suspend fun trySignUp(email: String, login: String, password: String): Boolean =
         withContext(Dispatchers.IO) {
             try {
-                val response = userRetrofit.createNewUser(
+                userInfo.value = userRetrofit.createNewUser(
                     UserDTO(
                         email = email,
                         login = login,
                         password = password
                     )
-                ).execute()
-                Log.d("tag1", response.toString())
+                ).toDomainUser()
                 true
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Log.d("tag1", e.toString())
-                false
-            } catch (e: HttpException) {
                 false
             }
         }
