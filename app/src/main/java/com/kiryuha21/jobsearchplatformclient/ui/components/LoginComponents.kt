@@ -44,6 +44,8 @@ fun LoginForm(
             placeholder = "Пароль",
             onUpdate = onPasswordFieldEdited,
             initString = initPassword,
+            isError = false,
+            supportingText = "",
             modifier = Modifier.padding(5.dp).testTag("login_password")
         )
         ResetPasswordHelper(

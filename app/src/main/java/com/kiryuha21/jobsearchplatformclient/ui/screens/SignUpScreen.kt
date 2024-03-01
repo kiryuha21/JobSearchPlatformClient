@@ -49,18 +49,23 @@ fun SignUpScreen(
                 fixFunction = onErrorFix,
                 modifier = Modifier.fillMaxWidth()
             )
-            else -> SignUpForm(
-                onRegister = onRegister,
-                onLoginFieldUpdated = onLoginFieldUpdated,
-                onEmailFieldUpdated = onEmailFieldUpdated,
-                onPasswordFieldUpdated = onPasswordFieldUpdated,
-                onPasswordRepeatFieldUpdated = onPasswordRepeatFieldUpdated,
-                initLogin = state.login,
-                initEmail = state.email,
-                initPassword = state.password,
-                initPasswordRepeat = state.passwordRepeat,
-                modifier = Modifier.fillMaxWidth()
-            )
+            else -> {
+                val passwordsNotMatch = state.password != state.passwordRepeat
+                SignUpForm(
+                    onRegister = onRegister,
+                    onLoginFieldUpdated = onLoginFieldUpdated,
+                    onEmailFieldUpdated = onEmailFieldUpdated,
+                    onPasswordFieldUpdated = onPasswordFieldUpdated,
+                    onPasswordRepeatFieldUpdated = onPasswordRepeatFieldUpdated,
+                    initLogin = state.login,
+                    initEmail = state.email,
+                    initPassword = state.password,
+                    initPasswordRepeat = state.passwordRepeat,
+                    passwordRepeatNotMatches = passwordsNotMatch,
+                    passwordRepeatSupportingText = if (passwordsNotMatch) "Пароли не совпадают" else "",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
     }

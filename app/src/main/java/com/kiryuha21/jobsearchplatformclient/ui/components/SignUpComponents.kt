@@ -23,6 +23,8 @@ fun SignUpForm(
     initEmail: String,
     initPassword: String,
     initPasswordRepeat: String,
+    passwordRepeatNotMatches: Boolean,
+    passwordRepeatSupportingText: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -34,27 +36,31 @@ fun SignUpForm(
             placeholder = "Логин",
             onUpdate = onLoginFieldUpdated,
             initString = initLogin,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 10.dp, bottom = 10.dp)
         )
         DefaultTextField(
             icon = Icons.Filled.Email,
             placeholder = "E-mail",
             onUpdate = onEmailFieldUpdated,
             initString = initEmail,
-            modifier = Modifier.padding(5.dp)
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 10.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
             onUpdate = onPasswordFieldUpdated,
             initString = initPassword,
-            modifier = Modifier.padding(5.dp)
+            isError = false,
+            supportingText = "",
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 5.dp)
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
             placeholder = "Повторите пароль",
             onUpdate = onPasswordRepeatFieldUpdated,
             initString = initPasswordRepeat,
+            isError = passwordRepeatNotMatches,
+            supportingText = passwordRepeatSupportingText,
             modifier = Modifier.padding(5.dp)
         )
         DefaultButton(

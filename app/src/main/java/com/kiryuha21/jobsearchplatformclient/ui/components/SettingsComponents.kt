@@ -65,6 +65,8 @@ fun SecuredFields(
             enabled = enabled,
             placeholder = "",
             initString = "",
+            isError = false,
+            supportingText = "",
             onUpdate = onPasswordFieldEdit
         )
     }

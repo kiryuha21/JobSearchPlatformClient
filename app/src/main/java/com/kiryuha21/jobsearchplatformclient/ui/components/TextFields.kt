@@ -86,6 +86,8 @@ fun SecuredPasswordTextField(
     enabled: Boolean,
     placeholder: String,
     initString: String,
+    isError: Boolean,
+    supportingText: String,
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -101,6 +103,12 @@ fun SecuredPasswordTextField(
             onUpdate(text)
         },
         enabled = enabled,
+        isError = isError,
+        supportingText = {
+            if (supportingText.isNotEmpty()) {
+                Text(text = supportingText)
+            }
+        },
         placeholder = { Text(text = placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -124,6 +132,8 @@ fun PasswordTextField(
     icon: ImageVector,
     placeholder: String,
     initString: String,
+    isError: Boolean,
+    supportingText: String,
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -132,6 +142,8 @@ fun PasswordTextField(
         enabled = true,
         placeholder = placeholder,
         initString = initString,
+        isError = isError,
+        supportingText = supportingText,
         onUpdate = onUpdate,
         modifier = modifier
     )

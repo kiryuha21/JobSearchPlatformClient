@@ -41,6 +41,8 @@ fun SecureConfirmAlertDialogue(
                     icon = Icons.Rounded.Password,
                     placeholder = "Ваш пароль",
                     initString = state.password,
+                    isError = false,
+                    supportingText = "",
                     onUpdate = onPasswordUpdate
                 )
             }
