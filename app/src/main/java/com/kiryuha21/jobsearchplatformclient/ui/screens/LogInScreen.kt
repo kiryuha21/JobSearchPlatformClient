@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
@@ -82,6 +83,7 @@ fun LoginScreenPreview() {
             isError = false,
             email = "",
             login = "",
+            role = UserRole.Worker,
             password ="",
             passwordRepeat = ""
         ),

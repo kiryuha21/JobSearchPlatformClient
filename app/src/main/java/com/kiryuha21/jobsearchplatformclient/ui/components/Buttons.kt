@@ -23,9 +23,24 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 
 @Composable
-fun DefaultButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun DefaultButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SecuredButton(text = text, onClick = onClick, enabled = true, modifier = modifier)
+}
+
+@Composable
+fun SecuredButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier
     ) {
         Text(text = text)
@@ -87,5 +102,4 @@ fun StyledDefaultButtonPreview() {
     ) {
         StyledDefaultButton(text = "some text", onClick = { })
     }
-
 }

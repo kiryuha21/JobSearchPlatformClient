@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.domain.Employer
-import com.kiryuha21.jobsearchplatformclient.data.domain.Worker
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeCardWrapper
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
@@ -28,37 +26,38 @@ fun ProfileScreen() {
         Title(text = "Мои резюме", fontSize = 30.sp)
         Title(text = "Вы вошли как ${CurrentUser.userInfo.value.login}", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(20.dp))
-        when (CurrentUser.userInfo.value) {
-            is Worker -> {
-                val resumes = (CurrentUser.userInfo.value as Worker).resumes
-                if (resumes != null) {
-                    LazyColumn {
-                        items(resumes) {
-                            ResumeCardWrapper(
-                                resume = it,
-                                onEdit = {},
-                                onDelete = {},
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                } else {
-                    NoItemsCard()
-                }
-            }
-
-            is Employer -> {
-                val vacancies = (CurrentUser.userInfo.value as Employer).vacancies
-                if (vacancies != null) {
-                    LazyColumn {
-                        items(vacancies) {
-                            VacancyCardWrapper(vacancy = it, modifier = Modifier.fillMaxWidth())
-                        }
-                    }
-                } else {
-                    NoItemsCard()
-                }
-            }
-        }
+        // TODO: migrate viewmodel for new api and uncomment
+//        when (CurrentUser.userInfo.value) {
+//            is Worker -> {
+//                val resumes = (CurrentUser.userInfo.value as Worker).resumes
+//                if (resumes != null) {
+//                    LazyColumn {
+//                        items(resumes) {
+//                            ResumeCardWrapper(
+//                                resume = it,
+//                                onEdit = {},
+//                                onDelete = {},
+//                                modifier = Modifier.fillMaxWidth()
+//                            )
+//                        }
+//                    }
+//                } else {
+//                    NoItemsCard()
+//                }
+//            }
+//
+//            is Employer -> {
+//                val vacancies = (CurrentUser.userInfo.value as Employer).vacancies
+//                if (vacancies != null) {
+//                    LazyColumn {
+//                        items(vacancies) {
+//                            VacancyCardWrapper(vacancy = it, modifier = Modifier.fillMaxWidth())
+//                        }
+//                    }
+//                } else {
+//                    NoItemsCard()
+//                }
+//            }
+//        }
     }
 }

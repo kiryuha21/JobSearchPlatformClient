@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResetPasswordForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
@@ -57,6 +58,7 @@ fun ResetPasswordScreenPreview() {
             email = "",
             login = "",
             password ="",
+            role = UserRole.Worker,
             passwordRepeat = ""
         ), {}
     ) {}

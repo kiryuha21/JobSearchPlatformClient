@@ -5,18 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.data.domain.BaseUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitEntity
-import com.kiryuha21.jobsearchplatformclient.data.remote.UserApi
-import com.kiryuha21.jobsearchplatformclient.data.remote.UserDTO
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.IOException
-import java.util.Date
 
 class AuthViewModel(private val navController: NavController) :
     BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
@@ -26,6 +23,7 @@ class AuthViewModel(private val navController: NavController) :
             isError = false,
             email = "",
             login = "",
+            role = UserRole.Worker,
             password = "",
             passwordRepeat = ""
         )
@@ -51,6 +49,7 @@ class AuthViewModel(private val navController: NavController) :
             is AuthContract.AuthIntent.EditEmail -> setState { copy(email = intent.newEmail) }
             is AuthContract.AuthIntent.EditPassword -> setState { copy(password = intent.newPassword) }
             is AuthContract.AuthIntent.EditPasswordRepeat -> setState { copy(passwordRepeat = intent.newPasswordRepeat) }
+            is AuthContract.AuthIntent.EditRole -> setState { copy(role = intent.newRole) }
 
             is AuthContract.AuthIntent.LogIn -> tryLogIn()
             is AuthContract.AuthIntent.SignUp -> createNewUser()
@@ -81,9 +80,12 @@ class AuthViewModel(private val navController: NavController) :
         setState { copy(isLoading = true) }
         viewModelScope.launch {
             val successfulRegister = CurrentUser.trySignUp(
-                email = viewState.value.email,
-                login = viewState.value.login,
-                password = viewState.value.password
+                BaseUser(
+                    email = viewState.value.email,
+                    login = viewState.value.login,
+                    password = viewState.value.password,
+                    role = viewState.value.role
+                )
             )
             if (successfulRegister) {
                 setState { copy(isLoading = false) }

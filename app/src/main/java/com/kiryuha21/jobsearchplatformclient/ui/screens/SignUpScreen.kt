@@ -12,10 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.components.FixableErrorComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.SignUpForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.ToggleButtonElement
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable
@@ -25,6 +27,7 @@ fun SignUpScreen(
     onEmailFieldUpdated: (String) -> Unit,
     onPasswordFieldUpdated: (String) -> Unit,
     onPasswordRepeatFieldUpdated: (String) -> Unit,
+    onRoleToggled: (ToggleButtonElement) -> Unit,
     onErrorFix: () -> Unit,
     onRegister: () -> Unit
 ) {
@@ -57,10 +60,8 @@ fun SignUpScreen(
                     onEmailFieldUpdated = onEmailFieldUpdated,
                     onPasswordFieldUpdated = onPasswordFieldUpdated,
                     onPasswordRepeatFieldUpdated = onPasswordRepeatFieldUpdated,
-                    initLogin = state.login,
-                    initEmail = state.email,
-                    initPassword = state.password,
-                    initPasswordRepeat = state.passwordRepeat,
+                    onRoleToggled = onRoleToggled,
+                    state = state,
                     passwordRepeatNotMatches = passwordsNotMatch,
                     passwordRepeatSupportingText = if (passwordsNotMatch) "Пароли не совпадают" else "",
                     modifier = Modifier.fillMaxWidth()
@@ -81,9 +82,10 @@ fun SignUpScreenPreview() {
             isError = false,
             email = "",
             login = "",
+            role = UserRole.Worker,
             password ="",
             passwordRepeat = ""
         ),
-        {}, {}, {}, {}, {}
+        {}, {}, {}, {}, {}, {}
     ) {}
 }

@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.contract
 
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewIntent
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
@@ -9,6 +10,7 @@ class AuthContract {
         val isError: Boolean,
         val email: String,
         val login: String,
+        val role: UserRole,
         val password: String,
         val passwordRepeat: String
     ): ViewState
@@ -27,6 +29,7 @@ class AuthContract {
         data class EditEmail(val newEmail: String) : AuthIntent()
         data class EditPassword(val newPassword: String) : AuthIntent()
         data class EditPasswordRepeat(val newPasswordRepeat: String) : AuthIntent()
+        data class EditRole(val newRole: UserRole): AuthIntent()
 
         data object FixError : AuthIntent()
     }

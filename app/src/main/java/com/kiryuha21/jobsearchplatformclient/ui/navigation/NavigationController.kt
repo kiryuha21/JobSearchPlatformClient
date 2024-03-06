@@ -28,101 +28,110 @@ fun NavGraphBuilder.addAuthentication(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.Authentication) {
-        navigation(
-            startDestination = LogIn,
-            route = route
-        ) {
-            composable(LogIn) {
-                val viewModel =
-                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
-                LaunchedEffect(key1 = Unit) {
-                    shouldShowAppBar.value = false
+    navigation(
+        startDestination = LogIn,
+        route = route
+    ) {
+        composable(LogIn) {
+            val viewModel =
+                it.sharedAuthViewModel(navController = navController) as AuthViewModel
+            LaunchedEffect(key1 = Unit) {
+                shouldShowAppBar.value = false
+            }
+
+            LogInScreen(
+                state = viewModel.viewState.value,
+                onEmailFieldEdited = { newEmail ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                },
+                onPasswordFieldEdited = { newPassword ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+                },
+                onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
+                onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
+                onLogin = {
+                    viewModel.processIntent(AuthContract.AuthIntent.LogIn)
                 }
+            )
+        }
+        composable(SignUp) {
+            val viewModel =
+                it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
-                LogInScreen(
-                    state = viewModel.viewState.value,
-                    onEmailFieldEdited = { newEmail ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
-                    },
-                    onPasswordFieldEdited = { newPassword ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
-                    },
-                    onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
-                    onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
-                    onLogin = {
-                        viewModel.processIntent(AuthContract.AuthIntent.LogIn)
-                    }
-                )
-            }
-            composable(SignUp) {
-                val viewModel =
-                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
-
-                SignUpScreen(
-                    state = viewModel.viewState.value,
-                    onLoginFieldUpdated = { newLogin ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
-                    },
-                    onEmailFieldUpdated = { newEmail ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
-                    },
-                    onPasswordFieldUpdated = { newPassword ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
-                    },
-                    onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
-                    },
-                    onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
-                    onRegister = {
-                        viewModel.processIntent(
-                            AuthContract.AuthIntent.SignUp
+            SignUpScreen(
+                state = viewModel.viewState.value,
+                onLoginFieldUpdated = { newLogin ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
+                },
+                onEmailFieldUpdated = { newEmail ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                },
+                onPasswordFieldUpdated = { newPassword ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+                },
+                onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
+                    viewModel.processIntent(
+                        AuthContract.AuthIntent.EditPasswordRepeat(
+                            newPasswordRepeat
                         )
-                    })
-            }
-            composable(ResetPassword) {
-                val viewModel =
-                    it.sharedAuthViewModel(navController = navController) as AuthViewModel
+                    )
+                },
+                onRoleToggled = { toggleElement ->
+                    viewModel.processIntent(
+                        AuthContract.AuthIntent.EditRole(toggleElement.role)
+                    )
+                },
+                onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
+                onRegister = {
+                    viewModel.processIntent(
+                        AuthContract.AuthIntent.SignUp
+                    )
+                })
+        }
+        composable(ResetPassword) {
+            val viewModel =
+                it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
-                ResetPasswordScreen(
-                    state = viewModel.viewState.value,
-                    onEmailFieldEdited = { newEmail ->
-                        viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
-                    },
-                    onReset = {
-                        viewModel.processIntent(
-                            AuthContract.AuthIntent.ResetPassword
-                        )
-                    }
-                )
-            }
+            ResetPasswordScreen(
+                state = viewModel.viewState.value,
+                onEmailFieldEdited = { newEmail ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                },
+                onReset = {
+                    viewModel.processIntent(
+                        AuthContract.AuthIntent.ResetPassword
+                    )
+                }
+            )
         }
     }
+}
 
 fun NavGraphBuilder.addMainApp(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.MainApp) {
-        navigation(
-            startDestination = HomeScreen,
-            route = route
-        ) {
-            composable(HomeScreen) {
-                val viewModel: HomePageViewModel =
-                    viewModel(factory = HomePageViewModel.provideFactory(navController))
-                LaunchedEffect(key1 = Unit) {
-                    shouldShowAppBar.value = true
-                }
+    navigation(
+        startDestination = HomeScreen,
+        route = route
+    ) {
+        composable(HomeScreen) {
+            val viewModel: HomePageViewModel =
+                viewModel(factory = HomePageViewModel.provideFactory(navController))
+            LaunchedEffect(key1 = Unit) {
+                shouldShowAppBar.value = true
+            }
 
-                HomeScreen(viewModel)
-            }
-            composable(Profile) {
-                ProfileScreen()
-            }
-            composable(Settings) {
-                SettingsScreen({},{},{})
-            }
+            HomeScreen(viewModel)
+        }
+        composable(Profile) {
+            ProfileScreen()
+        }
+        composable(Settings) {
+            SettingsScreen({}, {}, {})
         }
     }
+}
 
 @Composable
 fun NavigationController() {
