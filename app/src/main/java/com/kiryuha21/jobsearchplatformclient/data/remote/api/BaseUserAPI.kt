@@ -1,5 +1,6 @@
-package com.kiryuha21.jobsearchplatformclient.data.remote
+package com.kiryuha21.jobsearchplatformclient.data.remote.api
 
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.BaseUserDTO
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

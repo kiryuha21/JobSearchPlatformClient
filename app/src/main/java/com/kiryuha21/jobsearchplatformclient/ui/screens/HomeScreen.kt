@@ -17,7 +17,7 @@ fun HomeScreen(viewModel: HomePageViewModel) {
     val state by viewModel.viewState
 
     LaunchedEffect(key1 = true) {
-        viewModel.processIntent(HomePageContract.HomePageIntent.LoadVacancies)
+        viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies)
     }
 
     LazyColumn {

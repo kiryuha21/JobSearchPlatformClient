@@ -1,15 +1,15 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote
 
-import android.util.Log
 import com.auth0.android.jwt.JWT
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.mappers.toTokenRequestDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.api.TokenAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.TokenDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object AuthToken {
     private val retrofit = RetrofitObject.retrofit.create(TokenAPI::class.java)
     private var token: JWT? = null
+    private var refreshToken: JWT? = null
 
     suspend fun getToken() =
         when {
@@ -20,15 +20,26 @@ object AuthToken {
 
     suspend fun createToken(username: String, password: String) {
         withContext(Dispatchers.IO) {
-            val tokenRequest = TokenDTO.TokenRequestDTO(username, password)
-            val tokenDTO = retrofit.getToken(tokenRequest)
+            val tokenDTO = retrofit.createToken(TokenDTO.TokenCreateRequestDTO(username, password))
             token = JWT(tokenDTO.token)
+            refreshToken = JWT(tokenDTO.refreshToken)
         }
     }
 
     private suspend fun refreshToken() =
         withContext(Dispatchers.IO) {
-            val tokenDTO = retrofit.getToken(CurrentUser.userInfo.value.toTokenRequestDTO())
-            JWT(tokenDTO.token)
+            val refreshTokenString = refreshToken?.toString()
+                ?: throw Exception("can't refresh without refresh token")
+
+            if (refreshToken!!.isExpired(5 * 60 * 60 * 24)) {  // in 5 days or less
+                val tokenDTO = retrofit.renewRefreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
+                token = JWT(tokenDTO.token)
+                refreshToken = JWT(tokenDTO.refreshToken)
+            } else {
+                val tokenDTO = retrofit.refreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
+                token = JWT(tokenDTO.token)
+            }
+
+            token
         }
-}
+    }

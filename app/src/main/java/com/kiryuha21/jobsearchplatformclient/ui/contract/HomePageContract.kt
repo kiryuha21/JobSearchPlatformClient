@@ -13,7 +13,10 @@ sealed class HomePageContract {
     ) : ViewState
 
     sealed class HomePageIntent : ViewIntent {
-        data object LoadVacancies: HomePageIntent()
+        data object FindMatchingVacancies: HomePageIntent()
+        data object LoadProfileVacancies: HomePageIntent()
+        data object FindMatchingResumes: HomePageIntent()
+        data object LoadProfileResumes: HomePageIntent()
         data object LogOut: HomePageIntent()
     }
 }

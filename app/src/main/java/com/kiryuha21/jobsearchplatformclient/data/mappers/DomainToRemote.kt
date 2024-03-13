@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.BaseUser
-import com.kiryuha21.jobsearchplatformclient.data.remote.BaseUserDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.TokenDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.BaseUserDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.TokenDTO
 
 fun BaseUser.toBaseUserDTO() =
     BaseUserDTO(
@@ -13,7 +13,7 @@ fun BaseUser.toBaseUserDTO() =
     )
 
 fun BaseUser.toTokenRequestDTO() =
-    TokenDTO.TokenRequestDTO(
+    TokenDTO.TokenCreateRequestDTO(
         username = this.username,
         password = this.password
     )

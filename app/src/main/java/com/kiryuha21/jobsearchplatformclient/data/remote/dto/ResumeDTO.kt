@@ -1,10 +1,12 @@
-package com.kiryuha21.jobsearchplatformclient.data.remote
+package com.kiryuha21.jobsearchplatformclient.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class Resume(
+data class ResumeDTO(
     @SerializedName("id")
-    val id: Int,
+    val id: String,
+    @SerializedName("workerLogin")
+    val workerLogin: String,
     @SerializedName("firstName")
     val firstName: String,
     @SerializedName("lastName")
@@ -16,7 +18,7 @@ data class Resume(
     @SerializedName("applyPosition")
     val applyPosition: String,
     @SerializedName("skills")
-    val skills: List<SkillDTO> = emptyList(),
+    val skills: List<SkillDTO>? = emptyList(),
     @SerializedName("workExperience")
-    val workExperience: List<WorkExperienceDTO> = emptyList()
+    val workExperience: List<WorkExperienceDTO>? = emptyList()
 )

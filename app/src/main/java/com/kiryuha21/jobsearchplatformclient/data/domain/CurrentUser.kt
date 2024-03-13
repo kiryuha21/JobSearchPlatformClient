@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toBaseUserDTO
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainUser
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.BaseUserAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.api.BaseUserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.data.remote
+package com.kiryuha21.jobsearchplatformclient.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole

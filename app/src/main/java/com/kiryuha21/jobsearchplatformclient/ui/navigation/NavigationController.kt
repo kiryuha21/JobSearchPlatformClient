@@ -116,16 +116,16 @@ fun NavGraphBuilder.addMainApp(
         route = route
     ) {
         composable(HomeScreen) {
-            val viewModel: HomePageViewModel =
-                viewModel(factory = HomePageViewModel.provideFactory(navController))
             LaunchedEffect(key1 = Unit) {
                 shouldShowAppBar.value = true
             }
 
+            val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
             HomeScreen(viewModel)
         }
         composable(Profile) {
-            ProfileScreen()
+            val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
+            ProfileScreen(viewModel)
         }
         composable(Settings) {
             SettingsScreen({}, {}, {})

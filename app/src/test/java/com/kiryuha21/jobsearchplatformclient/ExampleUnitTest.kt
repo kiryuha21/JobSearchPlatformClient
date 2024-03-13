@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient
 
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
-import com.kiryuha21.jobsearchplatformclient.data.remote.ResumeAPI
-import com.kiryuha21.jobsearchplatformclient.data.remote.BaseUserDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.BaseUserDTO
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
