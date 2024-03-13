@@ -56,7 +56,7 @@ fun ResetPasswordScreenPreview() {
             isLoading = false,
             isError = false,
             email = "",
-            login = "",
+            username = "",
             password ="",
             role = UserRole.Worker,
             passwordRepeat = ""

@@ -1,6 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient
 
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitEntity
+import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.ResumeAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.BaseUserDTO
 import kotlinx.coroutines.test.runTest
@@ -21,10 +21,10 @@ class ExampleUnitTest {
 
     @Test
     fun userRetrofitWorks() = runTest {
-        val userRetrofit = RetrofitEntity.retrofit.create(ResumeAPI::class.java)
+        val userRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
         val user = BaseUserDTO(
             email = "test@gmail.com",
-            login = "my_example_login",
+            username = "my_example_login",
             password = "secure_one"
         )
 

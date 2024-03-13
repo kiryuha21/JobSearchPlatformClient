@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
@@ -22,9 +20,9 @@ import androidx.compose.ui.unit.dp
 fun LoginForm(
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
-    onEmailFieldEdited: (String) -> Unit,
+    onUsernameFieldEdited: (String) -> Unit,
     onPasswordFieldEdited: (String) -> Unit,
-    initEmail: String,
+    initUsername: String,
     initPassword: String,
     modifier: Modifier = Modifier
 ) {
@@ -33,11 +31,11 @@ fun LoginForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DefaultTextField(
-            icon = Icons.Filled.Email,
-            placeholder = "E-mail",
-            onUpdate = onEmailFieldEdited,
-            initString = initEmail,
-            modifier = Modifier.padding(5.dp).testTag("login_email")
+            icon = Icons.Filled.Abc,
+            placeholder = "Логин",
+            onUpdate = onUsernameFieldEdited,
+            initString = initUsername,
+            modifier = Modifier.padding(5.dp).testTag("login_username")
         )
         PasswordTextField(
             icon = Icons.Filled.Password,
@@ -54,7 +52,7 @@ fun LoginForm(
         )
         DefaultButton(
             text = "Войти",
-            onClick = { onLogin() },
+            onClick = onLogin,
             modifier = Modifier
                 .padding(top = 20.dp)
                 .defaultMinSize(minWidth = 200.dp)

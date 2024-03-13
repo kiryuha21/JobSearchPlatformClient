@@ -81,7 +81,7 @@ fun SignUpScreenPreview() {
             isLoading = false,
             isError = false,
             email = "",
-            login = "",
+            username = "",
             role = UserRole.Worker,
             password ="",
             passwordRepeat = ""

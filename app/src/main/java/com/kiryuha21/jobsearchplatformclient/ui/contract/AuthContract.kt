@@ -9,7 +9,7 @@ class AuthContract {
         val isLoading: Boolean,
         val isError: Boolean,
         val email: String,
-        val login: String,
+        val username: String,
         val role: UserRole,
         val password: String,
         val passwordRepeat: String

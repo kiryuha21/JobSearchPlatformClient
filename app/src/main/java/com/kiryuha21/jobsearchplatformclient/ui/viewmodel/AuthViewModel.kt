@@ -10,9 +10,6 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val navController: NavController) :
@@ -22,7 +19,7 @@ class AuthViewModel(private val navController: NavController) :
             isLoading = false,
             isError = false,
             email = "",
-            login = "",
+            username = "",
             role = UserRole.Worker,
             password = "",
             passwordRepeat = ""
@@ -45,7 +42,7 @@ class AuthViewModel(private val navController: NavController) :
 
             is AuthContract.AuthIntent.FixError -> setState { copy(isError = false) }
 
-            is AuthContract.AuthIntent.EditLogin -> setState { copy(login = intent.newLogin) }
+            is AuthContract.AuthIntent.EditLogin -> setState { copy(username = intent.newLogin) }
             is AuthContract.AuthIntent.EditEmail -> setState { copy(email = intent.newEmail) }
             is AuthContract.AuthIntent.EditPassword -> setState { copy(password = intent.newPassword) }
             is AuthContract.AuthIntent.EditPasswordRepeat -> setState { copy(passwordRepeat = intent.newPasswordRepeat) }
@@ -60,19 +57,17 @@ class AuthViewModel(private val navController: NavController) :
     private fun tryLogIn() {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val successfulLogin = async(Dispatchers.IO) {
-                // TODO: replace delay with real check
-                delay(500L)
-                CurrentUser.tryLogIn(_viewState.value.login, _viewState.value.password)
-            }
-            if (successfulLogin.await()) {
+            val successfulLogin = CurrentUser.tryLogIn(_viewState.value.username, _viewState.value.password)
+            if (successfulLogin) {
+                setState { copy(isLoading = false) }
                 navController.navigate(NavigationGraph.MainApp.HomeScreen) {
                     popUpTo(NavigationGraph.Authentication.route) {
                         inclusive = true
                     }
                 }
+            } else {
+                setState { copy(isLoading = false, isError = true) }
             }
-            setState { copy(isLoading = false) }
         }
     }
 
@@ -82,7 +77,7 @@ class AuthViewModel(private val navController: NavController) :
             val successfulRegister = CurrentUser.trySignUp(
                 BaseUser(
                     email = viewState.value.email,
-                    login = viewState.value.login,
+                    username = viewState.value.username,
                     password = viewState.value.password,
                     role = viewState.value.role
                 )

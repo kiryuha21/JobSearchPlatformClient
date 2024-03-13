@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable
@@ -36,7 +35,7 @@ fun SignUpForm(
             icon = Icons.Filled.Abc,
             placeholder = "Логин",
             onUpdate = onLoginFieldUpdated,
-            initString = state.login,
+            initString = state.username,
             modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 10.dp, bottom = 10.dp)
         )
         DefaultTextField(

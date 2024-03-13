@@ -54,7 +54,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(120.dp)
         )
-        Text("Hello, ${CurrentUser.userInfo.value.login}!")
+        Text("Hello, ${CurrentUser.userInfo.value.username}!")
     }
 }
 

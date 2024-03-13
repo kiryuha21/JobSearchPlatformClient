@@ -4,18 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeCardWrapper
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
-import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyCardWrapper
 
 @Composable
 fun ProfileScreen() {
@@ -24,7 +19,7 @@ fun ProfileScreen() {
         modifier = Modifier.fillMaxWidth()
     ) {
         Title(text = "Мои резюме", fontSize = 30.sp)
-        Title(text = "Вы вошли как ${CurrentUser.userInfo.value.login}", fontSize = 20.sp)
+        Title(text = "Вы вошли как ${CurrentUser.userInfo.value.username}", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(20.dp))
         // TODO: migrate viewmodel for new api and uncomment
 //        when (CurrentUser.userInfo.value) {

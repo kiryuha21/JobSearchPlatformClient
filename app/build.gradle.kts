@@ -87,4 +87,7 @@ dependencies {
 
     // shimmer animation effect
     implementation("com.valentinilk.shimmer:compose-shimmer:1.2.0")
+
+    // jwt decoding
+    implementation("com.auth0.android:jwtdecode:2.0.2")
 }

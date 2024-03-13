@@ -41,8 +41,8 @@ fun NavGraphBuilder.addAuthentication(
 
             LogInScreen(
                 state = viewModel.viewState.value,
-                onEmailFieldEdited = { newEmail ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+                onUsernameFieldEdited = { newLogin ->
+                    viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
                 },
                 onPasswordFieldEdited = { newPassword ->
                     viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))

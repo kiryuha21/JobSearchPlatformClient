@@ -6,7 +6,7 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.BaseUserDTO
 fun BaseUserDTO.toDomainUser() =
     BaseUser(
         email = this.email,
-        login = this.login,
+        username = this.username,
         password = this.password,
         role = this.role
     )

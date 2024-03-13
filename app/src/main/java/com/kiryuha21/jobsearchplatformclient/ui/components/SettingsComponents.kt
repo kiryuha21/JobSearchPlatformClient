@@ -2,7 +2,6 @@ package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
@@ -50,7 +49,7 @@ fun SecuredFields(
             icon = Icons.Filled.Abc,
             enabled = enabled,
             placeholder = "my_login",
-            initString = CurrentUser.userInfo.value.login,
+            initString = CurrentUser.userInfo.value.username,
             onUpdate = onLoginFieldEdit
         )
         SecuredTextField(

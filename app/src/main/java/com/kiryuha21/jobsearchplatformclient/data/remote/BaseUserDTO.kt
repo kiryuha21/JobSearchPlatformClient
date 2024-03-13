@@ -6,9 +6,9 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 data class BaseUserDTO(
     @SerializedName("email")
     val email: String,
-    @SerializedName("login")
-    val login: String,
-    @SerializedName("pass")
+    @SerializedName("username")
+    val username: String,
+    @SerializedName("password")
     val password: String,
     @SerializedName("role")
     val role: UserRole

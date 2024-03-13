@@ -6,7 +6,7 @@ enum class UserRole {
 }
 open class BaseUser(
     val email: String,
-    val login: String,
+    val username: String,
     val password: String,
     val role: UserRole
 )

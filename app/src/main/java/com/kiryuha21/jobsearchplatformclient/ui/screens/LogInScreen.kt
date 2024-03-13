@@ -23,7 +23,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 @Composable
 fun LogInScreen(
     state: AuthContract.AuthState,
-    onEmailFieldEdited: (String) -> Unit,
+    onUsernameFieldEdited: (String) -> Unit,
     onPasswordFieldEdited: (String) -> Unit,
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
@@ -59,9 +59,9 @@ fun LogInScreen(
                 LoginForm(
                     onLogin = onLogin,
                     onResetPassword = onResetPassword,
-                    onEmailFieldEdited = onEmailFieldEdited,
+                    onUsernameFieldEdited = onUsernameFieldEdited,
                     onPasswordFieldEdited = onPasswordFieldEdited,
-                    initEmail = state.email,
+                    initUsername = state.username,
                     initPassword = state.password
                 )
                 NotSignedUpHelper(
@@ -82,7 +82,7 @@ fun LoginScreenPreview() {
             isLoading = false,
             isError = false,
             email = "",
-            login = "",
+            username = "",
             role = UserRole.Worker,
             password ="",
             passwordRepeat = ""
