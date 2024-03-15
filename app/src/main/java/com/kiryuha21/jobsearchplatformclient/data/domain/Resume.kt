@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
 data class Resume(
+    val id: String,
     val firstName: String,
     val lastName: String,
     val phoneNumber: String,

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.valentinilk.shimmer.shimmer
 
@@ -75,6 +76,61 @@ fun LoadedVacancyItem(vacancy: Vacancy, modifier: Modifier = Modifier) {
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     modifier = Modifier.animateContentSize()
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun VacancyDetails(vacancy: Vacancy, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = vacancy.title)
+        }
+        Text(text = vacancy.company.name)
+        Text(text = "${vacancy.minSalary} - ${vacancy.maxSalary}")
+        Text(text = vacancy.description)
+    }
+}
+
+@Composable
+fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        shape = RoundedCornerShape(3.dp),
+        onClick = onClick,
+        modifier = modifier.padding(5.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = vacancy.title,
+                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            )
+
+            val salaryText =
+                if (vacancy.minSalary == vacancy.maxSalary) "${vacancy.minSalary}"
+                else "От ${vacancy.minSalary} до ${vacancy.maxSalary}"
+            Text(text = salaryText, fontFamily = FontFamily.Cursive)
+
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Work,
+                    contentDescription = "work",
+                )
+                Text(text = vacancy.company.name, modifier = Modifier.padding(start = 20.dp))
             }
         }
     }

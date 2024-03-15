@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 
 data class VacancyDTO(
+    @SerializedName("id")
+    val id: String,
     @SerializedName("title")
     val title: String,
     @SerializedName("description")

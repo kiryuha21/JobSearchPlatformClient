@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -173,11 +174,105 @@ fun ResumeCard(
     }
 }
 
+@Composable
+fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = resume.applyPosition)
+        }
+        Text(text = resume.fullName())
+        Text(text = resume.contactEmail)
+        Text(text = resume.phoneNumber)
+        for (skill in resume.skills) {
+            Text(text = skill.toString())
+        }
+        for (exp in resume.workExperience) {
+            Text(text = "${exp.workMonthsFormatted()} как ${exp.positionFormatted()}")
+        }
+    }
+}
+
+@Composable
+fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Card(
+        onClick = onClick,
+        modifier = modifier.padding(10.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .animateContentSize()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Filled.Work, contentDescription = "title")
+                Text(
+                    text = resume.applyPosition,
+                    fontSize = 20.sp,
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.W600,
+                    modifier = Modifier.offset(x = 10.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Person, contentDescription = "full name")
+                Text(
+                    text = resume.fullName(),
+                    fontSize = 16.sp,
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.W700,
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Email, contentDescription = "email")
+                Text(
+                    text = "E-mail: ${resume.contactEmail}",
+                    fontSize = 16.sp,
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.offset(x = 10.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                Icon(imageVector = Icons.Filled.Phone, contentDescription = "contact phone")
+                Text(
+                    text = "Контактный телефон: ${resume.phoneNumber}",
+                    fontSize = 16.sp,
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.offset(x = 10.dp)
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CardPreview() {
     ResumeCard(
         resume = Resume(
+            "12khe12nj1nek",
             "John",
             "Smit",
             "12909483",
@@ -202,5 +297,38 @@ fun CardPreview() {
                 )
             )
         ), modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ClickableCardPreview() {
+    ClickableResumeCard(
+        resume = Resume(
+            "12khe12nj1nek",
+            "John",
+            "Smit",
+            "12909483",
+            "hey@gmail.com",
+            "Senior C++ developer",
+            listOf(
+                Skill(
+                    "C++ development",
+                    SkillLevel.HasCommercialProjects
+                )
+            ),
+            listOf(
+                WorkExperience(
+                    Company(
+                        "yandex",
+                        CompanySize.Big
+                    ),
+                    "C++ developer",
+                    PositionLevel.Lead,
+                    100500,
+                    420
+                )
+            )
+        ), {}, modifier = Modifier.fillMaxWidth()
     )
 }

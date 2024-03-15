@@ -7,7 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadedVacancyItem
+import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.ShimmeringVacancyListItem
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
@@ -29,10 +33,39 @@ fun HomeScreen(viewModel: HomePageViewModel) {
             }
 
             false -> {
-                val vacancies = state.vacancies
-                if (vacancies != null) {
-                    items(vacancies) {
-                        LoadedVacancyItem(vacancy = it, modifier = Modifier.fillMaxWidth())
+                when (CurrentUser.userInfo.value.role) {
+                    UserRole.Worker -> {
+                        if (!state.vacancies.isNullOrEmpty()) {
+                            items(state.vacancies!!) {
+                                ClickableVacancyCard(
+                                    vacancy = it,
+                                    onClick = {
+                                        viewModel.processIntent(
+                                            HomePageContract.HomePageIntent.OpenVacancyDetails(
+                                                it.id
+                                            )
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        } else {
+                            item {
+                                NoItemsCard()
+                            }
+                        }
+                    }
+
+                    UserRole.Employer -> {
+                        if (!state.resumes.isNullOrEmpty()) {
+                            items(state.resumes!!) {
+                                ResumeCard(resume = it, modifier = Modifier.fillMaxWidth())
+                            }
+                        } else {
+                            item {
+                                NoItemsCard()
+                            }
+                        }
                     }
                 }
             }

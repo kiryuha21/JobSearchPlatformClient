@@ -7,20 +7,23 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
@@ -29,10 +32,10 @@ fun NavGraphBuilder.addAuthentication(
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.Authentication) {
     navigation(
-        startDestination = LogIn,
-        route = route
+        startDestination = LOG_IN,
+        route = NAV_ROUTE
     ) {
-        composable(LogIn) {
+        composable(LOG_IN) {
             val viewModel =
                 it.sharedAuthViewModel(navController = navController) as AuthViewModel
             LaunchedEffect(key1 = Unit) {
@@ -54,7 +57,7 @@ fun NavGraphBuilder.addAuthentication(
                 }
             )
         }
-        composable(SignUp) {
+        composable(SIGN_UP) {
             val viewModel =
                 it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
@@ -88,7 +91,7 @@ fun NavGraphBuilder.addAuthentication(
                     )
                 })
         }
-        composable(ResetPassword) {
+        composable(RESET_PASSWORD) {
             val viewModel =
                 it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
@@ -112,23 +115,53 @@ fun NavGraphBuilder.addMainApp(
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.MainApp) {
     navigation(
-        startDestination = HomeScreen,
-        route = route
+        startDestination = HOME_SCREEN,
+        route = NAV_ROUTE
     ) {
-        composable(HomeScreen) {
-            LaunchedEffect(key1 = Unit) {
+        composable(HOME_SCREEN) {
+            LaunchedEffect(Unit) {
                 shouldShowAppBar.value = true
             }
 
             val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
             HomeScreen(viewModel)
         }
-        composable(Profile) {
+        composable(PROFILE) {
+            LaunchedEffect(Unit) {
+                shouldShowAppBar.value = true
+            }
+
             val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
             ProfileScreen(viewModel)
         }
-        composable(Settings) {
+        composable(SETTINGS) {
+            LaunchedEffect(Unit) {
+                shouldShowAppBar.value = true
+            }
+
             SettingsScreen({}, {}, {})
+        }
+        composable(VACANCY_DETAILS) {
+            LaunchedEffect(Unit) {
+                shouldShowAppBar.value = false
+            }
+
+            VacancyDetailsScreen(
+                editable = CurrentUser.userInfo.value.role != UserRole.Worker,
+                vacancyId = it.arguments?.getString("vacancyId"),
+                viewModel = it.sharedHomePageViewModel(navController = navController)
+            )
+        }
+        composable(RESUME_DETAILS) {
+            LaunchedEffect(Unit) {
+                shouldShowAppBar.value = false
+            }
+
+            ResumeDetailsScreen(
+                editable = CurrentUser.userInfo.value.role == UserRole.Worker,
+                resumeId = it.arguments?.getString("resumeId"),
+                viewModel = it.sharedHomePageViewModel(navController = navController)
+            )
         }
     }
 }
@@ -141,8 +174,8 @@ fun NavigationController() {
     MainAppScaffold(
         navigateFunction = navController::navigate,
         onLogOut = {
-            navController.navigate(NavigationGraph.Authentication.LogIn) {
-                popUpTo(NavigationGraph.MainApp.route) {
+            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
                     inclusive = true
                 }
             }
@@ -151,7 +184,7 @@ fun NavigationController() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = NavigationGraph.Authentication.route,
+            startDestination = NavigationGraph.Authentication.NAV_ROUTE,
             modifier = Modifier.padding(paddingValues)
         ) {
             addAuthentication(navController, shouldShowTopBar)

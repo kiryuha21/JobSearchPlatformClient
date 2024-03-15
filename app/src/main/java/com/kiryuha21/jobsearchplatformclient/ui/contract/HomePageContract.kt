@@ -9,7 +9,9 @@ sealed class HomePageContract {
     data class HomePageState(
         val isLoading: Boolean,
         val vacancies: List<Vacancy>?,
-        val resumes: List<Resume>?
+        val resumes: List<Resume>?,
+        val openedVacancy: Vacancy?,
+        val openedResume: Resume?
     ) : ViewState
 
     sealed class HomePageIntent : ViewIntent {
@@ -18,5 +20,7 @@ sealed class HomePageContract {
         data object FindMatchingResumes: HomePageIntent()
         data object LoadProfileResumes: HomePageIntent()
         data object LogOut: HomePageIntent()
+        data class OpenVacancyDetails(val vacancyId: String): HomePageIntent()
+        data class OpenResumeDetails(val resumeId: String): HomePageIntent()
     }
 }

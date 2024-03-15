@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -17,10 +16,11 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.create
 
 class HomePageViewModel(private val navController: NavController) :
     BaseViewModel<HomePageContract.HomePageIntent, HomePageContract.HomePageState>() {
@@ -31,7 +31,9 @@ class HomePageViewModel(private val navController: NavController) :
         return HomePageContract.HomePageState(
             isLoading = true,
             vacancies = null,
-            resumes = null
+            resumes = null,
+            openedVacancy = null,
+            openedResume = null
         )
     }
 
@@ -42,6 +44,8 @@ class HomePageViewModel(private val navController: NavController) :
             is HomePageContract.HomePageIntent.LoadProfileVacancies -> loadProfileVacancies()
             is HomePageContract.HomePageIntent.LoadProfileResumes -> loadProfileResumes()
             is HomePageContract.HomePageIntent.LogOut -> logOut()
+            is HomePageContract.HomePageIntent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
+            is HomePageContract.HomePageIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
         }
     }
 
@@ -50,6 +54,7 @@ class HomePageViewModel(private val navController: NavController) :
             delay(5000)
             val vacancies = listOf(
                 Vacancy(
+                    id = "1",
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
                     company = Company("Gold rocks", CompanySize.Big),
@@ -57,6 +62,7 @@ class HomePageViewModel(private val navController: NavController) :
                     maxSalary = 20000
                 ),
                 Vacancy(
+                    id = "2",
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
                     company = Company("Gold rocks", CompanySize.Big),
@@ -64,6 +70,7 @@ class HomePageViewModel(private val navController: NavController) :
                     maxSalary = 20000
                 ),
                 Vacancy(
+                    id = "3",
                     title = "Cave Digger",
                     description = "In this good company you will have everything you want and even money",
                     company = Company("Gold rocks", CompanySize.Big),
@@ -91,10 +98,28 @@ class HomePageViewModel(private val navController: NavController) :
         }
     }
 
+    private fun openResumeDetails(resumeId: String) {
+        navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+            val resume = resumeRetrofit.getResumeById(resumeId).toDomainResume()
+            setState { copy(isLoading = false, openedResume = resume) }
+        }
+    }
+
+    private fun openVacancyDetails(vacancyId: String) {
+        navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+            val vacancy = vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy()
+            setState { copy(isLoading = false, openedVacancy = vacancy) }
+        }
+    }
+
 
     private fun logOut() {
-        navController.navigate(NavigationGraph.Authentication.LogIn) {
-            popUpTo(NavigationGraph.MainApp.route) {
+        navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+            popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
                 inclusive = true
             }
         }

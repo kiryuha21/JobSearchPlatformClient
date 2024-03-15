@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,11 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableResumeCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeCardWrapper
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
-import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyCardWrapper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
@@ -47,10 +46,13 @@ fun ProfileScreen(viewModel: HomePageViewModel) {
                     else -> {
                         LazyColumn {
                             items(state.resumes!!) {
-                                ResumeCardWrapper(
+                                ClickableResumeCard(
                                     resume = it,
-                                    onEdit = { },
-                                    onDelete = { },
+                                    onClick = {
+                                        viewModel.processIntent(
+                                            HomePageContract.HomePageIntent.OpenResumeDetails(it.id)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
@@ -70,8 +72,13 @@ fun ProfileScreen(viewModel: HomePageViewModel) {
                     else -> {
                         LazyColumn {
                             items(state.vacancies!!) {
-                                VacancyCardWrapper(
+                                ClickableVacancyCard(
                                     vacancy = it,
+                                    onClick = {
+                                        viewModel.processIntent(
+                                            HomePageContract.HomePageIntent.OpenVacancyDetails(it.id)
+                                        )
+                                    },
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }

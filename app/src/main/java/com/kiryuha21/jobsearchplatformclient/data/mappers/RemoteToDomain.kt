@@ -23,6 +23,7 @@ fun BaseUserDTO.toDomainUser() =
 
 fun ResumeDTO.toDomainResume() =
     Resume(
+        id = id,
         firstName = firstName,
         lastName = lastName,
         phoneNumber = phoneNumber,
@@ -55,6 +56,7 @@ fun CompanyDTO.toDomainCompany() =
 
 fun VacancyDTO.toDomainVacancy() =
     Vacancy(
+        id = id,
         title = title,
         description = description,
         company = company,

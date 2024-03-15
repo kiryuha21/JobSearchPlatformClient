@@ -29,15 +29,15 @@ class AuthViewModel(private val navController: NavController) :
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is AuthContract.AuthIntent.NavigateToLogin -> {
-                navController.navigate(NavigationGraph.Authentication.LogIn)
+                navController.navigate(NavigationGraph.Authentication.LOG_IN)
             }
 
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
-                navController.navigate(NavigationGraph.Authentication.ResetPassword)
+                navController.navigate(NavigationGraph.Authentication.RESET_PASSWORD)
             }
 
             is AuthContract.AuthIntent.NavigateToSignUp -> {
-                navController.navigate(NavigationGraph.Authentication.SignUp)
+                navController.navigate(NavigationGraph.Authentication.SIGN_UP)
             }
 
             is AuthContract.AuthIntent.FixError -> setState { copy(isError = false) }
@@ -60,8 +60,8 @@ class AuthViewModel(private val navController: NavController) :
             val successfulLogin = CurrentUser.tryLogIn(_viewState.value.username, _viewState.value.password)
             if (successfulLogin) {
                 setState { copy(isLoading = false) }
-                navController.navigate(NavigationGraph.MainApp.HomeScreen) {
-                    popUpTo(NavigationGraph.Authentication.route) {
+                navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
+                    popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                         inclusive = true
                     }
                 }
@@ -84,8 +84,8 @@ class AuthViewModel(private val navController: NavController) :
             )
             if (successfulRegister) {
                 setState { copy(isLoading = false) }
-                navController.navigate(NavigationGraph.MainApp.HomeScreen) {
-                    popUpTo(NavigationGraph.Authentication.route) {
+                navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
+                    popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                         inclusive = true
                     }
                 }

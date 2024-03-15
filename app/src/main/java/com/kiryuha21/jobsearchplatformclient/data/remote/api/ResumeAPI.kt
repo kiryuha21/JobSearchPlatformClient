@@ -7,4 +7,7 @@ import retrofit2.http.Path
 interface ResumeAPI {
     @GET("resumes/worker_login/{login}")
     suspend fun getResumesByWorkerLogin(@Path("login") login: String): List<ResumeDTO>
+
+    @GET("resumes/{resumeId}")
+    suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO
 }
