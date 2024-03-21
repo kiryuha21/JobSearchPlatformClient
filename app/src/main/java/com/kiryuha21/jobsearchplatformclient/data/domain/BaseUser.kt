@@ -4,7 +4,7 @@ enum class UserRole {
     Employer,
     Worker
 }
-open class BaseUser(
+class BaseUser(
     val email: String,
     val username: String,
     val password: String,
