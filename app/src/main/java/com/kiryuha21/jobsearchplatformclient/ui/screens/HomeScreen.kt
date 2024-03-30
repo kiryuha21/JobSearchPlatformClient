@@ -19,6 +19,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 @Composable
 fun HomeScreen(viewModel: HomePageViewModel) {
     val state by viewModel.viewState
+    val user by CurrentUser.info
 
     LaunchedEffect(key1 = true) {
         viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies)
@@ -33,7 +34,7 @@ fun HomeScreen(viewModel: HomePageViewModel) {
             }
 
             false -> {
-                when (CurrentUser.userInfo.value.role) {
+                when (user.role) {
                     UserRole.Worker -> {
                         if (!state.vacancies.isNullOrEmpty()) {
                             items(state.vacancies!!) {

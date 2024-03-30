@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,7 @@ class HomePageViewModel(private val navController: NavController) :
     BaseViewModel<HomePageContract.HomePageIntent, HomePageContract.HomePageState>() {
     private val resumeRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
     private val vacancyRetrofit = RetrofitObject.retrofit.create(VacancyAPI::class.java)
+    private val user by CurrentUser.info
 
     override fun initialState(): HomePageContract.HomePageState {
         return HomePageContract.HomePageState(
@@ -86,14 +88,14 @@ class HomePageViewModel(private val navController: NavController) :
     private fun loadProfileResumes() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
-            val resumes = resumeRetrofit.getResumesByWorkerLogin(CurrentUser.userInfo.value.username).map { it.toDomainResume() }
+            val resumes = resumeRetrofit.getResumesByWorkerLogin(user.username).map { it.toDomainResume() }
             setState { copy(isLoading = false, resumes = resumes) }
         }
     }
     private fun loadProfileVacancies() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
-            val vacancies = vacancyRetrofit.getVacanciesByEmployerLogin(CurrentUser.userInfo.value.username).map { it.toDomainVacancy() }
+            val vacancies = vacancyRetrofit.getVacanciesByEmployerLogin(user.username).map { it.toDomainVacancy() }
             setState { copy(isLoading = false, vacancies = vacancies) }
         }
     }

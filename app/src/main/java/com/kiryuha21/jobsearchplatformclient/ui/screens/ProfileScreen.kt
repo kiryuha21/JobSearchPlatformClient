@@ -26,15 +26,16 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 @Composable
 fun ProfileScreen(viewModel: HomePageViewModel) {
     val state by viewModel.viewState
+    val user by CurrentUser.info
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
         Title(text = "Мои резюме", fontSize = 30.sp)
-        Title(text = "Вы вошли как ${CurrentUser.userInfo.value.username}", fontSize = 20.sp)
+        Title(text = "Вы вошли как ${user.username}", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(20.dp))
-        when (CurrentUser.userInfo.value.role) {
+        when (user.role) {
             UserRole.Worker -> {
                 LaunchedEffect(Unit) {
                     viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileResumes)

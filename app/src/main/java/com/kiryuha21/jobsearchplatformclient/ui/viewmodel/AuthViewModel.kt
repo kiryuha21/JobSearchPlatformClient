@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
-import com.kiryuha21.jobsearchplatformclient.data.domain.BaseUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import kotlinx.coroutines.launch
@@ -75,7 +75,7 @@ class AuthViewModel(private val navController: NavController) :
         setState { copy(isLoading = true) }
         viewModelScope.launch {
             val successfulRegister = CurrentUser.trySignUp(
-                BaseUser(
+                UserDTO.SignUpUserDTO(
                     email = viewState.value.email,
                     username = viewState.value.username,
                     password = viewState.value.password,

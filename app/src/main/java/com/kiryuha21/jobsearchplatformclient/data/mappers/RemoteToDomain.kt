@@ -1,24 +1,24 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
-import com.kiryuha21.jobsearchplatformclient.data.domain.BaseUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import com.kiryuha21.jobsearchplatformclient.data.remote.dto.BaseUserDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 
-fun BaseUserDTO.toDomainUser() =
-    BaseUser(
+fun UserDTO.UserDTO.toDomainUser() =
+    User(
         email = this.email,
         username = this.username,
-        password = this.password,
-        role = this.role
+        role = this.role,
+        imageUrl = this.imageUrl
     )
 
 fun ResumeDTO.toDomainResume() =

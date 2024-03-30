@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,8 @@ fun SecuredFields(
     onPasswordFieldEdit: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val user by CurrentUser.info
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,14 +52,14 @@ fun SecuredFields(
             icon = Icons.Filled.Abc,
             enabled = enabled,
             placeholder = "my_login",
-            initString = CurrentUser.userInfo.value.username,
+            initString = user.username,
             onUpdate = onLoginFieldEdit
         )
         SecuredTextField(
             icon = Icons.Filled.Email,
             enabled = enabled,
             placeholder = "example@gmail.com",
-            initString = CurrentUser.userInfo.value.email,
+            initString = user.email,
             onUpdate = onEmailFieldEdit
         )
         SecuredPasswordTextField(

@@ -13,18 +13,6 @@ import com.kiryuha21.jobsearchplatformclient.data.local.entity.VacancyEntity
 
 @Database(entities = [RefreshTokenEntity::class, ResumeEntity::class, VacancyEntity::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
-    override fun clearAllTables() {
-        TODO("Not yet implemented")
-    }
-
-    override fun createInvalidationTracker(): InvalidationTracker {
-        TODO("Not yet implemented")
-    }
-
-    override fun createOpenHelper(config: DatabaseConfiguration): SupportSQLiteOpenHelper {
-        TODO("Not yet implemented")
-    }
-
     companion object {
         @Volatile
         private var Instance: AppDatabase? = null

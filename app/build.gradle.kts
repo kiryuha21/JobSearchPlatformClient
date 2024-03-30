@@ -105,4 +105,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     testImplementation("androidx.room:room-testing:$roomVersion")
     implementation("androidx.room:room-paging:$roomVersion")
+
+    // async image loading(coil)
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

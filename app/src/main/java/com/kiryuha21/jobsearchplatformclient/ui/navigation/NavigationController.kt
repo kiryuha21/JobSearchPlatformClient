@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -114,6 +115,8 @@ fun NavGraphBuilder.addMainApp(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.MainApp) {
+    val user by CurrentUser.info
+
     navigation(
         startDestination = HOME_SCREEN,
         route = NAV_ROUTE
@@ -147,7 +150,7 @@ fun NavGraphBuilder.addMainApp(
             }
 
             VacancyDetailsScreen(
-                editable = CurrentUser.userInfo.value.role != UserRole.Worker,
+                editable = user.role != UserRole.Worker,
                 vacancyId = it.arguments?.getString("vacancyId"),
                 viewModel = it.sharedHomePageViewModel(navController = navController)
             )
@@ -158,7 +161,7 @@ fun NavGraphBuilder.addMainApp(
             }
 
             ResumeDetailsScreen(
-                editable = CurrentUser.userInfo.value.role == UserRole.Worker,
+                editable = user.role == UserRole.Worker,
                 resumeId = it.arguments?.getString("resumeId"),
                 viewModel = it.sharedHomePageViewModel(navController = navController)
             )

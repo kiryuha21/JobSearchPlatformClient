@@ -4,9 +4,9 @@ enum class UserRole {
     Employer,
     Worker
 }
-class BaseUser(
+class User(
     val email: String,
     val username: String,
-    val password: String,
-    val role: UserRole
+    val role: UserRole,
+    val imageUrl: String?
 )
