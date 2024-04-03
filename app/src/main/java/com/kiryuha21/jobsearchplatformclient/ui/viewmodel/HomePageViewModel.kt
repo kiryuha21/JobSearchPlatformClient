@@ -20,6 +20,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -46,6 +47,8 @@ class HomePageViewModel(private val navController: NavController) :
             is HomePageContract.HomePageIntent.LoadProfileVacancies -> loadProfileVacancies()
             is HomePageContract.HomePageIntent.LoadProfileResumes -> loadProfileResumes()
             is HomePageContract.HomePageIntent.LogOut -> logOut()
+            is HomePageContract.HomePageIntent.CreateNewResume -> createNewResume()
+            is HomePageContract.HomePageIntent.CreateNewVacancy -> createNewVacancy()
             is HomePageContract.HomePageIntent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
             is HomePageContract.HomePageIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
         }
@@ -53,38 +56,20 @@ class HomePageViewModel(private val navController: NavController) :
 
     private fun findMatchingVacancies() {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(5000)
-            val vacancies = listOf(
-                Vacancy(
-                    id = "1",
-                    title = "Cave Digger",
-                    description = "In this good company you will have everything you want and even money",
-                    company = Company("Gold rocks", CompanySize.Big),
-                    minSalary = 15000,
-                    maxSalary = 20000
-                ),
-                Vacancy(
-                    id = "2",
-                    title = "Cave Digger",
-                    description = "In this good company you will have everything you want and even money",
-                    company = Company("Gold rocks", CompanySize.Big),
-                    minSalary = 15000,
-                    maxSalary = 20000
-                ),
-                Vacancy(
-                    id = "3",
-                    title = "Cave Digger",
-                    description = "In this good company you will have everything you want and even money",
-                    company = Company("Gold rocks", CompanySize.Big),
-                    minSalary = 15000,
-                    maxSalary = 20000
-                ),
-            )
-            setState { copy(vacancies = vacancies, isLoading = false) }
+            setState { copy(isLoading = true) }
+            val vacancies = vacancyRetrofit.getMatchingVacancies().map { it.toDomainVacancy() }
+            setState { copy(isLoading = false, vacancies = vacancies) }
         }
     }
 
-    private fun findMatchingResumes(): Nothing = TODO()
+    private fun findMatchingResumes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            setState { copy(isLoading = true) }
+            val resumes = resumeRetrofit.getMatchingResumes().map { it.toDomainResume() }
+            setState { copy(isLoading = false, resumes = resumes) }
+        }
+    }
+
     private fun loadProfileResumes() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
@@ -118,6 +103,8 @@ class HomePageViewModel(private val navController: NavController) :
         }
     }
 
+    private fun createNewResume(): Nothing = TODO()
+    private fun createNewVacancy(): Nothing = TODO()
 
     private fun logOut() {
         navController.navigate(NavigationGraph.Authentication.LOG_IN) {

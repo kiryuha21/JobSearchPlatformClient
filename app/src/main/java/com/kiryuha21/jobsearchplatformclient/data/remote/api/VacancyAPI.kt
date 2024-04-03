@@ -10,4 +10,7 @@ interface VacancyAPI {
 
     @GET("vacancy/{vacancyId}")
     suspend fun getVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO
+
+    @GET("vacancy")
+    suspend fun getMatchingVacancies(): List<VacancyDTO>
 }

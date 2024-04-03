@@ -15,10 +15,11 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 
 fun UserDTO.UserDTO.toDomainUser() =
     User(
-        email = this.email,
-        username = this.username,
-        role = this.role,
-        imageUrl = this.imageUrl
+        email = email,
+        username = username,
+        role = role,
+        userStatus = userStatus,
+        imageUrl = imageUrl
     )
 
 fun ResumeDTO.toDomainResume() =
@@ -30,6 +31,7 @@ fun ResumeDTO.toDomainResume() =
         contactEmail = contactEmail,
         applyPosition = applyPosition,
         skills = skills?.map { it.toDomainSkill() } ?: emptyList(),
+        publicationStatus = publicationStatus,
         workExperience = workExperience?.map { it.toDomainWorkExperience() } ?: emptyList()
     )
 
@@ -61,5 +63,6 @@ fun VacancyDTO.toDomainVacancy() =
         description = description,
         company = company,
         minSalary = minSalary,
-        maxSalary = maxSalary
+        maxSalary = maxSalary,
+        publicationStatus = publicationStatus
     )

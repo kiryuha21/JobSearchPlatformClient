@@ -17,9 +17,12 @@ import androidx.navigation.compose.rememberNavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.screens.HomeScreen
+import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.ProfileScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
@@ -59,8 +62,7 @@ fun NavGraphBuilder.addAuthentication(
             )
         }
         composable(SIGN_UP) {
-            val viewModel =
-                it.sharedAuthViewModel(navController = navController) as AuthViewModel
+            val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
             SignUpScreen(
                 state = viewModel.viewState.value,
@@ -74,38 +76,23 @@ fun NavGraphBuilder.addAuthentication(
                     viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
                 },
                 onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
-                    viewModel.processIntent(
-                        AuthContract.AuthIntent.EditPasswordRepeat(
-                            newPasswordRepeat
-                        )
-                    )
+                    viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
                 },
                 onRoleToggled = { toggleElement ->
-                    viewModel.processIntent(
-                        AuthContract.AuthIntent.EditRole(toggleElement.role)
-                    )
+                    viewModel.processIntent(AuthContract.AuthIntent.EditRole(toggleElement.role))
                 },
                 onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
-                onRegister = {
-                    viewModel.processIntent(
-                        AuthContract.AuthIntent.SignUp
-                    )
-                })
+                onRegister = { viewModel.processIntent(AuthContract.AuthIntent.SignUp) })
         }
         composable(RESET_PASSWORD) {
-            val viewModel =
-                it.sharedAuthViewModel(navController = navController) as AuthViewModel
+            val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
             ResetPasswordScreen(
                 state = viewModel.viewState.value,
                 onEmailFieldEdited = { newEmail ->
                     viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
                 },
-                onReset = {
-                    viewModel.processIntent(
-                        AuthContract.AuthIntent.ResetPassword
-                    )
-                }
+                onReset = { viewModel.processIntent(AuthContract.AuthIntent.ResetPassword) }
             )
         }
     }
@@ -121,51 +108,81 @@ fun NavGraphBuilder.addMainApp(
         startDestination = HOME_SCREEN,
         route = NAV_ROUTE
     ) {
-        composable(HOME_SCREEN) {
+        composable(HOME_SCREEN) { navBackStackEntry ->
             LaunchedEffect(Unit) {
                 shouldShowAppBar.value = true
             }
 
-            val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
-            HomeScreen(viewModel)
-        }
-        composable(PROFILE) {
-            LaunchedEffect(Unit) {
-                shouldShowAppBar.value = true
-            }
+            val viewModel: HomePageViewModel =
+                navBackStackEntry.sharedHomePageViewModel(navController = navController)
+            val state by viewModel.viewState
+            when (user.role) {
+                UserRole.Worker -> WorkerHomeScreen(
+                    state = state,
+                    loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies) },
+                    openVacancyDetails = {viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) }
+                )
 
-            val viewModel: HomePageViewModel = it.sharedHomePageViewModel(navController = navController)
-            ProfileScreen(viewModel)
-        }
-        composable(SETTINGS) {
-            LaunchedEffect(Unit) {
-                shouldShowAppBar.value = true
+                UserRole.Employer -> EmployerHomeScreen(
+                    state = state,
+                    loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingResumes) },
+                    openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) }
+                )
             }
-
-            SettingsScreen({}, {}, {})
         }
-        composable(VACANCY_DETAILS) {
-            LaunchedEffect(Unit) {
-                shouldShowAppBar.value = false
-            }
+    }
+    composable(PROFILE) { navBackStackEntry ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = true
+        }
 
-            VacancyDetailsScreen(
-                editable = user.role != UserRole.Worker,
-                vacancyId = it.arguments?.getString("vacancyId"),
-                viewModel = it.sharedHomePageViewModel(navController = navController)
+        val viewModel: HomePageViewModel =
+            navBackStackEntry.sharedHomePageViewModel(navController = navController)
+        val state by viewModel.viewState
+        when (user.role) {
+            UserRole.Worker -> WorkerProfileScreen(
+                state = state,
+                loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileResumes) },
+                openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) },
+                createNewResume = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewResume) }
+            )
+
+            UserRole.Employer -> EmployerProfileScreen(
+                state = state,
+                loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileVacancies) },
+                openVacancyDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) },
+                createNewVacancy = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewVacancy) }
             )
         }
-        composable(RESUME_DETAILS) {
-            LaunchedEffect(Unit) {
-                shouldShowAppBar.value = false
-            }
-
-            ResumeDetailsScreen(
-                editable = user.role == UserRole.Worker,
-                resumeId = it.arguments?.getString("resumeId"),
-                viewModel = it.sharedHomePageViewModel(navController = navController)
-            )
+    }
+    composable(SETTINGS) {
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = true
         }
+
+        SettingsScreen({}, {}, {})
+    }
+    composable(VACANCY_DETAILS) {
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+
+        VacancyDetailsScreen(
+            editable = user.role != UserRole.Worker,
+            vacancyId = it.arguments?.getString("vacancyId"),
+            viewModel = it.sharedHomePageViewModel(navController = navController)
+        )
+    }
+    composable(RESUME_DETAILS) {
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+
+        ResumeDetailsScreen(
+            editable = user.role == UserRole.Worker,
+            resumeId = it.arguments?.getString("resumeId"),
+            viewModel = it.sharedHomePageViewModel(navController = navController)
+        )
     }
 }
 

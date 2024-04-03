@@ -2,6 +2,7 @@ package com.kiryuha21.jobsearchplatformclient.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserStatus
 
 sealed class UserDTO {
     data class SignUpUserDTO(
@@ -22,6 +23,8 @@ sealed class UserDTO {
         val username: String,
         @SerializedName("role")
         val role: UserRole,
+        @SerializedName("status")
+        val userStatus: UserStatus,
         @SerializedName("imageUrl")
         val imageUrl: String?
     )

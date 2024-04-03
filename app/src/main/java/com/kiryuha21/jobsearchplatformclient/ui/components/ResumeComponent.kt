@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Work
+import androidx.compose.material.icons.filled.WorkOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -36,11 +38,13 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
+import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
+import kotlin.math.min
 
 @Composable
 fun ResumeCard(
@@ -208,11 +212,11 @@ fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier 
     ) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(10.dp)
-                .animateContentSize()
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Filled.Work, contentDescription = "title")
+                Icon(imageVector = Icons.Filled.WorkOutline, contentDescription = "title")
                 Text(
                     text = resume.applyPosition,
                     fontSize = 20.sp,
@@ -240,28 +244,28 @@ fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier 
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-                Icon(imageVector = Icons.Filled.Email, contentDescription = "email")
+                Icon(imageVector = Icons.Filled.AutoAwesome, contentDescription = "email")
                 Text(
-                    text = "E-mail: ${resume.contactEmail}",
+                    text = "Навыки",
                     fontSize = 16.sp,
                     fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.offset(x = 10.dp)
+                    fontWeight = FontWeight.W700,
+                    modifier = Modifier.padding(start = 10.dp)
                 )
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 10.dp)
+            Column(
+                modifier = Modifier.padding(start = 10.dp)
             ) {
-                Icon(imageVector = Icons.Filled.Phone, contentDescription = "contact phone")
-                Text(
-                    text = "Контактный телефон: ${resume.phoneNumber}",
-                    fontSize = 16.sp,
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.offset(x = 10.dp)
-                )
+                for (i in 0..min(2, resume.skills.size - 1)) {
+                    Text(
+                        text = "${Typography.bullet} ${resume.skills[i].name}",
+                        fontSize = 16.sp,
+                        fontFamily = interFontFamily,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier.padding(start = 10.dp, top = 5.dp)
+                    )
+                }
             }
         }
     }
@@ -295,7 +299,8 @@ fun CardPreview() {
                     100500,
                     420
                 )
-            )
+            ),
+            PublicationStatus.Published
         ), modifier = Modifier.fillMaxWidth()
     )
 }
@@ -315,6 +320,18 @@ fun ClickableCardPreview() {
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
+                ),
+                Skill(
+                    "Drinking Tea",
+                    SkillLevel.AwareOf
+                ),
+                Skill(
+                    "Sleeping well",
+                    SkillLevel.AwareOf
+                ),
+                Skill(
+                    "Dropping prod",
+                    SkillLevel.AwareOf
                 )
             ),
             listOf(
@@ -328,7 +345,8 @@ fun ClickableCardPreview() {
                     100500,
                     420
                 )
-            )
+            ),
+            PublicationStatus.Published
         ), {}, modifier = Modifier.fillMaxWidth()
     )
 }

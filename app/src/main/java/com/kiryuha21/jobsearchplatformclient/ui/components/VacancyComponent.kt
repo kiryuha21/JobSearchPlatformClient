@@ -28,9 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import coil.compose.AsyncImage
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
+import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.valentinilk.shimmer.shimmer
 
@@ -101,36 +105,46 @@ fun VacancyDetails(vacancy: Vacancy, modifier: Modifier = Modifier) {
 @Composable
 fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
-        shape = RoundedCornerShape(3.dp),
+        shape = RoundedCornerShape(10.dp),
         onClick = onClick,
         modifier = modifier.padding(5.dp)
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(5.dp)
                 .fillMaxWidth()
+                .padding(10.dp)
         ) {
-            Text(
-                text = vacancy.title,
-                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            )
-
-            val salaryText =
-                if (vacancy.minSalary == vacancy.maxSalary) "${vacancy.minSalary}"
-                else "От ${vacancy.minSalary} до ${vacancy.maxSalary}"
-            Text(text = salaryText, fontFamily = FontFamily.Cursive)
-
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                Text(
+                    text = vacancy.title,
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                )
+
+                Text(text = vacancy.company.name, modifier = Modifier.padding(end = 20.dp))
+
+                val salaryText =
+                    if (vacancy.minSalary == vacancy.maxSalary) "${vacancy.minSalary}"
+                    else "От ${vacancy.minSalary} до ${vacancy.maxSalary}"
+                Text(text = salaryText, fontFamily = FontFamily.Cursive)
+            }
+
+            if (vacancy.imageUrl == null) {
                 Icon(
                     imageVector = Icons.Rounded.Work,
                     contentDescription = "work",
+                    modifier = Modifier.size(64.dp),
+                    tint = Color.Gray
                 )
-                Text(text = vacancy.company.name, modifier = Modifier.padding(start = 20.dp))
+            } else {
+                AsyncImage(
+                    model = vacancy.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp)
+                )
             }
         }
     }
@@ -195,4 +209,21 @@ fun ShimmeringVacancyListItem(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ClickableVacancyCardPreview() {
+    ClickableVacancyCard(
+        vacancy = Vacancy(
+            id = "3",
+            title = "Cave Digger",
+            description = "In this good company you will have everything you want and even money",
+            company = Company("Gold rocks", CompanySize.Big),
+            minSalary = 15000,
+            maxSalary = 20000,
+            publicationStatus = PublicationStatus.Published,
+            imageUrl = "https://fakeimg.pl/350x200/?text=World&font=lobster",
+        ),
+        onClick = { })
 }

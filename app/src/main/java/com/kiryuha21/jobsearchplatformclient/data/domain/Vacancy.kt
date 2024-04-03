@@ -7,5 +7,6 @@ data class Vacancy(
     val company: Company,
     val minSalary: Int,
     val maxSalary: Int,
+    val publicationStatus: PublicationStatus,
     val imageUrl: String? = null
 )

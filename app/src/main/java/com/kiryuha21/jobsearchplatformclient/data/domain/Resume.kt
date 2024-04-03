@@ -9,6 +9,7 @@ data class Resume(
     val applyPosition: String,
     val skills: List<Skill> = emptyList(),
     val workExperience: List<WorkExperience> = emptyList(),
+    val publicationStatus: PublicationStatus,
     val imageUrl: String? = null
 ) {
     fun fullName() = "$lastName $firstName"

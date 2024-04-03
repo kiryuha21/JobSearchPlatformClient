@@ -14,7 +14,7 @@ import androidx.compose.runtime.State
 
 object CurrentUser {
     private val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
-    private val _info: MutableState<User> = mutableStateOf(User("", "", UserRole.Worker, null))
+    private val _info: MutableState<User> = mutableStateOf(User("", "", UserRole.Worker, UserStatus.Active, null))
     val info: State<User> = _info
 
     suspend fun tryLogIn(login: String, password: String): Boolean {

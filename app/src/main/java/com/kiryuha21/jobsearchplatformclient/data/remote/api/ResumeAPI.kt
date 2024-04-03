@@ -10,4 +10,7 @@ interface ResumeAPI {
 
     @GET("resume/{resumeId}")
     suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO
+
+    @GET("resume")
+    suspend fun getMatchingResumes(): List<ResumeDTO>
 }

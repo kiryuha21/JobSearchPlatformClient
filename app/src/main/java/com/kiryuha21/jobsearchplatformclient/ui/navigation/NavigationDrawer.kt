@@ -37,14 +37,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import kotlinx.coroutines.launch
 
-// TODO: make real user info loading
 @Composable
 fun DrawerMiniProfile(modifier: Modifier = Modifier) {
     val user by CurrentUser.info
@@ -53,15 +52,24 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(start = 15.dp)
     ) {
-        SubcomposeAsyncImage(
-            model = if (user.imageUrl == null) painterResource(id = R.drawable.default_avatar) else user.imageUrl,
-            contentDescription = null,
-            loading = {
-                LoadingComponent()
-            },
-            modifier = Modifier
-                .size(120.dp)
-        )
+        if (user.imageUrl != null) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(user.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.default_avatar),
+                contentDescription = null,
+                modifier = Modifier.size(120.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.default_avatar),
+                contentDescription = null,
+                modifier = Modifier.size(120.dp)
+            )
+        }
+
         Text("Hello, ${user.username}!")
     }
 }
