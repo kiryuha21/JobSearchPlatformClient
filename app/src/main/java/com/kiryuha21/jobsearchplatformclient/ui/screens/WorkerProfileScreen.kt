@@ -65,17 +65,15 @@ fun WorkerProfileScreen(
             when {
                 state.resumes == null -> LoadingComponent()
                 state.resumes.isEmpty() -> NoItemsCard()
-                else -> {
-                    LazyColumn {
-                        items(state.resumes) {
-                            ClickableResumeCard(
-                                resume = it,
-                                onClick = {
-                                    openResumeDetails(it.id)
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                else -> LazyColumn {
+                    items(state.resumes) {
+                        ClickableResumeCard(
+                            resume = it,
+                            onClick = {
+                                openResumeDetails(it.id)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
             }

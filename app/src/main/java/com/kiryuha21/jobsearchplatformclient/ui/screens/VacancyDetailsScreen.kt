@@ -13,22 +13,21 @@ import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyDetails
+import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
 @Composable
 fun VacancyDetailsScreen(
     editable: Boolean,
     vacancyId: String?,
-    viewModel: HomePageViewModel
+    state: HomePageContract.HomePageState
 ) {
     if (vacancyId == null) {
         throw Exception("vacancyId shouldn't be null!")
     }
 
-    val state by viewModel.viewState
-
     when (state.isLoading) {
-        true -> LoadingComponent()
+        true -> LoadingComponent(modifier = Modifier.fillMaxSize())
         false -> {
             Column(
                 modifier = Modifier.fillMaxSize()

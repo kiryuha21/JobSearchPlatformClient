@@ -7,28 +7,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeDetails
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 
 @Composable
 fun ResumeDetailsScreen(
     editable: Boolean,
     resumeId: String?,
-    viewModel: HomePageViewModel
+    state: HomePageContract.HomePageState
 ) {
     if (resumeId == null) {
         throw Exception("vacancyId shouldn't be null!")
     }
 
-    val state by viewModel.viewState
-
     when (state.isLoading) {
-        true -> LoadingComponent()
+        true -> LoadingComponent(modifier = Modifier.fillMaxSize())
         false -> {
             Column(
                 modifier = Modifier.fillMaxSize()

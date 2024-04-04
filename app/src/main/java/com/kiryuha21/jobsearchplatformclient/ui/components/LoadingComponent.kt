@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -13,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun LoadingComponent(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
         CircularProgressIndicator()

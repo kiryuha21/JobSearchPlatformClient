@@ -35,66 +35,62 @@ fun NavGraphBuilder.addAuthentication(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.Authentication) {
-    navigation(
-        startDestination = LOG_IN,
-        route = NAV_ROUTE
-    ) {
-        composable(LOG_IN) {
-            val viewModel =
-                it.sharedAuthViewModel(navController = navController) as AuthViewModel
-            LaunchedEffect(key1 = Unit) {
-                shouldShowAppBar.value = false
-            }
-
-            LogInScreen(
-                state = viewModel.viewState.value,
-                onUsernameFieldEdited = { newLogin ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
-                },
-                onPasswordFieldEdited = { newPassword ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
-                },
-                onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
-                onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
-                onLogin = {
-                    viewModel.processIntent(AuthContract.AuthIntent.LogIn)
-                }
-            )
+    composable(LOG_IN) {
+        LaunchedEffect(key1 = Unit) {
+            shouldShowAppBar.value = false
         }
-        composable(SIGN_UP) {
-            val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
 
-            SignUpScreen(
-                state = viewModel.viewState.value,
-                onLoginFieldUpdated = { newLogin ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
-                },
-                onEmailFieldUpdated = { newEmail ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
-                },
-                onPasswordFieldUpdated = { newPassword ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
-                },
-                onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
-                },
-                onRoleToggled = { toggleElement ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditRole(toggleElement.role))
-                },
-                onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
-                onRegister = { viewModel.processIntent(AuthContract.AuthIntent.SignUp) })
-        }
-        composable(RESET_PASSWORD) {
-            val viewModel = it.sharedAuthViewModel(navController = navController) as AuthViewModel
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val state by viewModel.viewState
 
-            ResetPasswordScreen(
-                state = viewModel.viewState.value,
-                onEmailFieldEdited = { newEmail ->
-                    viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
-                },
-                onReset = { viewModel.processIntent(AuthContract.AuthIntent.ResetPassword) }
-            )
-        }
+        LogInScreen(
+            state = state,
+            onUsernameFieldEdited = { newLogin ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
+            },
+            onPasswordFieldEdited = { newPassword ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+            },
+            onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
+            onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
+            onLogin = { viewModel.processIntent(AuthContract.AuthIntent.LogIn) }
+        )
+    }
+    composable(SIGN_UP) {
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val state by viewModel.viewState
+
+        SignUpScreen(
+            state = state,
+            onLoginFieldUpdated = { newLogin ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
+            },
+            onEmailFieldUpdated = { newEmail ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+            },
+            onPasswordFieldUpdated = { newPassword ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditPassword(newPassword))
+            },
+            onPasswordRepeatFieldUpdated = { newPasswordRepeat ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditPasswordRepeat(newPasswordRepeat))
+            },
+            onRoleToggled = { toggleElement ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditRole(toggleElement.role))
+            },
+            onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) },
+            onRegister = { viewModel.processIntent(AuthContract.AuthIntent.SignUp) })
+    }
+    composable(RESET_PASSWORD) {
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val state by viewModel.viewState
+
+        ResetPasswordScreen(
+            state = state,
+            onEmailFieldEdited = { newEmail ->
+                viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
+            },
+            onReset = { viewModel.processIntent(AuthContract.AuthIntent.ResetPassword) }
+        )
     }
 }
 
@@ -104,41 +100,36 @@ fun NavGraphBuilder.addMainApp(
 ) = with(NavigationGraph.MainApp) {
     val user by CurrentUser.info
 
-    navigation(
-        startDestination = HOME_SCREEN,
-        route = NAV_ROUTE
-    ) {
-        composable(HOME_SCREEN) { navBackStackEntry ->
-            LaunchedEffect(Unit) {
-                shouldShowAppBar.value = true
-            }
-
-            val viewModel: HomePageViewModel =
-                navBackStackEntry.sharedHomePageViewModel(navController = navController)
-            val state by viewModel.viewState
-            when (user.role) {
-                UserRole.Worker -> WorkerHomeScreen(
-                    state = state,
-                    loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies) },
-                    openVacancyDetails = {viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) }
-                )
-
-                UserRole.Employer -> EmployerHomeScreen(
-                    state = state,
-                    loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingResumes) },
-                    openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) }
-                )
-            }
-        }
-    }
-    composable(PROFILE) { navBackStackEntry ->
+    composable(HOME_SCREEN) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
 
-        val viewModel: HomePageViewModel =
-            navBackStackEntry.sharedHomePageViewModel(navController = navController)
+        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
         val state by viewModel.viewState
+
+        when (user.role) {
+            UserRole.Worker -> WorkerHomeScreen(
+                state = state,
+                loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies) },
+                openVacancyDetails = {viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) }
+            )
+
+            UserRole.Employer -> EmployerHomeScreen(
+                state = state,
+                loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingResumes) },
+                openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) }
+            )
+        }
+    }
+    composable(PROFILE) { backStack ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = true
+        }
+
+        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val state by viewModel.viewState
+
         when (user.role) {
             UserRole.Worker -> WorkerProfileScreen(
                 state = state,
@@ -155,33 +146,39 @@ fun NavGraphBuilder.addMainApp(
             )
         }
     }
-    composable(SETTINGS) {
+    composable(SETTINGS) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
 
+        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
         SettingsScreen({}, {}, {})
     }
-    composable(VACANCY_DETAILS) {
+    composable(VACANCY_DETAILS) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
+
+        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val state by viewModel.viewState
 
         VacancyDetailsScreen(
-            editable = user.role != UserRole.Worker,
-            vacancyId = it.arguments?.getString("vacancyId"),
-            viewModel = it.sharedHomePageViewModel(navController = navController)
+            editable = user.role == UserRole.Employer,
+            vacancyId = backStack.arguments?.getString("vacancyId"),
+            state = state
         )
     }
-    composable(RESUME_DETAILS) {
+    composable(RESUME_DETAILS) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
 
+        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+        val state by viewModel.viewState
         ResumeDetailsScreen(
             editable = user.role == UserRole.Worker,
-            resumeId = it.arguments?.getString("resumeId"),
-            viewModel = it.sharedHomePageViewModel(navController = navController)
+            resumeId = backStack.arguments?.getString("resumeId"),
+            state = state
         )
     }
 }
@@ -207,9 +204,19 @@ fun NavigationController() {
             startDestination = NavigationGraph.Authentication.NAV_ROUTE,
             modifier = Modifier.padding(paddingValues)
         ) {
-            addAuthentication(navController, shouldShowTopBar)
-            addMainApp(navController, shouldShowTopBar)
+            navigation(
+                startDestination = NavigationGraph.Authentication.LOG_IN,
+                route = NavigationGraph.Authentication.NAV_ROUTE
+            ) {
+                addAuthentication(navController, shouldShowTopBar)
+            }
+
+            navigation(
+                startDestination = NavigationGraph.MainApp.HOME_SCREEN,
+                route = NavigationGraph.MainApp.NAV_ROUTE
+            ) {
+                addMainApp(navController, shouldShowTopBar)
+            }
         }
     }
-
 }
