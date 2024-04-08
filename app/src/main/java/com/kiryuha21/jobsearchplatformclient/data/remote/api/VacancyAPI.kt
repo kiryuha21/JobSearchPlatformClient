@@ -34,7 +34,7 @@ interface VacancyAPI {
     suspend fun setPicture(
         @Header("Authorization") authToken: String,
         @Path("id") id: String,
-        @Part("picture") picture: MultipartBody.Part
+        @Part picture: MultipartBody.Part
     )
 
     @PUT("vacancy/{id}")

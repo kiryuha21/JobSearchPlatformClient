@@ -23,5 +23,7 @@ data class ResumeDTO(
     @SerializedName("workExperience")
     val workExperience: List<WorkExperienceDTO> = emptyList(),
     @SerializedName("status")
-    val publicationStatus: PublicationStatus
+    val publicationStatus: PublicationStatus,
+    @SerializedName("imageUrl")
+    val imageUrl: String?
 )

@@ -23,7 +23,8 @@ fun Resume.toResumeDTO() =
         applyPosition = applyPosition,
         skills = skills.map { it.toSkillDTO() },
         workExperience = workExperience.map { it.toWorkExperienceDTO() },
-        publicationStatus = publicationStatus
+        publicationStatus = publicationStatus,
+        imageUrl = imageUrl
     )
 
 fun Skill.toSkillDTO() =
@@ -55,5 +56,6 @@ fun Vacancy.toVacancyDTO() =
         company = company.toCompanyDTO(),
         minSalary = minSalary,
         maxSalary = maxSalary,
-        publicationStatus = publicationStatus
+        publicationStatus = publicationStatus,
+        imageUrl = imageUrl
     )

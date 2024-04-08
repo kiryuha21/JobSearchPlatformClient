@@ -19,5 +19,7 @@ data class VacancyDTO(
     @SerializedName("maxSalary")
     val maxSalary: Int,
     @SerializedName("status")
-    val publicationStatus: PublicationStatus
+    val publicationStatus: PublicationStatus,
+    @SerializedName("imageUrl")
+    val imageUrl: String?
 )

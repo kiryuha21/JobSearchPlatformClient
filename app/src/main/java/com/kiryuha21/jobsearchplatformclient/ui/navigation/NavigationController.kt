@@ -1,5 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
+import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -194,15 +197,15 @@ fun NavGraphBuilder.addMainApp(
         val state by viewModel.viewState
         val resume = state.openedResume!!
 
-        val onClick: (Resume) -> Unit = if (resume.id.isNotEmpty()) {
-            { viewModel.processIntent(MainAppContract.MainAppIntent.EditResume(it)) }
+        val onUpdateResume: (Resume, Bitmap?) -> Unit = if (resume.id.isNotEmpty()) {
+            { res, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.EditResume(res, bitmap)) }
         } else {
-            { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewResume(it)) }
+            { res, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewResume(res, bitmap)) }
         }
 
         ResumeEditScreen(
             initResume = state.openedResume!!,
-            onClick = onClick
+            onUpdateResume = onUpdateResume
         )
     }
     composable(VACANCY_EDIT) { backStack ->
@@ -210,15 +213,15 @@ fun NavGraphBuilder.addMainApp(
         val state by viewModel.viewState
         val vacancy = state.openedVacancy!!
 
-        val onClick: (Vacancy) -> Unit = if (vacancy.id.isNotEmpty()) {
-            { viewModel.processIntent(MainAppContract.MainAppIntent.EditVacancy(it)) }
+        val onUpdateVacancy: (Vacancy, Bitmap?) -> Unit = if (vacancy.id.isNotEmpty()) {
+            { vac, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.EditVacancy(vac, bitmap)) }
         } else {
-            { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewVacancy(it)) }
+            { vac, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewVacancy(vac, bitmap)) }
         }
 
         VacancyEditScreen(
             initVacancy = Vacancy(),
-            onClick = onClick
+            onUpdateVacancy = onUpdateVacancy
         )
     }
 }

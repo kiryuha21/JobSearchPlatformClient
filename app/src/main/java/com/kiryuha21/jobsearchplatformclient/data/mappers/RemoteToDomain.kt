@@ -32,7 +32,8 @@ fun ResumeDTO.toDomainResume() =
         applyPosition = applyPosition,
         skills = skills.map { it.toDomainSkill() },
         publicationStatus = publicationStatus,
-        workExperience = workExperience.map { it.toDomainWorkExperience() }
+        workExperience = workExperience.map { it.toDomainWorkExperience() },
+        imageUrl = imageUrl
     )
 
 fun SkillDTO.toDomainSkill() =
@@ -63,5 +64,6 @@ fun VacancyDTO.toDomainVacancy() =
         company = company.toDomainCompany(),
         minSalary = minSalary,
         maxSalary = maxSalary,
-        publicationStatus = publicationStatus
+        publicationStatus = publicationStatus,
+        imageUrl = imageUrl
     )

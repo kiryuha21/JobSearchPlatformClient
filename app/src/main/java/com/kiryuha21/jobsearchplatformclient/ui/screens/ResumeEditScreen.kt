@@ -1,5 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -74,7 +76,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ResumeEditScreen(
     initResume: Resume,
-    onClick: (Resume) -> Unit
+    onUpdateResume: (Resume, Bitmap?) -> Unit
 ) {
     var resume by remember { mutableStateOf(initResume) }
     var skillFormVisible by remember { mutableStateOf(false) }
@@ -93,7 +95,7 @@ fun ResumeEditScreen(
     )
 
     var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
+        mutableStateOf(if (initResume.imageUrl != null) Uri.parse(initResume.imageUrl) else null)
     }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -108,8 +110,18 @@ fun ResumeEditScreen(
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
+            val ctx = LocalContext.current
+
             ExtendedFloatingActionButton(
-                onClick = { onClick(resume) },
+                onClick = {
+                    if (selectedImageUri == null || selectedImageUri == Uri.parse(initResume.imageUrl)) {
+                        onUpdateResume(resume, null)
+                    } else {
+                        val source = ImageDecoder.createSource(ctx.contentResolver, selectedImageUri!!)
+                        val bitmap = ImageDecoder.decodeBitmap(source)
+                        onUpdateResume(resume, bitmap)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(0.4f)
             ) {
                 Text(text = "Сохранить")
@@ -357,5 +369,5 @@ fun ResumeEditScreenPreview() {
             ),
             PublicationStatus.Published
         )
-    ) {}
+    ) { _, _ -> }
 }
