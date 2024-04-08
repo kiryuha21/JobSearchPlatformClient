@@ -5,11 +5,11 @@ enum class PositionLevel {
 }
 
 data class WorkExperience(
-    var company: Company,
-    var position: String,
-    var positionLevel: PositionLevel,
-    var salary: Int,
-    var months: Int
+    val company: Company,
+    val position: String,
+    val positionLevel: PositionLevel,
+    val salary: Int,
+    val months: Int
 ) {
     fun workMonthsFormatted() =
         "${months / 12} лет и ${months % 12} месяцев"

@@ -8,8 +8,8 @@ enum class SkillLevel {
 }
 
 data class Skill(
-    var name: String,
-    var skillLevel: SkillLevel
+    val name: String,
+    val skillLevel: SkillLevel
 ) {
     override fun toString(): String =
         when (skillLevel) {

@@ -1,7 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
-import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 
 data class VacancyDTO(
@@ -14,7 +13,7 @@ data class VacancyDTO(
     @SerializedName("description")
     val description: String,
     @SerializedName("company")
-    val company: Company,
+    val company: CompanyDTO,
     @SerializedName("minSalary")
     val minSalary: Int,
     @SerializedName("maxSalary")

@@ -146,7 +146,9 @@ fun NavGraphBuilder.addMainApp(
                 state = state,
                 loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileVacancies) },
                 openVacancyDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) },
-                openVacancyEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit) }
+                openVacancyEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit(
+                    Vacancy()
+                )) }
             )
         }
     }
@@ -177,7 +179,7 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = false
         }
 
-        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val state by viewModel.viewState
         ResumeDetailsScreen(
             editable = user.role == UserRole.Worker,
@@ -188,7 +190,7 @@ fun NavGraphBuilder.addMainApp(
         )
     }
     composable(RESUME_EDIT) { backStack ->
-        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val state by viewModel.viewState
         val resume = state.openedResume!!
 
@@ -204,11 +206,19 @@ fun NavGraphBuilder.addMainApp(
         )
     }
     composable(VACANCY_EDIT) { backStack ->
-        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val state by viewModel.viewState
+        val vacancy = state.openedVacancy!!
+
+        val onClick: (Vacancy) -> Unit = if (vacancy.id.isNotEmpty()) {
+            { viewModel.processIntent(MainAppContract.MainAppIntent.EditVacancy(it)) }
+        } else {
+            { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewVacancy(it)) }
+        }
 
         VacancyEditScreen(
             initVacancy = Vacancy(),
-            onClick = { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewVacancy(it)) }
+            onClick = onClick
         )
     }
 }

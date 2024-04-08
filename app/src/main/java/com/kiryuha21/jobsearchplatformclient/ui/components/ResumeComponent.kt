@@ -277,19 +277,19 @@ fun SkillForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
+    var skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
     val comboBoxItems = listOf(
         ComboBoxItem("Имею представление") {
-            skill.skillLevel = SkillLevel.AwareOf
+            skill = skill.copy(skillLevel = SkillLevel.AwareOf)
         },
         ComboBoxItem("Имел дело") {
-            skill.skillLevel = SkillLevel.Tested
+            skill = skill.copy(skillLevel = SkillLevel.Tested)
         },
         ComboBoxItem("Есть пет-проекты") {
-            skill.skillLevel = SkillLevel.HasPetProjects
+            skill = skill.copy(skillLevel = SkillLevel.HasPetProjects)
         },
         ComboBoxItem("Есть коммерческие проекты") {
-            skill.skillLevel = SkillLevel.HasCommercialProjects
+            skill = skill.copy(skillLevel = SkillLevel.HasCommercialProjects)
         },
     )
 
@@ -300,7 +300,7 @@ fun SkillForm(
             icon = Icons.Default.Abc,
             placeholder = "Названия навыка",
             initString = "",
-            onUpdate = { skill.name = it },
+            onUpdate = { skill = skill.copy(name = it) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -328,21 +328,21 @@ fun WorkExperienceForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val workExperience by remember {
+    var workExperience by remember {
         mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
     }
     val comboBoxItems = listOf(
         ComboBoxItem("Джуниор") {
-            workExperience.positionLevel = PositionLevel.Junior
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Junior)
         },
         ComboBoxItem("Мидл") {
-            workExperience.positionLevel = PositionLevel.Middle
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Middle)
         },
         ComboBoxItem("Сеньор") {
-            workExperience.positionLevel = PositionLevel.Senior
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Senior)
         },
         ComboBoxItem("Лид") {
-            workExperience.positionLevel = PositionLevel.Lead
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Lead)
         },
     )
 
@@ -362,21 +362,21 @@ fun WorkExperienceForm(
             icon = Icons.Default.Abc,
             placeholder = "Позиция",
             initString = "",
-            onUpdate = { workExperience.position = it },
+            onUpdate = { workExperience = workExperience.copy(position = it) },
             modifier = Modifier.fillMaxWidth()
         )
 
         NumericTextField(
             placeholder = "Зарплата (₽)",
             initString = "0",
-            onUpdate = { workExperience.salary = it.toInt() },
+            onUpdate = { workExperience = workExperience.copy(salary = it.toInt()) },
             modifier = Modifier.fillMaxWidth()
         )
 
         NumericTextField(
             placeholder = "Месяцев проработано",
             initString = "0",
-            onUpdate = { workExperience.months = it.toInt() },
+            onUpdate = { workExperience = workExperience.copy(months = it.toInt()) },
             modifier = Modifier.fillMaxWidth()
         )
 

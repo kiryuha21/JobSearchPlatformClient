@@ -20,7 +20,7 @@ sealed class MainAppContract {
         data object FindMatchingResumes: MainAppIntent()
         data object LoadProfileResumes: MainAppIntent()
         data object LogOut: MainAppIntent()
-        data object OpenVacancyEdit: MainAppIntent()
+        data class OpenVacancyEdit(val vacancy: Vacancy): MainAppIntent()
         data class CreateNewVacancy(val vacancy: Vacancy): MainAppIntent()
         data class EditVacancy(val vacancy: Vacancy): MainAppIntent()
         data class DeleteVacancy(val vacancy: Vacancy): MainAppIntent()

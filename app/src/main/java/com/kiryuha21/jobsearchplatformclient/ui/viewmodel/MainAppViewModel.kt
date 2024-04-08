@@ -12,6 +12,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
@@ -44,7 +45,10 @@ class MainAppViewModel(private val navController: NavController) :
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
-            is MainAppContract.MainAppIntent.OpenVacancyEdit -> navController.navigate(VACANCY_EDIT)
+            is MainAppContract.MainAppIntent.OpenVacancyEdit -> {
+                setState { copy(openedVacancy = intent.vacancy) }
+                navController.navigate(VACANCY_EDIT)
+            }
             is MainAppContract.MainAppIntent.OpenResumeEdit -> {
                 setState { copy(openedResume = intent.resume) }
                 navController.navigate(RESUME_EDIT)
@@ -61,7 +65,7 @@ class MainAppViewModel(private val navController: NavController) :
             is MainAppContract.MainAppIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
             is MainAppContract.MainAppIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy)
             is MainAppContract.MainAppIntent.EditVacancy -> editVacancy(intent.vacancy)
-            is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy)
+            is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy.id)
         }
     }
 
@@ -140,15 +144,27 @@ class MainAppViewModel(private val navController: NavController) :
     }
 
     private fun createNewVacancy(vacancy: Vacancy) {
-        // TODO: implement
+        viewModelScope.launch(Dispatchers.IO) {
+            vacancyRetrofit.createNewVacancy("Bearer ${AuthToken.getToken()!!}", vacancy.toVacancyDTO())
+        }
+        navController.popBackStack()
+        navController.navigate(PROFILE)
     }
 
     private fun editVacancy(vacancy: Vacancy) {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            vacancyRetrofit.editVacancy("Bearer ${AuthToken.getToken()}", vacancy.id, vacancy.toVacancyDTO())
+        }
+        setState { copy(openedVacancy = vacancy) }
+        navController.navigate(PROFILE)
     }
 
-    private fun deleteVacancy(vacancy: Vacancy) {
-
+    private fun deleteVacancy(vacancyId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId)
+        }
+        navController.popBackStack()
+        navController.navigate(PROFILE)
     }
 
     private fun logOut() {

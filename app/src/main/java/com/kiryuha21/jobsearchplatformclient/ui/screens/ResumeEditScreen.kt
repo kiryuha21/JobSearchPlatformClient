@@ -82,13 +82,13 @@ fun ResumeEditScreen(
 
     val comboBoxItems = listOf(
         ComboBoxItem("Опубликовано") {
-            resume.publicationStatus = PublicationStatus.Published
+            resume = resume.copy(publicationStatus = PublicationStatus.Published)
         },
         ComboBoxItem("Черновик") {
-            resume.publicationStatus = PublicationStatus.Draft
+            resume = resume.copy(publicationStatus = PublicationStatus.Draft)
         },
         ComboBoxItem("Скрыто") {
-            resume.publicationStatus = PublicationStatus.Hidden
+            resume = resume.copy(publicationStatus = PublicationStatus.Hidden)
         },
     )
 
