@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.valentinilk.shimmer.shimmer
@@ -219,7 +218,7 @@ fun ClickableVacancyCardPreview() {
             id = "3",
             title = "Cave Digger",
             description = "In this good company you will have everything you want and even money",
-            company = Company("Gold rocks", CompanySize.Big),
+            company = Company("Gold rocks"),
             minSalary = 15000,
             maxSalary = 20000,
             publicationStatus = PublicationStatus.Published,

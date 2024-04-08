@@ -20,8 +20,10 @@ sealed class HomePageContract {
         data object FindMatchingResumes: HomePageIntent()
         data object LoadProfileResumes: HomePageIntent()
         data object LogOut: HomePageIntent()
-        data object CreateNewVacancy: HomePageIntent()
-        data object CreateNewResume: HomePageIntent()
+        data object OpenVacancyEdit: HomePageIntent()
+        data class CreateNewVacancy(val vacancy: Vacancy): HomePageIntent()
+        data object OpenResumeEdit: HomePageIntent()
+        data class CreateNewResume(val resume: Resume): HomePageIntent()
         data class OpenVacancyDetails(val vacancyId: String): HomePageIntent()
         data class OpenResumeDetails(val resumeId: String): HomePageIntent()
     }

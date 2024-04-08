@@ -30,7 +30,7 @@ fun EmployerProfileScreen(
     state: HomePageContract.HomePageState,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit,
-    createNewVacancy: () -> Unit
+    openVacancyEdit: () -> Unit
 ) {
     val user by CurrentUser.info
 
@@ -38,7 +38,7 @@ fun EmployerProfileScreen(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = createNewVacancy
+                onClick = openVacancyEdit
             ) {
                 Text(text = "Новая вакансия")
             }

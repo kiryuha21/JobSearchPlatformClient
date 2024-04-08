@@ -14,8 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
@@ -25,9 +29,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeEditScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyDetailsScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyEditScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
 
@@ -135,14 +141,14 @@ fun NavGraphBuilder.addMainApp(
                 state = state,
                 loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileResumes) },
                 openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) },
-                createNewResume = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewResume) }
+                openResumeEdit = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeEdit) }
             )
 
             UserRole.Employer -> EmployerProfileScreen(
                 state = state,
                 loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileVacancies) },
                 openVacancyDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) },
-                createNewVacancy = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewVacancy) }
+                openVacancyEdit = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyEdit) }
             )
         }
     }
@@ -179,6 +185,22 @@ fun NavGraphBuilder.addMainApp(
             editable = user.role == UserRole.Worker,
             resumeId = backStack.arguments?.getString("resumeId"),
             state = state
+        )
+    }
+    composable(RESUME_EDIT) { backStack ->
+        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+
+        ResumeEditScreen(
+            initResume = Resume("", "", "", "", "", "", mutableListOf(), mutableListOf(), PublicationStatus.Published),
+            onClick = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewResume(it)) }
+        )
+    }
+    composable(VACANCY_EDIT) { backStack ->
+        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+
+        VacancyEditScreen(
+            initVacancy = Vacancy("", "", "", Company(""), 0, 0, PublicationStatus.Published),
+            onClick = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewVacancy(it)) }
         )
     }
 }

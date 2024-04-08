@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
@@ -36,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.CompanySize
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
@@ -271,6 +271,139 @@ fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier 
     }
 }
 
+@Composable
+fun SkillForm(
+    onSubmit: (Skill) -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
+    val comboBoxItems = listOf(
+        ComboBoxItem("Имею представление") {
+            skill.skillLevel = SkillLevel.AwareOf
+        },
+        ComboBoxItem("Имел дело") {
+            skill.skillLevel = SkillLevel.Tested
+        },
+        ComboBoxItem("Есть пет-проекты") {
+            skill.skillLevel = SkillLevel.HasPetProjects
+        },
+        ComboBoxItem("Есть коммерческие проекты") {
+            skill.skillLevel = SkillLevel.HasCommercialProjects
+        },
+    )
+
+    Column(
+        modifier = modifier
+    ) {
+        DefaultTextField(
+            icon = Icons.Default.Abc,
+            placeholder = "Названия навыка",
+            initString = "",
+            onUpdate = { skill.name = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Уровень навыка")
+            ComboBox(items = comboBoxItems)
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            DefaultButton(text = "Сохранить", onClick = { onSubmit(skill) })
+            DefaultButton(text = "Отменить", onClick = onCancel)
+        }
+    }
+}
+
+@Composable
+fun WorkExperienceForm(
+    onSubmit: (WorkExperience) -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val workExperience by remember {
+        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
+    }
+    val comboBoxItems = listOf(
+        ComboBoxItem("Джуниор") {
+            workExperience.positionLevel = PositionLevel.Junior
+        },
+        ComboBoxItem("Мидл") {
+            workExperience.positionLevel = PositionLevel.Middle
+        },
+        ComboBoxItem("Сеньор") {
+            workExperience.positionLevel = PositionLevel.Senior
+        },
+        ComboBoxItem("Лид") {
+            workExperience.positionLevel = PositionLevel.Lead
+        },
+    )
+
+    Column(
+        modifier = modifier
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Уровень позиции")
+            ComboBox(items = comboBoxItems)
+        }
+
+        DefaultTextField(
+            icon = Icons.Default.Abc,
+            placeholder = "Позиция",
+            initString = "",
+            onUpdate = { workExperience.position = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        NumericTextField(
+            placeholder = "Зарплата (₽)",
+            initString = "0",
+            onUpdate = { workExperience.salary = it.toInt() },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        NumericTextField(
+            placeholder = "Месяцев проработано",
+            initString = "0",
+            onUpdate = { workExperience.months = it.toInt() },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+        ) {
+            DefaultButton(text = "Сохранить", onClick = { onSubmit(workExperience) })
+            DefaultButton(text = "Отменить", onClick = onCancel)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WorkExperienceFormPreview() {
+    WorkExperienceForm({}, {})
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SkillFormPreview() {
+    SkillForm({}, {})
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CardPreview() {
@@ -282,17 +415,16 @@ fun CardPreview() {
             "12909483",
             "hey@gmail.com",
             "Senior C++ developer",
-            listOf(
+            mutableListOf(
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
                 )
             ),
-            listOf(
+            mutableListOf(
                 WorkExperience(
                     Company(
                         "yandex",
-                        CompanySize.Big
                     ),
                     "C++ developer",
                     PositionLevel.Lead,
@@ -316,7 +448,7 @@ fun ClickableCardPreview() {
             "12909483",
             "hey@gmail.com",
             "Senior C++ developer",
-            listOf(
+            mutableListOf(
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
@@ -334,11 +466,10 @@ fun ClickableCardPreview() {
                     SkillLevel.AwareOf
                 )
             ),
-            listOf(
+            mutableListOf(
                 WorkExperience(
                     Company(
                         "yandex",
-                        CompanySize.Big
                     ),
                     "C++ developer",
                     PositionLevel.Lead,

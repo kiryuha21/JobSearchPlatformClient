@@ -1,16 +1,16 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
 data class Resume(
-    val id: String,
-    val firstName: String,
-    val lastName: String,
-    val phoneNumber: String,
-    val contactEmail: String,
-    val applyPosition: String,
-    val skills: List<Skill> = emptyList(),
-    val workExperience: List<WorkExperience> = emptyList(),
-    val publicationStatus: PublicationStatus,
-    val imageUrl: String? = null
+    var id: String,
+    var firstName: String,
+    var lastName: String,
+    var phoneNumber: String,
+    var contactEmail: String,
+    var applyPosition: String,
+    var skills: MutableList<Skill> = mutableListOf(),
+    var workExperience: MutableList<WorkExperience> = mutableListOf(),
+    var publicationStatus: PublicationStatus,
+    var imageUrl: String? = null
 ) {
     fun fullName() = "$lastName $firstName"
 }

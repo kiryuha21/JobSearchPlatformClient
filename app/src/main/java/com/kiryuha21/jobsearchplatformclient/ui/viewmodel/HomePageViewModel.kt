@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
@@ -15,7 +17,9 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
 import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_EDIT
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_EDIT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -37,13 +41,15 @@ class HomePageViewModel(private val navController: NavController) :
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
+            is HomePageContract.HomePageIntent.OpenVacancyEdit -> navController.navigate(VACANCY_EDIT)
+            is HomePageContract.HomePageIntent.OpenResumeEdit -> navController.navigate(RESUME_EDIT)
             is HomePageContract.HomePageIntent.FindMatchingVacancies -> findMatchingVacancies()
             is HomePageContract.HomePageIntent.FindMatchingResumes -> findMatchingResumes()
             is HomePageContract.HomePageIntent.LoadProfileVacancies -> loadProfileVacancies()
             is HomePageContract.HomePageIntent.LoadProfileResumes -> loadProfileResumes()
             is HomePageContract.HomePageIntent.LogOut -> logOut()
-            is HomePageContract.HomePageIntent.CreateNewResume -> createNewResume()
-            is HomePageContract.HomePageIntent.CreateNewVacancy -> createNewVacancy()
+            is HomePageContract.HomePageIntent.CreateNewResume -> createNewResume(intent.resume)
+            is HomePageContract.HomePageIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy)
             is HomePageContract.HomePageIntent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
             is HomePageContract.HomePageIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
         }
@@ -98,8 +104,12 @@ class HomePageViewModel(private val navController: NavController) :
         }
     }
 
-    private fun createNewResume(): Nothing = TODO()
-    private fun createNewVacancy(): Nothing = TODO()
+    private fun createNewResume(resume: Resume) {
+        navController.navigate(RESUME_EDIT)
+    }
+    private fun createNewVacancy(vacancy: Vacancy) {
+        // TODO: implement
+    }
 
     private fun logOut() {
         navController.navigate(NavigationGraph.Authentication.LOG_IN) {

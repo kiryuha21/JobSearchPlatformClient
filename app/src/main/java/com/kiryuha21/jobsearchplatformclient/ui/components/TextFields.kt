@@ -81,6 +81,28 @@ fun DefaultTextField(
 }
 
 @Composable
+fun NumericTextField(
+    placeholder: String,
+    initString: String,
+    onUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { mutableStateOf(initString) }
+
+    OutlinedTextField(
+        value = text,
+        modifier = modifier,
+        label = { Text(placeholder) },
+        placeholder = { Text(text = placeholder) },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        onValueChange = {
+            text = it
+            onUpdate(text)
+        }
+    )
+}
+
+@Composable
 fun SecuredPasswordTextField(
     icon: ImageVector,
     enabled: Boolean,
