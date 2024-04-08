@@ -7,20 +7,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyDetails
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 
 @Composable
 fun VacancyDetailsScreen(
     editable: Boolean,
     vacancyId: String?,
-    state: HomePageContract.HomePageState
+    state: MainAppContract.MainAppState
 ) {
     if (vacancyId == null) {
         throw Exception("vacancyId shouldn't be null!")

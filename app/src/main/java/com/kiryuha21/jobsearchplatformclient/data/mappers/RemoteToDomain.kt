@@ -30,9 +30,9 @@ fun ResumeDTO.toDomainResume() =
         phoneNumber = phoneNumber,
         contactEmail = contactEmail,
         applyPosition = applyPosition,
-        skills = skills?.map { it.toDomainSkill() }?.toMutableList() ?: mutableListOf(),
+        skills = skills.map { it.toDomainSkill() },
         publicationStatus = publicationStatus,
-        workExperience = workExperience?.map { it.toDomainWorkExperience() }?.toMutableList() ?: mutableListOf()
+        workExperience = workExperience.map { it.toDomainWorkExperience() }
     )
 
 fun SkillDTO.toDomainSkill() =

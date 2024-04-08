@@ -11,11 +11,14 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.PROFILE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_EDIT
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
@@ -23,15 +26,15 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainA
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(private val navController: NavController) :
-    BaseViewModel<HomePageContract.HomePageIntent, HomePageContract.HomePageState>() {
+class MainAppViewModel(private val navController: NavController) :
+    BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
     private val resumeRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
     private val vacancyRetrofit = RetrofitObject.retrofit.create(VacancyAPI::class.java)
     private val user by CurrentUser.info
 
-    override fun initialState(): HomePageContract.HomePageState {
-        return HomePageContract.HomePageState(
-            isLoading = true,
+    override fun initialState(): MainAppContract.MainAppState {
+        return MainAppContract.MainAppState(
+            isLoading = false,
             vacancies = null,
             resumes = null,
             openedVacancy = null,
@@ -41,17 +44,24 @@ class HomePageViewModel(private val navController: NavController) :
 
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
-            is HomePageContract.HomePageIntent.OpenVacancyEdit -> navController.navigate(VACANCY_EDIT)
-            is HomePageContract.HomePageIntent.OpenResumeEdit -> navController.navigate(RESUME_EDIT)
-            is HomePageContract.HomePageIntent.FindMatchingVacancies -> findMatchingVacancies()
-            is HomePageContract.HomePageIntent.FindMatchingResumes -> findMatchingResumes()
-            is HomePageContract.HomePageIntent.LoadProfileVacancies -> loadProfileVacancies()
-            is HomePageContract.HomePageIntent.LoadProfileResumes -> loadProfileResumes()
-            is HomePageContract.HomePageIntent.LogOut -> logOut()
-            is HomePageContract.HomePageIntent.CreateNewResume -> createNewResume(intent.resume)
-            is HomePageContract.HomePageIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy)
-            is HomePageContract.HomePageIntent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
-            is HomePageContract.HomePageIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
+            is MainAppContract.MainAppIntent.OpenVacancyEdit -> navController.navigate(VACANCY_EDIT)
+            is MainAppContract.MainAppIntent.OpenResumeEdit -> {
+                setState { copy(openedResume = intent.resume) }
+                navController.navigate(RESUME_EDIT)
+            }
+            is MainAppContract.MainAppIntent.FindMatchingVacancies -> findMatchingVacancies()
+            is MainAppContract.MainAppIntent.FindMatchingResumes -> findMatchingResumes()
+            is MainAppContract.MainAppIntent.LoadProfileVacancies -> loadProfileVacancies()
+            is MainAppContract.MainAppIntent.LoadProfileResumes -> loadProfileResumes()
+            is MainAppContract.MainAppIntent.LogOut -> logOut()
+            is MainAppContract.MainAppIntent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
+            is MainAppContract.MainAppIntent.CreateNewResume -> createNewResume(intent.resume)
+            is MainAppContract.MainAppIntent.EditResume -> editResume(intent.resume)
+            is MainAppContract.MainAppIntent.DeleteResume -> deleteResume(intent.resume.id)
+            is MainAppContract.MainAppIntent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
+            is MainAppContract.MainAppIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy)
+            is MainAppContract.MainAppIntent.EditVacancy -> editVacancy(intent.vacancy)
+            is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy)
         }
     }
 
@@ -78,6 +88,7 @@ class HomePageViewModel(private val navController: NavController) :
             setState { copy(isLoading = false, resumes = resumes) }
         }
     }
+
     private fun loadProfileVacancies() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
@@ -95,6 +106,30 @@ class HomePageViewModel(private val navController: NavController) :
         }
     }
 
+    private fun createNewResume(resume: Resume) {
+        viewModelScope.launch(Dispatchers.IO) {
+            resumeRetrofit.createNewResume("Bearer ${AuthToken.getToken()!!}", resume.toResumeDTO())
+        }
+        navController.popBackStack()
+        navController.navigate(PROFILE)
+    }
+
+    private fun editResume(resume: Resume) {
+        viewModelScope.launch(Dispatchers.IO) {
+            resumeRetrofit.editResume("Bearer ${AuthToken.getToken()}", resume.id, resume.toResumeDTO())
+        }
+        setState { copy(openedResume = resume) }
+        navController.navigate(PROFILE)
+    }
+
+    private fun deleteResume(resumeId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId)
+        }
+        navController.popBackStack()
+        navController.navigate(PROFILE)
+    }
+
     private fun openVacancyDetails(vacancyId: String) {
         navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
         viewModelScope.launch {
@@ -104,11 +139,16 @@ class HomePageViewModel(private val navController: NavController) :
         }
     }
 
-    private fun createNewResume(resume: Resume) {
-        navController.navigate(RESUME_EDIT)
-    }
     private fun createNewVacancy(vacancy: Vacancy) {
         // TODO: implement
+    }
+
+    private fun editVacancy(vacancy: Vacancy) {
+
+    }
+
+    private fun deleteVacancy(vacancy: Vacancy) {
+
     }
 
     private fun logOut() {
@@ -127,7 +167,7 @@ class HomePageViewModel(private val navController: NavController) :
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return HomePageViewModel(navController) as T
+                    return MainAppViewModel(navController) as T
                 }
             }
     }

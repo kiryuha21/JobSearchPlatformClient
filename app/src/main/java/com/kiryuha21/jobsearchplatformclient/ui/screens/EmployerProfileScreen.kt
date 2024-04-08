@@ -23,11 +23,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 
 @Composable
 fun EmployerProfileScreen(
-    state: HomePageContract.HomePageState,
+    state: MainAppContract.MainAppState,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit,
     openVacancyEdit: () -> Unit

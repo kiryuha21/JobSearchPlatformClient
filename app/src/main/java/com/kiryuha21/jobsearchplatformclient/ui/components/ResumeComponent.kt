@@ -415,13 +415,13 @@ fun CardPreview() {
             "12909483",
             "hey@gmail.com",
             "Senior C++ developer",
-            mutableListOf(
+            listOf(
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
                 )
             ),
-            mutableListOf(
+            listOf(
                 WorkExperience(
                     Company(
                         "yandex",
@@ -448,7 +448,7 @@ fun ClickableCardPreview() {
             "12909483",
             "hey@gmail.com",
             "Senior C++ developer",
-            mutableListOf(
+            listOf(
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
@@ -466,7 +466,7 @@ fun ClickableCardPreview() {
                     SkillLevel.AwareOf
                 )
             ),
-            mutableListOf(
+            listOf(
                 WorkExperience(
                     Company(
                         "yandex",

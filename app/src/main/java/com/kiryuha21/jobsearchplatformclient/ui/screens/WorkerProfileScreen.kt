@@ -22,11 +22,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableResumeCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 
 @Composable
 fun WorkerProfileScreen(
-    state: HomePageContract.HomePageState,
+    state: MainAppContract.MainAppState,
     loadResumes: () -> Unit,
     openResumeDetails: (String) -> Unit,
     openResumeEdit: () -> Unit

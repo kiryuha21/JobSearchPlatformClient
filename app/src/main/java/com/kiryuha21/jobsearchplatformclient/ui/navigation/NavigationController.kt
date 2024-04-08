@@ -14,14 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
@@ -35,7 +33,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyEditScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 
 fun NavGraphBuilder.addAuthentication(
     navController: NavController,
@@ -111,20 +109,20 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val state by viewModel.viewState
 
         when (user.role) {
             UserRole.Worker -> WorkerHomeScreen(
                 state = state,
-                loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingVacancies) },
-                openVacancyDetails = {viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) }
+                loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingVacancies) },
+                openVacancyDetails = {viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) }
             )
 
             UserRole.Employer -> EmployerHomeScreen(
                 state = state,
-                loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.FindMatchingResumes) },
-                openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) }
+                loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingResumes) },
+                openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) }
             )
         }
     }
@@ -133,22 +131,22 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val state by viewModel.viewState
 
         when (user.role) {
             UserRole.Worker -> WorkerProfileScreen(
                 state = state,
-                loadResumes = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileResumes) },
-                openResumeDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeDetails(it)) },
-                openResumeEdit = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenResumeEdit) }
+                loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileResumes) },
+                openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) },
+                openResumeEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(Resume())) }
             )
 
             UserRole.Employer -> EmployerProfileScreen(
                 state = state,
-                loadVacancies = { viewModel.processIntent(HomePageContract.HomePageIntent.LoadProfileVacancies) },
-                openVacancyDetails = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyDetails(it)) },
-                openVacancyEdit = { viewModel.processIntent(HomePageContract.HomePageIntent.OpenVacancyEdit) }
+                loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileVacancies) },
+                openVacancyDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) },
+                openVacancyEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit) }
             )
         }
     }
@@ -157,7 +155,7 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         SettingsScreen({}, {}, {})
     }
     composable(VACANCY_DETAILS) { backStack ->
@@ -165,7 +163,7 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = false
         }
 
-        val viewModel: HomePageViewModel = backStack.sharedHomePageViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val state by viewModel.viewState
 
         VacancyDetailsScreen(
@@ -179,28 +177,38 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = false
         }
 
-        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
         val state by viewModel.viewState
         ResumeDetailsScreen(
             editable = user.role == UserRole.Worker,
             resumeId = backStack.arguments?.getString("resumeId"),
+            onEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(it)) },
+            onDelete = { viewModel.processIntent(MainAppContract.MainAppIntent.DeleteResume(it)) },
             state = state
         )
     }
     composable(RESUME_EDIT) { backStack ->
-        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
+        val state by viewModel.viewState
+        val resume = state.openedResume!!
+
+        val onClick: (Resume) -> Unit = if (resume.id.isNotEmpty()) {
+            { viewModel.processIntent(MainAppContract.MainAppIntent.EditResume(it)) }
+        } else {
+            { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewResume(it)) }
+        }
 
         ResumeEditScreen(
-            initResume = Resume("", "", "", "", "", "", mutableListOf(), mutableListOf(), PublicationStatus.Published),
-            onClick = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewResume(it)) }
+            initResume = state.openedResume!!,
+            onClick = onClick
         )
     }
     composable(VACANCY_EDIT) { backStack ->
-        val viewModel = backStack.sharedHomePageViewModel<HomePageViewModel>(navController)
+        val viewModel = backStack.sharedMainAppViewModel<MainAppViewModel>(navController)
 
         VacancyEditScreen(
-            initVacancy = Vacancy("", "", "", Company(""), 0, 0, PublicationStatus.Published),
-            onClick = { viewModel.processIntent(HomePageContract.HomePageIntent.CreateNewVacancy(it)) }
+            initVacancy = Vacancy(),
+            onClick = { viewModel.processIntent(MainAppContract.MainAppIntent.CreateNewVacancy(it)) }
         )
     }
 }

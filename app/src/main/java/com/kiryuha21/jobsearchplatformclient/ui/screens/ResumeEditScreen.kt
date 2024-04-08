@@ -8,7 +8,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,13 +39,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -71,6 +66,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBox
 import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.PhoneField
 import com.kiryuha21.jobsearchplatformclient.ui.components.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.WorkExperienceForm
 import kotlinx.coroutines.launch
@@ -80,7 +76,7 @@ fun ResumeEditScreen(
     initResume: Resume,
     onClick: (Resume) -> Unit
 ) {
-    val resume by remember { mutableStateOf(initResume) }
+    var resume by remember { mutableStateOf(initResume) }
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
 
@@ -194,42 +190,42 @@ fun ResumeEditScreen(
                 icon = Icons.Default.Abc,
                 placeholder = "Имя",
                 initString = resume.firstName,
-                onUpdate = { resume.firstName = it },
+                onUpdate = { resume = resume.copy(firstName = it) },
                 modifier = Modifier.fillMaxWidth()
             )
             DefaultTextField(
                 icon = Icons.Default.Abc,
                 placeholder = "Фамилия",
                 initString = resume.lastName,
-                onUpdate = { resume.lastName = it },
+                onUpdate = { resume = resume.copy(lastName = it) },
                 modifier = Modifier.fillMaxWidth()
             )
-            DefaultTextField(
-                icon = Icons.Default.Phone,
-                placeholder = "Телефон",
+            PhoneField(
                 initString = resume.phoneNumber,
-                onUpdate = { resume.phoneNumber = it },
+                placeholder = "Номер телефона",
+                icon = Icons.Default.Phone,
+                mask = "0 (000) 000 00 00",
+                onUpdate = { resume = resume.copy(phoneNumber = it) },
                 modifier = Modifier.fillMaxWidth()
             )
             DefaultTextField(
                 icon = Icons.Default.Email,
                 placeholder = "E-mail",
                 initString = resume.contactEmail,
-                onUpdate = { resume.contactEmail = it },
+                onUpdate = { resume = resume.copy(contactEmail = it) },
                 modifier = Modifier.fillMaxWidth()
             )
             DefaultTextField(
                 icon = Icons.Default.Work,
                 placeholder = "Позиция",
-                initString = resume.firstName,
-                onUpdate = { resume.firstName = it },
+                initString = resume.applyPosition,
+                onUpdate = { resume = resume.copy(applyPosition = it) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            val skills = resume.skills.toMutableStateList()
-            if (skills.isNotEmpty()) {
+            if (resume.skills.isNotEmpty()) {
                 Text(text = "Навыки:", modifier = Modifier.padding(top = 10.dp))
-                skills.forEachIndexed { index, skill ->
+                resume.skills.forEachIndexed { index, skill ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -238,8 +234,9 @@ fun ResumeEditScreen(
                         Text(text = skill.toString(), modifier = Modifier.fillMaxWidth(0.8f))
                         IconButton(
                             onClick = {
-                                resume.skills.removeAt(index)
-                                skills.removeAt(index)
+                                resume = resume.copy(
+                                    skills = resume.skills.filterIndexed { ind, _ -> index != ind }
+                                )
                             }
                         ) {
                             Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
@@ -248,10 +245,9 @@ fun ResumeEditScreen(
                 }
             }
 
-            val workExperiences = resume.workExperience.toMutableStateList()
-            if (workExperiences.isNotEmpty()) {
+            if (resume.workExperience.isNotEmpty()) {
                 Text(text = "Опыт работы", modifier = Modifier.padding(top = 10.dp))
-                workExperiences.forEachIndexed { index, exp ->
+                resume.workExperience.forEachIndexed { index, exp ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -260,8 +256,9 @@ fun ResumeEditScreen(
                         Text(text = exp.toString(), modifier = Modifier.fillMaxWidth(0.8f))
                         IconButton(
                             onClick = {
-                                resume.workExperience.removeAt(index)
-                                workExperiences.removeAt(index)
+                                resume = resume.copy(
+                                    workExperience = resume.workExperience.filterIndexed { ind, _ -> index != ind }
+                                )
                             }
                         ) {
                             Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
@@ -303,7 +300,7 @@ fun ResumeEditScreen(
             AnimatedVisibility(visible = experienceFormVisible) {
                 WorkExperienceForm(
                     onSubmit = {
-                        resume.workExperience.add(it)
+                        resume = resume.copy(workExperience = resume.workExperience + it)
                         experienceFormVisible = false
                     }, onCancel = {
                         experienceFormVisible = false
@@ -314,7 +311,7 @@ fun ResumeEditScreen(
             AnimatedVisibility(visible = skillFormVisible) {
                 SkillForm(
                     onSubmit = {
-                        resume.skills.add(it)
+                        resume = resume.copy(skills = resume.skills + it)
                         skillFormVisible = false
                     },
                     onCancel = {
@@ -341,13 +338,13 @@ fun ResumeEditScreenPreview() {
             "123454678",
             "test@gmail.com",
             "C++ programmer",
-            mutableListOf(
+            listOf(
                 Skill(
                     "C++ development",
                     SkillLevel.HasCommercialProjects
                 )
             ),
-            mutableListOf(
+            listOf(
                 WorkExperience(
                     Company(
                         "yandex",

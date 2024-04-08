@@ -19,9 +19,9 @@ data class ResumeDTO(
     @SerializedName("applyPosition")
     val applyPosition: String,
     @SerializedName("skills")
-    val skills: List<SkillDTO>? = emptyList(),
+    val skills: List<SkillDTO> = emptyList(),
     @SerializedName("workExperience")
-    val workExperience: List<WorkExperienceDTO>? = emptyList(),
+    val workExperience: List<WorkExperienceDTO> = emptyList(),
     @SerializedName("status")
     val publicationStatus: PublicationStatus
 )

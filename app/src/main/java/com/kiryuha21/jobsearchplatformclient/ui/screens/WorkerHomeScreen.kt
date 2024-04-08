@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.ShimmeringVacancyListItem
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 
 @Composable
 fun WorkerHomeScreen(
-    state: HomePageContract.HomePageState,
+    state: MainAppContract.MainAppState,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit
 ) {

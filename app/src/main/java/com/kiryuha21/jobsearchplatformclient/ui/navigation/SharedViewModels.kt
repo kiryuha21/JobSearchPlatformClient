@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.HomePageViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(navController: NavController): T {
@@ -21,12 +21,12 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(navCont
 }
 
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedHomePageViewModel(navController: NavController): T {
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedMainAppViewModel(navController: NavController): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = HomePageViewModel.provideFactory(navController)
+        factory = MainAppViewModel.provideFactory(navController)
     )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry, factory = HomePageViewModel.provideFactory(navController))
+    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController))
 }

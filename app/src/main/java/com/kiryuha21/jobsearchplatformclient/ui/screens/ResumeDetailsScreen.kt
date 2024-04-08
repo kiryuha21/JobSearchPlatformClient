@@ -9,28 +9,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeDetails
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
-import com.kiryuha21.jobsearchplatformclient.ui.contract.HomePageContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 
 @Composable
 fun ResumeDetailsScreen(
     editable: Boolean,
     resumeId: String?,
-    state: HomePageContract.HomePageState
+    onEdit: (Resume) -> Unit,
+    onDelete: (Resume) -> Unit,
+    state: MainAppContract.MainAppState
 ) {
     if (resumeId == null) {
-        throw Exception("vacancyId shouldn't be null!")
+        throw Exception("resumeId shouldn't be null!")
     }
 
     when (state.isLoading) {
         true -> LoadingComponent(modifier = Modifier.fillMaxSize())
         false -> {
+            if (state.openedResume == null) {
+                throw Exception("opened resume shouldn't be null by now")
+            }
+
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                ResumeDetails(resume = state.openedResume!!, modifier = Modifier.fillMaxWidth())
+                ResumeDetails(resume = state.openedResume, modifier = Modifier.fillMaxWidth())
                 if (editable) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -38,8 +45,8 @@ fun ResumeDetailsScreen(
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp)
                     ) {
-                        StyledDefaultButton(text = "Редактировать", onClick = { /*TODO*/ })
-                        StyledDefaultButton(text = "Удалить", onClick = { /*TODO*/ })
+                        StyledDefaultButton(text = "Редактировать", onClick = { onEdit(state.openedResume) })
+                        StyledDefaultButton(text = "Удалить", onClick = { onDelete(state.openedResume) })
                     }
                 }
             }
