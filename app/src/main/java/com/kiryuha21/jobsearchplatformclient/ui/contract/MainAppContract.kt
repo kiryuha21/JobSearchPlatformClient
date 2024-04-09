@@ -32,5 +32,6 @@ sealed class MainAppContract {
         data class DeleteResume(val resume: Resume): MainAppIntent()
         data class OpenVacancyDetails(val vacancyId: String): MainAppIntent()
         data class OpenResumeDetails(val resumeId: String): MainAppIntent()
+        data class SetUserImage(val bitmap: Bitmap): MainAppIntent()
     }
 }

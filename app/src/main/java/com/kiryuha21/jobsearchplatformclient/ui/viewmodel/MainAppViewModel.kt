@@ -17,6 +17,7 @@ import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
@@ -27,6 +28,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainA
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_EDIT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -36,6 +38,7 @@ class MainAppViewModel(private val navController: NavController) :
     BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
     private val resumeRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
     private val vacancyRetrofit = RetrofitObject.retrofit.create(VacancyAPI::class.java)
+    private val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
     private val user by CurrentUser.info
 
     override fun initialState(): MainAppContract.MainAppState {
@@ -71,6 +74,23 @@ class MainAppViewModel(private val navController: NavController) :
             is MainAppContract.MainAppIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy, intent.bitmap)
             is MainAppContract.MainAppIntent.EditVacancy -> editVacancy(intent.vacancy, intent.bitmap)
             is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy.id)
+            is MainAppContract.MainAppIntent.SetUserImage -> setUserImage(intent.bitmap)
+        }
+    }
+
+    private fun setUserImage(bitmap: Bitmap) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val token = "Bearer ${AuthToken.getToken()}"
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val byteArray = stream.toByteArray()
+
+            val body = MultipartBody.Part.createFormData(
+                "picture",
+                user.username,
+                byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+            )
+            userRetrofit.setPicture(token, user.username, body)
         }
     }
 
@@ -117,7 +137,7 @@ class MainAppViewModel(private val navController: NavController) :
 
     private fun createNewResume(resume: Resume, bitmap: Bitmap?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()!!}"
+            val token = "Bearer ${AuthToken.getToken()}"
             val newResume = resumeRetrofit.createNewResume(token, resume.toResumeDTO())
 
             if (bitmap != null) {
@@ -138,7 +158,7 @@ class MainAppViewModel(private val navController: NavController) :
 
     private fun editResume(resume: Resume, bitmap: Bitmap?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()!!}"
+            val token = "Bearer ${AuthToken.getToken()}"
             val editedResume = resumeRetrofit.editResume(token, resume.id, resume.toResumeDTO())
 
             if (bitmap != null) {
@@ -176,7 +196,7 @@ class MainAppViewModel(private val navController: NavController) :
 
     private fun createNewVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()!!}"
+            val token = "Bearer ${AuthToken.getToken()}"
             val newResume = vacancyRetrofit.createNewVacancy(token, vacancy.toVacancyDTO())
 
             if (bitmap != null) {
@@ -197,7 +217,7 @@ class MainAppViewModel(private val navController: NavController) :
 
     private fun editVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
         viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()!!}"
+            val token = "Bearer ${AuthToken.getToken()}"
             val editedVacancy = vacancyRetrofit.editVacancy(token, vacancy.id, vacancy.toVacancyDTO())
 
             if (bitmap != null) {

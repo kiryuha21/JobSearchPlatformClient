@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -54,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
@@ -94,6 +96,7 @@ fun ResumeEditScreen(
         },
     )
 
+    val context = LocalContext.current
     var selectedImageUri by remember {
         mutableStateOf(if (initResume.imageUrl != null) Uri.parse(initResume.imageUrl) else null)
     }
@@ -101,6 +104,7 @@ fun ResumeEditScreen(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
+            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION )
             selectedImageUri = it
         }
     }
@@ -110,14 +114,12 @@ fun ResumeEditScreen(
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            val ctx = LocalContext.current
-
             ExtendedFloatingActionButton(
                 onClick = {
-                    if (selectedImageUri == null || selectedImageUri == Uri.parse(initResume.imageUrl)) {
+                    if (selectedImageUri == null || (initResume.imageUrl != null && selectedImageUri == Uri.parse(initResume.imageUrl))) {
                         onUpdateResume(resume, null)
                     } else {
-                        val source = ImageDecoder.createSource(ctx.contentResolver, selectedImageUri!!)
+                        val source = ImageDecoder.createSource(context.contentResolver, selectedImageUri!!)
                         val bitmap = ImageDecoder.decodeBitmap(source)
                         onUpdateResume(resume, bitmap)
                     }

@@ -40,7 +40,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
 import kotlinx.coroutines.launch
 
@@ -50,7 +49,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(start = 15.dp)
+        modifier = modifier.padding(start = 15.dp, top = 10.dp)
     ) {
         if (user.imageUrl != null) {
             AsyncImage(
@@ -70,7 +69,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
             )
         }
 
-        Text("Hello, ${user.username}!")
+        Text("Привет, ${user.username}!")
     }
 }
 
