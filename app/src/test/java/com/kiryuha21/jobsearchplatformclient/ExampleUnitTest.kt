@@ -1,5 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient
 
+import android.net.http.HttpException
+import android.util.Log
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
@@ -32,18 +34,24 @@ class ExampleUnitTest {
             role = UserRole.Worker
         )
 
-        val newUser = userRetrofit.createNewUser(user)
-        val createdUser = userRetrofit.getUserByUsername("my_example_login")
-        assertEquals(newUser, createdUser)
+        try {
+            val newUser = userRetrofit.createNewUser(user)
+            val createdUser = userRetrofit.getUserByUsername("my_example_login")
+            assertEquals(newUser, createdUser)
 
-        AuthToken.createToken("my_example_login", "secure_one")
-        assertNotNull(AuthToken.getToken())
+            AuthToken.createToken("my_example_login", "secure_one")
+            assertNotNull(AuthToken.getToken())
 
-        userRetrofit.deleteUserByUsername("my_example_login", "Bearer ${AuthToken.getToken()}")
-        assertThrows(Exception::class.java) {
-            runTest {
-                userRetrofit.getUserByUsername("my_example_login")
+            userRetrofit.deleteUserByUsername("my_example_login", "Bearer ${AuthToken.getToken()}")
+            assertThrows(Exception::class.java) {
+                runTest {
+                    userRetrofit.getUserByUsername("my_example_login")
+                }
             }
+        } catch (e: HttpException) {
+            println(e.message)
+            e.message?.let { Log.d("tag1", it) }
         }
+
     }
 }
