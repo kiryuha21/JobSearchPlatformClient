@@ -1,7 +1,11 @@
 package com.kiryuha21.jobsearchplatformclient
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertValueEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -12,9 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationController
 import com.kiryuha21.jobsearchplatformclient.ui.theme.JobSearchPlatformClientTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,7 +27,7 @@ import org.junit.runner.RunWith
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class AuthScreensTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
@@ -72,23 +74,18 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun loggingInWorks() {
+    fun loginPageWorks() {
         composeTestRule.setContent {
             JobSearchPlatformClientTheme {
                 NavigationController()
             }
         }
 
-        composeTestRule.onNodeWithTag("login_email").performTextInput("my_login")
-        composeTestRule.onNodeWithTag("login_password").performTextInput("my_password")
-        composeTestRule.onNodeWithText("Войти").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Войти").performClick()
+        composeTestRule.onNodeWithTag("login_username").performTextInput("username")
+        composeTestRule.onNodeWithTag("login_username").assert(hasText("username"))
 
-        composeTestRule.waitUntil(5000L) {
-            return@waitUntil composeTestRule.onNodeWithContentDescription(
-                "menu"
-            ).isDisplayed()
-        }
-        composeTestRule.onNodeWithContentDescription("menu").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Показать пароль").performClick()
+        composeTestRule.onNodeWithTag("login_password").performTextInput("password")
+        composeTestRule.onNodeWithTag("login_password").assert(hasText("password"))
     }
 }

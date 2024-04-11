@@ -80,14 +80,10 @@ class MainAppViewModel(private val navController: NavController) :
     private fun setUserImage(bitmap: Bitmap) {
         viewModelScope.launch(Dispatchers.IO) {
             val token = "Bearer ${AuthToken.getToken()}"
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            val byteArray = stream.toByteArray()
-
             val body = MultipartBody.Part.createFormData(
                 "picture",
                 CurrentUser.info.username,
-                byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+                bitmap.toRequestBody(100)
             )
             userRetrofit.setPicture(token, CurrentUser.info.username, body)
         }
@@ -140,13 +136,10 @@ class MainAppViewModel(private val navController: NavController) :
             val newResume = resumeRetrofit.createNewResume(token, resume.toResumeDTO())
 
             if (bitmap != null) {
-                val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-                val byteArray = stream.toByteArray()
                 val body = MultipartBody.Part.createFormData(
                     "picture",
                     resume.id,
-                    byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+                    bitmap.toRequestBody(100)
                 )
                 resumeRetrofit.setPicture(token, newResume.id, body)
             }
@@ -196,13 +189,10 @@ class MainAppViewModel(private val navController: NavController) :
             val newResume = vacancyRetrofit.createNewVacancy(token, vacancy.toVacancyDTO())
 
             if (bitmap != null) {
-                val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-                val byteArray = stream.toByteArray()
                 val body = MultipartBody.Part.createFormData(
                     "picture",
                     vacancy.id,
-                    byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+                    bitmap.toRequestBody(100)
                 )
                 vacancyRetrofit.setPicture(token, newResume.id, body)
             }
@@ -217,13 +207,10 @@ class MainAppViewModel(private val navController: NavController) :
             val editedVacancy = vacancyRetrofit.editVacancy(token, vacancy.id, vacancy.toVacancyDTO())
 
             if (bitmap != null) {
-                val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-                val byteArray = stream.toByteArray()
                 val body = MultipartBody.Part.createFormData(
                     "picture",
                     vacancy.id,
-                    byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+                    bitmap.toRequestBody(100)
                 )
                 vacancyRetrofit.setPicture(token, editedVacancy.id, body)
             }

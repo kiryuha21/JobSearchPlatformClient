@@ -1,4 +1,4 @@
-name: Generated APK AAB (Upload - Create Artifact To Github Action)
+name: Generate APK
 
 env:
   # The name of the main module repository
@@ -37,6 +37,9 @@ jobs:
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+
+      - name: Run gradle tests
+        run: ./gradlew test
 
       # Run Build Project
       - name: Build gradle project

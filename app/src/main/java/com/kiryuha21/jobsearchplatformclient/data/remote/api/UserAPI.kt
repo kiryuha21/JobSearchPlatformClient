@@ -2,7 +2,9 @@ package com.kiryuha21.jobsearchplatformclient.data.remote.api
 
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -24,4 +26,10 @@ interface UserAPI {
         @Path("username") username: String,
         @Part picture: MultipartBody.Part
     )
+
+    @DELETE("user/{username}")
+    suspend fun deleteUserByUsername(
+        @Path("username") username: String,
+        @Header("Authorization") authToken: String
+    ): Response<Unit>
 }
