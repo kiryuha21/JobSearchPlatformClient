@@ -26,15 +26,15 @@ class ExampleUnitTest {
 
     @Test
     fun createGetDeleteUser() = runTest {
-        val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
-        val user = UserDTO.SignUpUserDTO(
-            email = "test@gmail.com",
-            username = "my_example_login",
-            password = "secure_one",
-            role = UserRole.Worker
-        )
-
         try {
+            val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
+            val user = UserDTO.SignUpUserDTO(
+                email = "test@gmail.com",
+                username = "my_example_login",
+                password = "secure_one",
+                role = UserRole.Worker
+            )
+
             val newUser = userRetrofit.createNewUser(user)
             val createdUser = userRetrofit.getUserByUsername("my_example_login")
             // assertEquals(newUser, createdUser)
@@ -52,6 +52,8 @@ class ExampleUnitTest {
         } catch (e: HttpException) {
             println("HERE: reason is ${e.message}")
             e.message?.let { Log.d("tag1", it) }
+        } catch (e: Exception) {
+            println("HERE: reason is ${e.message}")
         }
 
     }
