@@ -15,7 +15,7 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 fun Resume.toResumeDTO() =
     ResumeDTO(
         id = id,
-        workerLogin = CurrentUser.info.value.username,
+        workerLogin = CurrentUser.info.username,
         firstName = firstName,
         lastName = lastName,
         phoneNumber = phoneNumber,
@@ -50,7 +50,7 @@ fun Company.toCompanyDTO() =
 fun Vacancy.toVacancyDTO() =
     VacancyDTO(
         id = id,
-        employerLogin = CurrentUser.info.value.username,
+        employerLogin = CurrentUser.info.username,
         title = title,
         description = description,
         company = company.toCompanyDTO(),

@@ -41,8 +41,6 @@ fun SecuredFields(
     onPasswordFieldEdit: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val user by CurrentUser.info
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,14 +50,14 @@ fun SecuredFields(
             icon = Icons.Filled.Abc,
             enabled = enabled,
             placeholder = "my_login",
-            initString = user.username,
+            initString = CurrentUser.info.username,
             onUpdate = onLoginFieldEdit
         )
         SecuredTextField(
             icon = Icons.Filled.Email,
             enabled = enabled,
             placeholder = "example@gmail.com",
-            initString = user.email,
+            initString = CurrentUser.info.email,
             onUpdate = onEmailFieldEdit
         )
         SecuredPasswordTextField(

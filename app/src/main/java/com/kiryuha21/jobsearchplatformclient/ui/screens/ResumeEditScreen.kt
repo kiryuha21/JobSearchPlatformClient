@@ -2,7 +2,6 @@ package com.kiryuha21.jobsearchplatformclient.ui.screens
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -25,17 +24,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -55,7 +51,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
@@ -66,13 +61,13 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBox
 import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultButton
-import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultTextField
-import com.kiryuha21.jobsearchplatformclient.ui.components.PhoneField
+import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeEditForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.WorkExperienceForm
+import com.kiryuha21.jobsearchplatformclient.util.getBitmap
+import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,6 +75,12 @@ fun ResumeEditScreen(
     initResume: Resume,
     onUpdateResume: (Resume, Bitmap?) -> Unit
 ) {
+    var validName by remember { mutableStateOf(initResume.firstName.isNotBlank()) }
+    var validSurname by remember { mutableStateOf(initResume.lastName.isNotBlank()) }
+    var validEmail by remember { mutableStateOf(initResume.contactEmail.isNotBlank()) }
+    var validPosition by remember { mutableStateOf(initResume.applyPosition.isNotBlank()) }
+    var validPhone by remember { mutableStateOf(initResume.phoneNumber.isNotBlank() && initResume.phoneNumber.isNumeric()) }
+
     var resume by remember { mutableStateOf(initResume) }
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
@@ -104,7 +105,7 @@ fun ResumeEditScreen(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
-            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION )
+            context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             selectedImageUri = it
         }
     }
@@ -114,14 +115,19 @@ fun ResumeEditScreen(
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
+            val enabled = validName && validSurname && validEmail && validPosition && validPhone
+
             ExtendedFloatingActionButton(
+                containerColor = if (enabled) FloatingActionButtonDefaults.containerColor else Color.LightGray,
                 onClick = {
+                    if (!enabled) {
+                        return@ExtendedFloatingActionButton
+                    }
+
                     if (selectedImageUri == null || (initResume.imageUrl != null && selectedImageUri == Uri.parse(initResume.imageUrl))) {
                         onUpdateResume(resume, null)
                     } else {
-                        val source = ImageDecoder.createSource(context.contentResolver, selectedImageUri!!)
-                        val bitmap = ImageDecoder.decodeBitmap(source)
-                        onUpdateResume(resume, bitmap)
+                        onUpdateResume(resume, selectedImageUri?.getBitmap(context))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(0.4f)
@@ -154,7 +160,7 @@ fun ResumeEditScreen(
                 Image(
                     painter = painter,
                     contentDescription = "upload_photo",
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(128.dp)
                         .clip(RoundedCornerShape(10.dp))
@@ -190,51 +196,49 @@ fun ResumeEditScreen(
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Статус резюме")
-                ComboBox(items = comboBoxItems)
-            }
-
-            DefaultTextField(
-                icon = Icons.Default.Abc,
-                placeholder = "Имя",
-                initString = resume.firstName,
-                onUpdate = { resume = resume.copy(firstName = it) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            DefaultTextField(
-                icon = Icons.Default.Abc,
-                placeholder = "Фамилия",
-                initString = resume.lastName,
-                onUpdate = { resume = resume.copy(lastName = it) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            PhoneField(
-                initString = resume.phoneNumber,
-                placeholder = "Номер телефона",
-                icon = Icons.Default.Phone,
-                mask = "0 (000) 000 00 00",
-                onUpdate = { resume = resume.copy(phoneNumber = it) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            DefaultTextField(
-                icon = Icons.Default.Email,
-                placeholder = "E-mail",
-                initString = resume.contactEmail,
-                onUpdate = { resume = resume.copy(contactEmail = it) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            DefaultTextField(
-                icon = Icons.Default.Work,
-                placeholder = "Позиция",
-                initString = resume.applyPosition,
-                onUpdate = { resume = resume.copy(applyPosition = it) },
-                modifier = Modifier.fillMaxWidth()
+            ResumeEditForm(
+                resume = resume,
+                comboBoxItems = comboBoxItems,
+                onFirstNameUpdate = { value, valid ->
+                    if (valid) {
+                        validName = true
+                        resume = resume.copy(firstName = value)
+                    } else {
+                        validName = false
+                    }
+                },
+                onLastNameUpdate = { value, valid ->
+                    if (valid) {
+                        validSurname = true
+                        resume = resume.copy(lastName = value)
+                    } else {
+                        validSurname = false
+                    }
+                },
+                onPhoneUpdate = { value, valid ->
+                    if (valid) {
+                        validPhone = true
+                        resume = resume.copy(phoneNumber = value)
+                    } else {
+                        validPhone = false
+                    }
+                },
+                onEmailUpdate = { value, valid ->
+                    if (valid) {
+                        validEmail = true
+                        resume = resume.copy(contactEmail = value)
+                    } else {
+                        validEmail = false
+                    }
+                },
+                onPositionUpdate = { value, valid ->
+                    if (valid) {
+                        validPosition = true
+                        resume = resume.copy(applyPosition = value)
+                    } else {
+                        validPosition = false
+                    }
+                }
             )
 
             if (resume.skills.isNotEmpty()) {

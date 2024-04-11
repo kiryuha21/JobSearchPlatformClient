@@ -48,10 +48,9 @@ fun NavGraphBuilder.addAuthentication(
         }
 
         val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
-        val state by viewModel.viewState
 
         LogInScreen(
-            state = state,
+            state = viewModel.viewState,
             onUsernameFieldEdited = { newLogin ->
                 viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
             },
@@ -65,10 +64,9 @@ fun NavGraphBuilder.addAuthentication(
     }
     composable(SIGN_UP) {
         val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
-        val state by viewModel.viewState
 
         SignUpScreen(
-            state = state,
+            state = viewModel.viewState,
             onLoginFieldUpdated = { newLogin ->
                 viewModel.processIntent(AuthContract.AuthIntent.EditLogin(newLogin))
             },
@@ -89,10 +87,9 @@ fun NavGraphBuilder.addAuthentication(
     }
     composable(RESET_PASSWORD) {
         val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
-        val state by viewModel.viewState
 
         ResetPasswordScreen(
-            state = state,
+            state = viewModel.viewState,
             onEmailFieldEdited = { newEmail ->
                 viewModel.processIntent(AuthContract.AuthIntent.EditEmail(newEmail))
             },
@@ -105,25 +102,22 @@ fun NavGraphBuilder.addMainApp(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>
 ) = with(NavigationGraph.MainApp) {
-    val user by CurrentUser.info
-
     composable(HOME_SCREEN) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
 
-        when (user.role) {
+        when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerHomeScreen(
-                state = state,
+                state = viewModel.viewState,
                 loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingVacancies) },
                 openVacancyDetails = {viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) }
             )
 
             UserRole.Employer -> EmployerHomeScreen(
-                state = state,
+                state = viewModel.viewState,
                 loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingResumes) },
                 openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) }
             )
@@ -135,18 +129,17 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
 
-        when (user.role) {
+        when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerProfileScreen(
-                state = state,
+                state = viewModel.viewState,
                 loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileResumes) },
                 openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) },
                 openResumeEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(Resume())) }
             )
 
             UserRole.Employer -> EmployerProfileScreen(
-                state = state,
+                state = viewModel.viewState,
                 loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileVacancies) },
                 openVacancyDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) },
                 openVacancyEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit(
@@ -169,12 +162,11 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
 
         VacancyDetailsScreen(
-            editable = user.role == UserRole.Employer,
+            editable = CurrentUser.info.role == UserRole.Employer,
             vacancyId = backStack.arguments?.getString("vacancyId"),
-            state = state
+            state = viewModel.viewState
         )
     }
     composable(RESUME_DETAILS) { backStack ->
@@ -183,19 +175,17 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
         ResumeDetailsScreen(
-            editable = user.role == UserRole.Worker,
+            editable = CurrentUser.info.role == UserRole.Worker,
             resumeId = backStack.arguments?.getString("resumeId"),
             onEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(it)) },
             onDelete = { viewModel.processIntent(MainAppContract.MainAppIntent.DeleteResume(it)) },
-            state = state
+            state = viewModel.viewState
         )
     }
     composable(RESUME_EDIT) { backStack ->
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
-        val resume = state.openedResume!!
+        val resume = viewModel.viewState.openedResume!!
 
         val onUpdateResume: (Resume, Bitmap?) -> Unit = if (resume.id.isNotEmpty()) {
             { res, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.EditResume(res, bitmap)) }
@@ -204,14 +194,13 @@ fun NavGraphBuilder.addMainApp(
         }
 
         ResumeEditScreen(
-            initResume = state.openedResume!!,
+            initResume = viewModel.viewState.openedResume!!,
             onUpdateResume = onUpdateResume
         )
     }
     composable(VACANCY_EDIT) { backStack ->
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val state by viewModel.viewState
-        val vacancy = state.openedVacancy!!
+        val vacancy = viewModel.viewState.openedVacancy!!
 
         val onUpdateVacancy: (Vacancy, Bitmap?) -> Unit = if (vacancy.id.isNotEmpty()) {
             { vac, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.EditVacancy(vac, bitmap)) }
@@ -220,7 +209,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         VacancyEditScreen(
-            initVacancy = Vacancy(),
+            initVacancy = viewModel.viewState.openedVacancy!!,
             onUpdateVacancy = onUpdateVacancy
         )
     }
@@ -229,7 +218,7 @@ fun NavGraphBuilder.addMainApp(
 @Composable
 fun NavigationController() {
     val navController = rememberNavController()
-    val shouldShowTopBar = rememberSaveable { mutableStateOf(true) }
+    val shouldShowTopBar = rememberSaveable { mutableStateOf(false) }
 
     MainAppScaffold(
         navigateFunction = navController::navigate,

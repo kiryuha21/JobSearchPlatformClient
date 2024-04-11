@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,16 +46,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerMiniProfile(modifier: Modifier = Modifier) {
-    val user by CurrentUser.info
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(start = 15.dp, top = 10.dp)
     ) {
-        if (user.imageUrl != null) {
+        if (CurrentUser.info.imageUrl != null) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(user.imageUrl)
+                    .data(CurrentUser.info.imageUrl)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.default_avatar),
@@ -69,7 +68,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
             )
         }
 
-        Text("Привет, ${user.username}!")
+        Text("Привет, ${CurrentUser.info.username}!")
     }
 }
 
@@ -197,7 +196,7 @@ fun MainAppScaffold(
     ) { onOpenDrawer ->
         Scaffold(
             topBar = {
-                if (shouldShowTopBar) {
+                AnimatedVisibility(visible = shouldShowTopBar) {
                     AppBar(onClick = onOpenDrawer)
                 }
             },

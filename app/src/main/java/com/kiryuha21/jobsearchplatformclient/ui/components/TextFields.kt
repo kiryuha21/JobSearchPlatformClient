@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -16,7 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -50,6 +54,7 @@ fun SecuredTextField(
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     var text by remember { mutableStateOf(initString) }
 
     OutlinedTextField(
@@ -59,6 +64,10 @@ fun SecuredTextField(
         label = { Text(placeholder) },
         leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
         placeholder = { Text(text = placeholder) },
+        singleLine = true,
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.moveFocus(FocusDirection.Down)
+        }),
         onValueChange = {
             text = it
             onUpdate(text)
@@ -85,24 +94,116 @@ fun DefaultTextField(
 }
 
 @Composable
-fun NumericTextField(
+fun ValidateableTextField(
     placeholder: String,
     initString: String,
-    onUpdate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onUpdate: (String, Boolean) -> Unit,
+    isValid: (String) -> Boolean,
+    errorMessage: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
+    val focusManager = LocalFocusManager.current
     var text by remember { mutableStateOf(initString) }
+    var supportingText by remember { mutableStateOf(if (isValid(initString)) "" else errorMessage) }
+
+    val leadingIcon: @Composable (() -> Unit)? = if (icon == null) {
+        null
+    } else {
+        { Icon(imageVector = icon, contentDescription = "icon") }
+    }
 
     OutlinedTextField(
         value = text,
         modifier = modifier,
         label = { Text(placeholder) },
         placeholder = { Text(text = placeholder) },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.moveFocus(FocusDirection.Down)
+        }),
+        singleLine = true,
+        isError = supportingText.isNotEmpty(),
+        supportingText = { Text(text = supportingText, color = Color.Red) },
+        leadingIcon = leadingIcon,
+        visualTransformation = visualTransformation,
+        onValueChange = {
+            text = it
+            supportingText = if (isValid(it)) "" else errorMessage
+            onUpdate(text, supportingText.isEmpty())
+        }
+    )
+}
+
+@Composable
+fun SecuredPasswordTextField(
+    icon: ImageVector,
+    enabled: Boolean,
+    placeholder: String,
+    initString: String,
+    isError: Boolean,
+    supportingText: String,
+    onUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { mutableStateOf(initString) }
+    var visible by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = text,
+        modifier = modifier,
+        label = { Text(placeholder) },
         onValueChange = {
             text = it
             onUpdate(text)
+        },
+        enabled = enabled,
+        isError = isError,
+        supportingText = {
+            if (supportingText.isNotEmpty()) {
+                Text(text = supportingText)
+            }
+        },
+        placeholder = { Text(text = placeholder) },
+        leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        singleLine = true,
+        trailingIcon = {
+            val image = if (visible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+            val description = if (visible) "Скрыть пароль" else "Показать пароль"
+
+            IconButton(onClick = { visible = !visible }) {
+                Icon(
+                    imageVector = image,
+                    contentDescription = description
+                )
+            }
         }
+    )
+}
+
+@Composable
+fun PasswordTextField(
+    icon: ImageVector,
+    placeholder: String,
+    initString: String,
+    isError: Boolean,
+    supportingText: String,
+    onUpdate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SecuredPasswordTextField(
+        icon = icon,
+        enabled = true,
+        placeholder = placeholder,
+        initString = initString,
+        isError = isError,
+        supportingText = supportingText,
+        onUpdate = onUpdate,
+        modifier = modifier
     )
 }
 
@@ -110,23 +211,23 @@ fun NumericTextField(
 fun PhoneField(
     initString: String,
     placeholder: String,
-    icon: ImageVector,
+    isValid: (String) -> Boolean,
+    errorMessage: String,
+    onUpdate: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
     mask: String = "000 000 00 00",
-    maskNumber: Char = '0',
-    onUpdate: (String) -> Unit
+    maskNumber: Char = '0'
 ) {
-    var text by remember { mutableStateOf(initString) }
-
-    OutlinedTextField(
-        value = initString,
-        onValueChange = { it ->
-            text = it.take(mask.count { it == maskNumber })
-            onUpdate(it.take(mask.count { it == maskNumber }))
+    ValidateableTextField(
+        placeholder = placeholder,
+        initString = initString,
+        onUpdate = { text, valid ->
+            onUpdate(text.take(mask.count { it == maskNumber }), valid)
         },
-        leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
-        placeholder = { Text(text = placeholder) },
-        label = { Text(text = placeholder) },
+        icon = icon,
+        isValid = isValid,
+        errorMessage = errorMessage,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
         visualTransformation = PhoneVisualTransformation(mask, maskNumber),
         modifier = modifier
@@ -184,73 +285,4 @@ private class PhoneOffsetMapper(val mask: String, val numberChar: Char) : Offset
 
     override fun transformedToOriginal(offset: Int): Int =
         offset - mask.take(offset).count { it != numberChar }
-}
-
-@Composable
-fun SecuredPasswordTextField(
-    icon: ImageVector,
-    enabled: Boolean,
-    placeholder: String,
-    initString: String,
-    isError: Boolean,
-    supportingText: String,
-    onUpdate: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var text by remember { mutableStateOf(initString) }
-    var visible by remember { mutableStateOf(false) }
-
-    OutlinedTextField(
-        value = text,
-        modifier = modifier,
-        label = { Text(placeholder) },
-        onValueChange = {
-            text = it
-            onUpdate(text)
-        },
-        enabled = enabled,
-        isError = isError,
-        supportingText = {
-            if (supportingText.isNotEmpty()) {
-                Text(text = supportingText)
-            }
-        },
-        placeholder = { Text(text = placeholder) },
-        leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val image = if (visible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-            val description = if (visible) "Скрыть пароль" else "Показать пароль"
-
-            IconButton(onClick = { visible = !visible }) {
-                Icon(
-                    imageVector = image,
-                    contentDescription = description
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun PasswordTextField(
-    icon: ImageVector,
-    placeholder: String,
-    initString: String,
-    isError: Boolean,
-    supportingText: String,
-    onUpdate: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    SecuredPasswordTextField(
-        icon = icon,
-        enabled = true,
-        placeholder = placeholder,
-        initString = initString,
-        isError = isError,
-        supportingText = supportingText,
-        onUpdate = onUpdate,
-        modifier = modifier
-    )
 }

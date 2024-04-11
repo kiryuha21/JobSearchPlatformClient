@@ -31,8 +31,6 @@ fun WorkerProfileScreen(
     openResumeDetails: (String) -> Unit,
     openResumeEdit: () -> Unit
 ) {
-    val user by CurrentUser.info
-
     LaunchedEffect(Unit) {
         loadResumes()
     }
@@ -58,7 +56,7 @@ fun WorkerProfileScreen(
         ) {
             Title(text = "Мои резюме", fontSize = 30.sp)
             Title(
-                text = "Вы вошли как ${user.username}",
+                text = "Вы вошли как ${CurrentUser.info.username}",
                 fontSize = 20.sp,
                 modifier = Modifier.padding(bottom = 20.dp)
             )

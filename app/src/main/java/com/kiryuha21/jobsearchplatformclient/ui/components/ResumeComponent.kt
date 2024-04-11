@@ -1,17 +1,15 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -28,11 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,139 +39,8 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
+import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlin.math.min
-
-@Composable
-fun ResumeCard(
-    resume: Resume,
-    modifier: Modifier = Modifier
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-    Card(
-        onClick = { isExpanded = !isExpanded },
-        modifier = modifier.padding(10.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(10.dp)
-                .animateContentSize()
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Filled.Work, contentDescription = "title")
-                Text(
-                    text = resume.applyPosition,
-                    fontSize = 20.sp,
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W600,
-                    modifier = Modifier.offset(x = 10.dp)
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                Icon(imageVector = Icons.Filled.Person, contentDescription = "full name")
-                Text(
-                    text = resume.fullName(),
-                    fontSize = 16.sp,
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W700,
-                    modifier = Modifier.padding(start = 10.dp)
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                Icon(imageVector = Icons.Filled.Email, contentDescription = "email")
-                Text(
-                    text = "E-mail: ${resume.contactEmail}",
-                    fontSize = 16.sp,
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.offset(x = 10.dp)
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                Icon(imageVector = Icons.Filled.Phone, contentDescription = "contact phone")
-                Text(
-                    text = "Контактный телефон: ${resume.phoneNumber}",
-                    fontSize = 16.sp,
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.offset(x = 10.dp)
-                )
-            }
-
-            if (isExpanded) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 10.dp)
-                ) {
-                    Icon(imageVector = Icons.Filled.Build, contentDescription = "skills")
-                    Text(text = "Навыки:", fontSize = 16.sp, modifier = Modifier.offset(x = 10.dp))
-                }
-                for (skill in resume.skills) {
-                    Text(
-                        buildAnnotatedString {
-                            withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 19.sp))) {
-                                append(Typography.bullet)
-                                append("\t\t")
-                                append(skill.toString())
-                            }
-                        }
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 10.dp)
-                ) {
-                    Icon(imageVector = Icons.Filled.Build, contentDescription = "work experience")
-                    Text(
-                        text = "Стаж работы:",
-                        fontSize = 16.sp,
-                        modifier = Modifier.offset(x = 10.dp)
-                    )
-                }
-                for (experience in resume.workExperience) {
-                    Text(
-                        buildAnnotatedString {
-                            withStyle(style = ParagraphStyle(textIndent = TextIndent(firstLine = 19.sp))) {
-                                append(Typography.bullet)
-                                append("\t\t")
-                                append(experience.workMonthsFormatted())
-                                append(" в ${experience.company.name} как ${experience.positionFormatted()}")
-                            }
-                        }
-                    )
-                }
-            } else {
-                Box(
-                    contentAlignment = Alignment.BottomCenter,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 25.dp)
-                ) {
-                    Text(
-                        text = "Нажмите чтобы раскрыть",
-                        fontSize = 12.sp,
-                        fontFamily = interFontFamily
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {
@@ -277,7 +141,9 @@ fun SkillForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var validName by remember { mutableStateOf(false) }
     var skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
+
     val comboBoxItems = listOf(
         ComboBoxItem("Имею представление") {
             skill = skill.copy(skillLevel = SkillLevel.AwareOf)
@@ -296,11 +162,20 @@ fun SkillForm(
     Column(
         modifier = modifier
     ) {
-        DefaultTextField(
+        ValidateableTextField(
             icon = Icons.Default.Abc,
             placeholder = "Названия навыка",
             initString = "",
-            onUpdate = { skill = skill.copy(name = it) },
+            onUpdate = { value, valid ->
+                if (valid) {
+                    validName = true
+                    skill = skill.copy(name = value)
+                } else {
+                    validName = false
+                }
+            },
+            isValid = { it.isNotBlank() },
+            errorMessage = "Название навыка не может быть пустым",
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -316,7 +191,7 @@ fun SkillForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            DefaultButton(text = "Сохранить", onClick = { onSubmit(skill) })
+            SecuredButton(text = "Сохранить", onClick = { onSubmit(skill) }, enabled = validName)
             DefaultButton(text = "Отменить", onClick = onCancel)
         }
     }
@@ -328,6 +203,11 @@ fun WorkExperienceForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var validSalary by remember { mutableStateOf(false) }
+    var validMonths by remember { mutableStateOf(false) }
+    var validCompany by remember { mutableStateOf(false) }
+    var validPosition by remember { mutableStateOf(false) }
+
     var workExperience by remember {
         mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
     }
@@ -349,7 +229,6 @@ fun WorkExperienceForm(
     Column(
         modifier = modifier
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -358,25 +237,63 @@ fun WorkExperienceForm(
             ComboBox(items = comboBoxItems)
         }
 
-        DefaultTextField(
+        ValidateableTextField(
+            icon = Icons.Default.Abc,
+            placeholder = "Название компании",
+            initString = "",
+            onUpdate = { value, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(company = Company(value))
+                }
+                validCompany = valid
+            },
+            isValid = { it.isNotBlank() },
+            errorMessage = "Название не может быть пустым",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        ValidateableTextField(
             icon = Icons.Default.Abc,
             placeholder = "Позиция",
             initString = "",
-            onUpdate = { workExperience = workExperience.copy(position = it) },
+            onUpdate = { value, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(position = value)
+                }
+                validPosition = valid
+            },
+            isValid = { it.isNotBlank() },
+            errorMessage = "Позиция не может быть пустой",
             modifier = Modifier.fillMaxWidth()
         )
 
-        NumericTextField(
+        ValidateableTextField(
             placeholder = "Зарплата (₽)",
-            initString = "0",
-            onUpdate = { workExperience = workExperience.copy(salary = it.toInt()) },
+            initString = "",
+            onUpdate = { text, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(salary = text.toInt())
+                }
+                validSalary = valid
+            },
+            isValid = { it.isNotEmpty() && it.isNumeric() },
+            errorMessage = "Введите корректное число",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 
-        NumericTextField(
+        ValidateableTextField(
             placeholder = "Месяцев проработано",
-            initString = "0",
-            onUpdate = { workExperience = workExperience.copy(months = it.toInt()) },
+            initString = "",
+            onUpdate = { text, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(months = text.toInt())
+                }
+                validMonths = valid
+            },
+            isValid = { it.isNotEmpty() && it.isNumeric() },
+            errorMessage = "Введите корректное число",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -386,10 +303,84 @@ fun WorkExperienceForm(
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         ) {
-            DefaultButton(text = "Сохранить", onClick = { onSubmit(workExperience) })
+            val valid = validCompany && validPosition && validMonths && validSalary
+
+            SecuredButton(
+                text = "Сохранить",
+                onClick = { onSubmit(workExperience) },
+                enabled = valid
+            )
             DefaultButton(text = "Отменить", onClick = onCancel)
         }
     }
+}
+
+@Composable
+fun ResumeEditForm(
+    resume: Resume,
+    comboBoxItems: List<ComboBoxItem>,
+    onFirstNameUpdate: (String, Boolean) -> Unit,
+    onLastNameUpdate: (String, Boolean) -> Unit,
+    onPhoneUpdate: (String, Boolean) -> Unit,
+    onEmailUpdate: (String, Boolean) -> Unit,
+    onPositionUpdate: (String, Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "Статус резюме")
+        ComboBox(items = comboBoxItems)
+    }
+    ValidateableTextField(
+        placeholder = "Имя",
+        initString = resume.firstName,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Имя не может быть пустым",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Abc,
+        onUpdate = onFirstNameUpdate
+    )
+    ValidateableTextField(
+        placeholder = "Фамилия",
+        initString = resume.lastName,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Фамилия не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Abc,
+        onUpdate = onLastNameUpdate
+    )
+    PhoneField(
+        initString = resume.phoneNumber,
+        placeholder = "Номер телефона",
+        icon = Icons.Default.Phone,
+        mask = "0-(000)-000-00-00",
+        onUpdate = onPhoneUpdate,
+        errorMessage = "Введите корректный телефон",
+        isValid = { it.isNotBlank() && it.isNumeric() },
+        modifier = Modifier.fillMaxWidth()
+    )
+    ValidateableTextField(
+        placeholder = "E-mail",
+        initString = resume.contactEmail,
+        isValid = { it.isNotBlank() },
+        errorMessage = "E-mail не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Email,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        onUpdate = onEmailUpdate
+    )
+    ValidateableTextField(
+        placeholder = "Позиция",
+        initString = resume.applyPosition,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Позиция не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Work,
+        onUpdate = onPositionUpdate
+    )
 }
 
 @Preview(showBackground = true)
@@ -402,39 +393,6 @@ fun WorkExperienceFormPreview() {
 @Composable
 fun SkillFormPreview() {
     SkillForm({}, {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardPreview() {
-    ResumeCard(
-        resume = Resume(
-            "12khe12nj1nek",
-            "John",
-            "Smit",
-            "12909483",
-            "hey@gmail.com",
-            "Senior C++ developer",
-            listOf(
-                Skill(
-                    "C++ development",
-                    SkillLevel.HasCommercialProjects
-                )
-            ),
-            listOf(
-                WorkExperience(
-                    Company(
-                        "yandex",
-                    ),
-                    "C++ developer",
-                    PositionLevel.Lead,
-                    100500,
-                    420
-                )
-            ),
-            PublicationStatus.Published
-        ), modifier = Modifier.fillMaxWidth()
-    )
 }
 
 @Preview(showBackground = true)

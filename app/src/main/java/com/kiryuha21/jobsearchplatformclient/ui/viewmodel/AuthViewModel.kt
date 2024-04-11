@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(private val navController: NavController) :
     BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
+
     override fun initialState(): AuthContract.AuthState {
         return AuthContract.AuthState(
             isLoading = false,
@@ -30,14 +32,17 @@ class AuthViewModel(private val navController: NavController) :
         when (intent) {
             is AuthContract.AuthIntent.NavigateToLogin -> {
                 navController.navigate(NavigationGraph.Authentication.LOG_IN)
+                setState { copy(isError = false) }
             }
 
             is AuthContract.AuthIntent.NavigateToResetPassword -> {
                 navController.navigate(NavigationGraph.Authentication.RESET_PASSWORD)
+                setState { copy(isError = false) }
             }
 
             is AuthContract.AuthIntent.NavigateToSignUp -> {
                 navController.navigate(NavigationGraph.Authentication.SIGN_UP)
+                setState { copy(isError = false) }
             }
 
             is AuthContract.AuthIntent.FixError -> setState { copy(isError = false) }
@@ -57,7 +62,7 @@ class AuthViewModel(private val navController: NavController) :
     private fun tryLogIn() {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val successfulLogin = CurrentUser.tryLogIn(_viewState.value.username, _viewState.value.password)
+            val successfulLogin = CurrentUser.tryLogIn(viewState.username, viewState.password)
             if (successfulLogin) {
                 setState { copy(isLoading = false) }
                 navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
@@ -76,10 +81,10 @@ class AuthViewModel(private val navController: NavController) :
         viewModelScope.launch {
             val successfulRegister = CurrentUser.trySignUp(
                 UserDTO.SignUpUserDTO(
-                    email = viewState.value.email,
-                    username = viewState.value.username,
-                    password = viewState.value.password,
-                    role = viewState.value.role
+                    email = viewState.email,
+                    username = viewState.username,
+                    password = viewState.password,
+                    role = viewState.role
                 )
             )
             if (successfulRegister) {

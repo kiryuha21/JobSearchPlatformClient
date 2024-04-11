@@ -26,9 +26,9 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainA
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_EDIT
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_EDIT
+import com.kiryuha21.jobsearchplatformclient.util.toRequestBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -39,7 +39,6 @@ class MainAppViewModel(private val navController: NavController) :
     private val resumeRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
     private val vacancyRetrofit = RetrofitObject.retrofit.create(VacancyAPI::class.java)
     private val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
-    private val user by CurrentUser.info
 
     override fun initialState(): MainAppContract.MainAppState {
         return MainAppContract.MainAppState(
@@ -87,10 +86,10 @@ class MainAppViewModel(private val navController: NavController) :
 
             val body = MultipartBody.Part.createFormData(
                 "picture",
-                user.username,
+                CurrentUser.info.username,
                 byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
             )
-            userRetrofit.setPicture(token, user.username, body)
+            userRetrofit.setPicture(token, CurrentUser.info.username, body)
         }
     }
 
@@ -113,7 +112,7 @@ class MainAppViewModel(private val navController: NavController) :
     private fun loadProfileResumes() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
-            val resumes = resumeRetrofit.getResumesByWorkerLogin(user.username).map { it.toDomainResume() }
+            val resumes = resumeRetrofit.getResumesByWorkerLogin(CurrentUser.info.username).map { it.toDomainResume() }
             setState { copy(isLoading = false, resumes = resumes) }
         }
     }
@@ -121,7 +120,7 @@ class MainAppViewModel(private val navController: NavController) :
     private fun loadProfileVacancies() {
         viewModelScope.launch(Dispatchers.IO) {
             setState { copy(isLoading = true) }
-            val vacancies = vacancyRetrofit.getVacanciesByEmployerLogin(user.username).map { it.toDomainVacancy() }
+            val vacancies = vacancyRetrofit.getVacanciesByEmployerLogin(CurrentUser.info.username).map { it.toDomainVacancy() }
             setState { copy(isLoading = false, vacancies = vacancies) }
         }
     }
@@ -162,13 +161,10 @@ class MainAppViewModel(private val navController: NavController) :
             val editedResume = resumeRetrofit.editResume(token, resume.id, resume.toResumeDTO())
 
             if (bitmap != null) {
-                val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
-                val byteArray = stream.toByteArray()
                 val body = MultipartBody.Part.createFormData(
                     "picture",
                     resume.id,
-                    byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, byteArray.size)
+                    bitmap.toRequestBody(100)
                 )
                 resumeRetrofit.setPicture(token, editedResume.id, body)
             }

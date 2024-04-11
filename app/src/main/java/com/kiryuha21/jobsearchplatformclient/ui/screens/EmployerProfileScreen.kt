@@ -32,8 +32,6 @@ fun EmployerProfileScreen(
     openVacancyDetails: (String) -> Unit,
     openVacancyEdit: () -> Unit
 ) {
-    val user by CurrentUser.info
-
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
@@ -51,7 +49,7 @@ fun EmployerProfileScreen(
                 .padding(paddingValues)
         ) {
             Title(text = "Мои вакансии", fontSize = 30.sp)
-            Title(text = "Вы вошли как ${user.username}", fontSize = 20.sp)
+            Title(text = "Вы вошли как ${CurrentUser.info.username}", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(20.dp))
 
             LaunchedEffect(Unit) {
