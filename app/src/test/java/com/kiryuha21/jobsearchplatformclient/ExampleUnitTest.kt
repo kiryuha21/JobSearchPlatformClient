@@ -37,14 +37,34 @@ class ExampleUnitTest {
             role = UserRole.Worker
         )
 
-        val newUser = userRetrofit.createNewUser(user)
-        val createdUser = userRetrofit.getUserByUsername("my_example_login")
+        val newUser = try {
+            userRetrofit.createNewUser(user)
+        } catch (e: Exception) {
+            println(e.message)
+            throw Exception(e.message)
+        }
+        val createdUser = try {
+            userRetrofit.getUserByUsername("my_example_login")
+        } catch (e: Exception) {
+            println(e.message)
+            throw Exception(e.message)
+        }
         assertEquals(newUser, createdUser)
 
-        AuthToken.createToken("my_example_login", "secure_one")
+        try {
+            AuthToken.createToken("my_example_login", "secure_one")
+        } catch (e: Exception) {
+            println(e.message)
+            throw Exception(e.message)
+        }
         assertNotNull(AuthToken.getToken())
 
-        userRetrofit.deleteUserByUsername("my_example_login", "Bearer ${AuthToken.getToken()}")
+        try {
+            userRetrofit.deleteUserByUsername("my_example_login", "Bearer ${AuthToken.getToken()}")
+        } catch (e: Exception) {
+            println(e.message)
+            throw Exception(e.message)
+        }
         assertThrows(Exception::class.java) {
             runTest {
                 userRetrofit.getUserByUsername("my_example_login")
