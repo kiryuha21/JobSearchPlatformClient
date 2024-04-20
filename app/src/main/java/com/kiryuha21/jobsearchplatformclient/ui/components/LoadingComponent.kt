@@ -11,14 +11,13 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingComponent(modifier: Modifier = Modifier) {
+fun LoadingComponent(modifier: Modifier = Modifier, description: String = "Loading...") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
         CircularProgressIndicator()
-        Text(text = "Loading...")
+        Text(text = description)
     }
-
 }

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -63,6 +62,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeEditForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.WorkExperienceForm
@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ResumeEditScreen(
     initResume: Resume,
+    isLoading: Boolean,
     onUpdateResume: (Resume, Bitmap?) -> Unit
 ) {
     var validName by remember { mutableStateOf(initResume.firstName.isNotBlank()) }
@@ -143,6 +144,11 @@ fun ResumeEditScreen(
                 .padding(10.dp)
                 .verticalScroll(scrollState)
         ) {
+            if (isLoading) {
+                LoadingComponent(description = "Сохранение резюме...")
+                return@Column
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -174,8 +180,6 @@ fun ResumeEditScreen(
                         }
                 )
 
-                Spacer(modifier = Modifier.width(20.dp))
-
                 Card(
                     colors = CardColors(
                         containerColor = Color.LightGray,
@@ -183,7 +187,8 @@ fun ResumeEditScreen(
                         disabledContainerColor = Color.LightGray,
                         disabledContentColor = Color.Gray
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
+                    modifier = Modifier.padding(start = 20.dp)
                 ) {
                     Row(
                         modifier = Modifier.padding(10.dp),
@@ -374,6 +379,6 @@ fun ResumeEditScreenPreview() {
                 )
             ),
             PublicationStatus.Published
-        )
+        ), false
     ) { _, _ -> }
 }
