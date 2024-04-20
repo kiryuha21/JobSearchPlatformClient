@@ -11,6 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import retrofit2.HttpException
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -41,6 +42,9 @@ class ExampleUnitTest {
         val newUser = runTest {
             try {
                 userRetrofit.createNewUser(user)
+            } catch (e: HttpException) {
+                Log.e("tag1", e.message())
+                throw Exception(e.message())
             } catch (e: Exception) {
                 Log.e("tag1", e.message.toString())
                 throw Exception(e.message)
