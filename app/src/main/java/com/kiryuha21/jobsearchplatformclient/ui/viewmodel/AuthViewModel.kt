@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,7 +10,9 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthViewModel(private val navController: NavController) :
     BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
@@ -60,11 +61,17 @@ class AuthViewModel(private val navController: NavController) :
     }
 
     private fun tryLogIn() {
+        setState { copy(isLoading = true) }
+
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
-            val successfulLogin = CurrentUser.tryLogIn(viewState.username, viewState.password)
+            val successfulLogin = withContext(Dispatchers.IO) {
+                CurrentUser.tryLogIn(
+                    viewState.username,
+                    viewState.password
+                )
+            }
+
             if (successfulLogin) {
-                setState { copy(isLoading = false) }
                 navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
                     popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                         inclusive = true
@@ -79,16 +86,18 @@ class AuthViewModel(private val navController: NavController) :
     private fun createNewUser() {
         setState { copy(isLoading = true) }
         viewModelScope.launch {
-            val successfulRegister = CurrentUser.trySignUp(
-                UserDTO.SignUpUserDTO(
-                    email = viewState.email,
-                    username = viewState.username,
-                    password = viewState.password,
-                    role = viewState.role
+            val successfulRegister = withContext(Dispatchers.IO) {
+                CurrentUser.trySignUp(
+                    UserDTO.SignUpUserDTO(
+                        email = viewState.email,
+                        username = viewState.username,
+                        password = viewState.password,
+                        role = viewState.role
+                    )
                 )
-            )
+            }
+
             if (successfulRegister) {
-                setState { copy(isLoading = false) }
                 navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
                     popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                         inclusive = true

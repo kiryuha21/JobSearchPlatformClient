@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object CurrentUser {
-    private val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
+    private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
     private val _info: MutableState<User> = mutableStateOf(User("", "", UserRole.Worker, UserStatus.Active, null))
     val info by _info
 

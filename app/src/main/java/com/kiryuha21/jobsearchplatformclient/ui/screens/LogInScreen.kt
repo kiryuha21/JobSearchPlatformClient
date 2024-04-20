@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.ui.components.ErrorComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.FixableErrorComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
@@ -27,7 +33,8 @@ fun LogInScreen(
     onPasswordFieldEdited: (String) -> Unit,
     onLogin: () -> Unit,
     onResetPassword: () -> Unit,
-    onSignUp: () -> Unit
+    onSignUp: () -> Unit,
+    onErrorFix: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,10 +59,17 @@ fun LogInScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        when (state.isLoading) {
-            true -> LoadingComponent()
+        when {
+            state.isLoading -> LoadingComponent()
+            state.isError -> FixableErrorComponent(
+                errorImage = Icons.Rounded.Error,
+                text = "Ой! Что-то пошло не по плану",
+                fixImage = Icons.Rounded.Refresh,
+                fixFunction = onErrorFix,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            false -> {
+            else -> {
                 LoginForm(
                     onLogin = onLogin,
                     onResetPassword = onResetPassword,
@@ -86,10 +100,5 @@ fun LoginScreenPreview() {
             role = UserRole.Worker,
             password ="",
             passwordRepeat = ""
-        ),
-        {},
-        {},
-        {},
-        {},
-        {})
+        ), {}, {}, {}, {}, {}, {})
 }

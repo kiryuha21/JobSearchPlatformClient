@@ -59,7 +59,8 @@ fun NavGraphBuilder.addAuthentication(
             },
             onResetPassword = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToResetPassword) },
             onSignUp = { viewModel.processIntent(AuthContract.AuthIntent.NavigateToSignUp) },
-            onLogin = { viewModel.processIntent(AuthContract.AuthIntent.LogIn) }
+            onLogin = { viewModel.processIntent(AuthContract.AuthIntent.LogIn) },
+            onErrorFix = { viewModel.processIntent(AuthContract.AuthIntent.FixError) }
         )
     }
     composable(SIGN_UP) {
@@ -195,6 +196,7 @@ fun NavGraphBuilder.addMainApp(
 
         ResumeEditScreen(
             initResume = viewModel.viewState.openedResume!!,
+            isLoading = viewModel.viewState.isLoading,
             onUpdateResume = onUpdateResume
         )
     }

@@ -4,11 +4,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitObject {
-    private const val BASE_URL = "http://46.8.53.121:8080/api/"
+    private const val BASE_URL = "https://job-search-platform.ru/api/"
 
     val retrofit: Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(UnsafeHttpClient.instance)  // TODO: replace with safe client
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 }

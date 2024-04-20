@@ -1,7 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import android.graphics.Bitmap
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -28,17 +27,16 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainA
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_EDIT
 import com.kiryuha21.jobsearchplatformclient.util.toRequestBody
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
 
 class MainAppViewModel(private val navController: NavController) :
     BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
-    private val resumeRetrofit = RetrofitObject.retrofit.create(ResumeAPI::class.java)
-    private val vacancyRetrofit = RetrofitObject.retrofit.create(VacancyAPI::class.java)
-    private val userRetrofit = RetrofitObject.retrofit.create(UserAPI::class.java)
+    private val resumeRetrofit by lazy { RetrofitObject.retrofit.create(ResumeAPI::class.java) }
+    private val vacancyRetrofit by lazy { RetrofitObject.retrofit.create(VacancyAPI::class.java) }
+    private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
 
     override fun initialState(): MainAppContract.MainAppState {
         return MainAppContract.MainAppState(
@@ -78,14 +76,17 @@ class MainAppViewModel(private val navController: NavController) :
     }
 
     private fun setUserImage(bitmap: Bitmap) {
+        val token = viewModelScope.async(Dispatchers.IO) {
+            "Bearer ${AuthToken.getToken()}"
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()}"
             val body = MultipartBody.Part.createFormData(
                 "picture",
                 CurrentUser.info.username,
                 bitmap.toRequestBody(100)
             )
-            userRetrofit.setPicture(token, CurrentUser.info.username, body)
+            userRetrofit.setPicture(token.await(), CurrentUser.info.username, body)
         }
     }
 
@@ -131,100 +132,147 @@ class MainAppViewModel(private val navController: NavController) :
     }
 
     private fun createNewResume(resume: Resume, bitmap: Bitmap?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()}"
-            val newResume = resumeRetrofit.createNewResume(token, resume.toResumeDTO())
-
-            if (bitmap != null) {
-                val body = MultipartBody.Part.createFormData(
-                    "picture",
-                    resume.id,
-                    bitmap.toRequestBody(100)
-                )
-                resumeRetrofit.setPicture(token, newResume.id, body)
-            }
+        val token = viewModelScope.async(Dispatchers.IO) {
+            "Bearer ${AuthToken.getToken()}"
         }
-        navController.popBackStack()
-        navController.navigate(PROFILE)
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            withContext(Dispatchers.IO) {
+                val newResume = resumeRetrofit.createNewResume(token.await(), resume.toResumeDTO())
+
+                if (bitmap != null) {
+                    val body = MultipartBody.Part.createFormData(
+                        "picture",
+                        resume.id,
+                        bitmap.toRequestBody(100)
+                    )
+                    resumeRetrofit.setPicture(token.await(), newResume.id, body)
+                }
+            }
+
+            setState { copy(isLoading = false) }
+            navController.popBackStack()
+            navController.navigate(PROFILE)
+        }
     }
 
     private fun editResume(resume: Resume, bitmap: Bitmap?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()}"
-            val editedResume = resumeRetrofit.editResume(token, resume.id, resume.toResumeDTO())
-
-            if (bitmap != null) {
-                val body = MultipartBody.Part.createFormData(
-                    "picture",
-                    resume.id,
-                    bitmap.toRequestBody(100)
-                )
-                resumeRetrofit.setPicture(token, editedResume.id, body)
-            }
-            setState { copy(openedResume = editedResume.toDomainResume()) }
+        val token = viewModelScope.async(Dispatchers.IO) {
+            "Bearer ${AuthToken.getToken()}"
         }
-        navController.navigate(PROFILE)
+
+        val job = if (bitmap != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val body = MultipartBody.Part.createFormData(
+                    name = "picture",
+                    filename = resume.id,
+                    body = bitmap.toRequestBody(100)
+                )
+                resumeRetrofit.setPicture(token.await(), resume.id, body)
+            }
+        } else null
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            val editedResume = withContext(Dispatchers.IO) {
+                resumeRetrofit.editResume(token.await(), resume.id, resume.toResumeDTO())
+            }
+            job?.join()
+
+            setState { copy(openedResume = editedResume.toDomainResume(), isLoading = false) }
+            navController.navigate(PROFILE)
+        }
     }
 
     private fun deleteResume(resumeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId)
+            }
+            navController.popBackStack()
+            navController.navigate(PROFILE)
         }
-        navController.popBackStack()
-        navController.navigate(PROFILE)
     }
 
     private fun openVacancyDetails(vacancyId: String) {
         navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val vacancy = vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy()
+            val vacancy = withContext(Dispatchers.IO) {
+                vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy()
+            }
             setState { copy(isLoading = false, openedVacancy = vacancy) }
         }
     }
 
     private fun createNewVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()}"
-            val newResume = vacancyRetrofit.createNewVacancy(token, vacancy.toVacancyDTO())
-
-            if (bitmap != null) {
-                val body = MultipartBody.Part.createFormData(
-                    "picture",
-                    vacancy.id,
-                    bitmap.toRequestBody(100)
-                )
-                vacancyRetrofit.setPicture(token, newResume.id, body)
-            }
+        val token = viewModelScope.async(Dispatchers.IO) {
+            "Bearer ${AuthToken.getToken()}"
         }
-        navController.popBackStack()
-        navController.navigate(PROFILE)
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            withContext(Dispatchers.IO) {
+                val newResume =
+                    vacancyRetrofit.createNewVacancy(token.await(), vacancy.toVacancyDTO())
+
+                if (bitmap != null) {
+                    val body = MultipartBody.Part.createFormData(
+                        "picture",
+                        vacancy.id,
+                        bitmap.toRequestBody(100)
+                    )
+                    vacancyRetrofit.setPicture(token.await(), newResume.id, body)
+                }
+            }
+
+            setState { copy(isLoading = false) }
+            navController.popBackStack()
+            navController.navigate(PROFILE)
+        }
     }
 
     private fun editVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val token = "Bearer ${AuthToken.getToken()}"
-            val editedVacancy = vacancyRetrofit.editVacancy(token, vacancy.id, vacancy.toVacancyDTO())
-
-            if (bitmap != null) {
-                val body = MultipartBody.Part.createFormData(
-                    "picture",
-                    vacancy.id,
-                    bitmap.toRequestBody(100)
-                )
-                vacancyRetrofit.setPicture(token, editedVacancy.id, body)
-            }
-            setState { copy(openedVacancy = editedVacancy.toDomainVacancy()) }
+        val token = viewModelScope.async(Dispatchers.IO) {
+            "Bearer ${AuthToken.getToken()}"
         }
-        navController.navigate(PROFILE)
+
+        val job = if (bitmap != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val body = MultipartBody.Part.createFormData(
+                    name = "picture",
+                    filename = vacancy.id,
+                    body = bitmap.toRequestBody(100)
+                )
+                vacancyRetrofit.setPicture(token.await(), vacancy.id, body)
+            }
+        } else null
+
+        viewModelScope.launch {
+            setState { copy(isLoading = true) }
+
+            val editedVacancy = withContext(Dispatchers.IO) {
+                vacancyRetrofit.editVacancy(token.await(), vacancy.id, vacancy.toVacancyDTO())
+            }
+            job?.join()
+
+            setState { copy(openedVacancy = editedVacancy.toDomainVacancy(), isLoading = false) }
+            navController.navigate(PROFILE)
+        }
     }
 
     private fun deleteVacancy(vacancyId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId)
+            }
+            navController.popBackStack()
+            navController.navigate(PROFILE)
         }
-        navController.popBackStack()
-        navController.navigate(PROFILE)
     }
 
     private fun logOut() {

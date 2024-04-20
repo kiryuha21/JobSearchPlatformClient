@@ -196,7 +196,7 @@ fun MainAppScaffold(
     ) { onOpenDrawer ->
         Scaffold(
             topBar = {
-                AnimatedVisibility(visible = shouldShowTopBar) {
+                if (shouldShowTopBar) {
                     AppBar(onClick = onOpenDrawer)
                 }
             },
