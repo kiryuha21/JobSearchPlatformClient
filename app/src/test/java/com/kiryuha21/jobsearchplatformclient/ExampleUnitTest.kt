@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient
 
+import android.util.Log
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
@@ -27,7 +28,7 @@ class ExampleUnitTest {
         val userRetrofit = try {
             RetrofitObject.retrofit.create(UserAPI::class.java)
         } catch (e: Exception) {
-            println(e.message)
+            Log.i("tag1", e.message.toString())
             throw Exception(e.message)
         }
         val user = UserDTO.SignUpUserDTO(
@@ -41,7 +42,7 @@ class ExampleUnitTest {
             try {
                 userRetrofit.createNewUser(user)
             } catch (e: Exception) {
-                println(e.message)
+                Log.i("tag1", e.message.toString())
                 throw Exception(e.message)
             }
         }
@@ -49,7 +50,7 @@ class ExampleUnitTest {
             try {
                 userRetrofit.getUserByUsername("my_example_login")
             } catch (e: Exception) {
-                println(e.message)
+                Log.i("tag1", e.message.toString())
                 throw Exception(e.message)
             }
         }
@@ -59,7 +60,7 @@ class ExampleUnitTest {
             try {
                 AuthToken.createToken("my_example_login", "secure_one")
             } catch (e: Exception) {
-                println(e.message)
+                Log.i("tag1", e.message.toString())
                 throw Exception(e.message)
             }
             assertNotNull(AuthToken.getToken())
@@ -72,7 +73,7 @@ class ExampleUnitTest {
                     "Bearer ${AuthToken.getToken()}"
                 )
             } catch (e: Exception) {
-                println(e.message)
+                Log.i("tag1", e.message.toString())
                 throw Exception(e.message)
             }
         }
