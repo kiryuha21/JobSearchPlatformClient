@@ -44,6 +44,11 @@ class ExampleUnitTest {
                 userRetrofit.createNewUser(user)
             } catch (e: HttpException) {
                 Log.i("tag1", e.message())
+                Log.i("tag1", e.message.toString())
+                Log.i("tag1", e.response().toString())
+                Log.i("tag1", e.code().toString())
+                Log.i("tag1", e.stackTraceToString())
+                Log.i("tag1", e.stackTrace.toString())
                 throw Exception(e.message())
             } catch (e: Exception) {
                 Log.i("tag1", e.message.toString())
