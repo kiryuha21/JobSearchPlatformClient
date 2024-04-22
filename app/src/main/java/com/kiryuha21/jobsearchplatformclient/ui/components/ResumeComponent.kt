@@ -10,14 +10,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.WorkOutline
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +47,78 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlin.math.min
+
+@Composable
+fun ResumeImageHintCard(modifier: Modifier = Modifier) {
+    Card(
+        colors = CardColors(
+            containerColor = Color.LightGray,
+            contentColor = Color.Black,
+            disabledContainerColor = Color.LightGray,
+            disabledContentColor = Color.Gray
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier.padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
+            Text(text = "Фото значительно повышает статус резюме")
+        }
+    }
+}
+
+@Composable
+fun ClickableSkillsList(
+    skills: List<Skill>,
+    imageVector: ImageVector,
+    onClick: (Int) -> Unit
+) {
+    if (skills.isNotEmpty()) {
+        Text(text = "Навыки:", modifier = Modifier.padding(top = 10.dp))
+        skills.forEachIndexed { index, skill ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = skill.toString(), modifier = Modifier.fillMaxWidth(0.8f))
+                IconButton(
+                    onClick = { onClick(index) }
+                ) {
+                    Icon(imageVector = imageVector, contentDescription = "delete")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ClickableWorkExperienceList(
+    workExperience: List<WorkExperience>,
+    imageVector: ImageVector,
+    onClick: (Int) -> Unit
+) {
+    if (workExperience.isNotEmpty()) {
+        Text(text = "Опыт работы", modifier = Modifier.padding(top = 10.dp))
+        workExperience.forEachIndexed { index, exp ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = exp.toString(), modifier = Modifier.fillMaxWidth(0.8f))
+                IconButton(
+                    onClick = { onClick(index) }
+                ) {
+                    Icon(imageVector = imageVector, contentDescription = "delete")
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {

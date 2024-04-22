@@ -26,14 +26,13 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedMainAppViewModel(
-    navController: NavController,
-    tokenDatasourceProvider: TokenDataStore
+    navController: NavController
 ): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = MainAppViewModel.provideFactory(navController, tokenDatasourceProvider)
+        factory = MainAppViewModel.provideFactory(navController)
     )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController, tokenDatasourceProvider))
+    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController))
 }

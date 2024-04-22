@@ -121,8 +121,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
 
         LaunchedEffect(key1 = Unit) {
@@ -154,8 +153,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
 
         when (CurrentUser.info.role) {
@@ -182,8 +180,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
         SettingsScreen({}, {}, {})
     }
@@ -193,8 +190,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
 
         VacancyDetailsScreen(
@@ -209,8 +205,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
 
         ResumeDetailsScreen(
@@ -223,8 +218,7 @@ fun NavGraphBuilder.addMainApp(
     }
     composable(RESUME_EDIT) { backStack ->
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
         val resume = viewModel.viewState.openedResume!!
 
@@ -242,8 +236,7 @@ fun NavGraphBuilder.addMainApp(
     }
     composable(VACANCY_EDIT) { backStack ->
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(LocalContext.current)
+            navController
         )
         val vacancy = viewModel.viewState.openedVacancy!!
 
