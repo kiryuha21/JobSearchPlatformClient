@@ -15,13 +15,16 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 fun EmployerHomeScreen(
     state: MainAppContract.MainAppState,
     loadResumes: () -> Unit,
-    openResumeDetails: (String) -> Unit
+    openResumeDetails: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LaunchedEffect(key1 = true) {
         loadResumes()
     }
 
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         when (state.isLoading) {
             true -> {
                 items(10) {

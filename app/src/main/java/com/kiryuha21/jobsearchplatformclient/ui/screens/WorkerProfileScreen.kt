@@ -29,7 +29,8 @@ fun WorkerProfileScreen(
     state: MainAppContract.MainAppState,
     loadResumes: () -> Unit,
     openResumeDetails: (String) -> Unit,
-    openResumeEdit: () -> Unit
+    openResumeEdit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LaunchedEffect(Unit) {
         loadResumes()
@@ -46,7 +47,8 @@ fun WorkerProfileScreen(
             ) {
                 Text(text = "Новое резюме")
             }
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

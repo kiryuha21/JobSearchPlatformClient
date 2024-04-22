@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingComponent(modifier: Modifier = Modifier, description: String = "Loading...") {
+fun LoadingComponent(modifier: Modifier = Modifier, description: String = "Загрузка...") {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

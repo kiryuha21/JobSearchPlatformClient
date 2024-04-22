@@ -15,13 +15,16 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 fun WorkerHomeScreen(
     state: MainAppContract.MainAppState,
     loadVacancies: () -> Unit,
-    openVacancyDetails: (String) -> Unit
+    openVacancyDetails: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LaunchedEffect(key1 = true) {
         loadVacancies()
     }
 
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         when (state.isLoading) {
             true -> {
                 items(10) {

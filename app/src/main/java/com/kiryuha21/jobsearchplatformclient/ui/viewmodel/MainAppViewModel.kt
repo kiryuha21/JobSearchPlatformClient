@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
@@ -281,10 +282,13 @@ class MainAppViewModel(
 
     private fun logOut() {
         viewModelScope.launch {
+            if (CurrentUser.info.role == UserRole.Worker) {
+                setState { copy(vacancies = emptyList()) }
+            } else {
+                setState { copy(resumes = emptyList()) }
+            }
             withContext(Dispatchers.IO) {
-                Log.d("tag1", "refresh token is ${tokenDatasourceProvider.getRefreshToken(this)}")
                 tokenDatasourceProvider.deleteRefreshToken()
-                Log.d("tag1", "refresh token is ${tokenDatasourceProvider.getRefreshToken(this)}")
             }
             navController.navigate(NavigationGraph.Authentication.LOG_IN) {
                 popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {

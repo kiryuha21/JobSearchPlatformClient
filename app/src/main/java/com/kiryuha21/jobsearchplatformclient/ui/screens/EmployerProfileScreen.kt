@@ -30,7 +30,8 @@ fun EmployerProfileScreen(
     state: MainAppContract.MainAppState,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit,
-    openVacancyEdit: () -> Unit
+    openVacancyEdit: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
@@ -40,7 +41,8 @@ fun EmployerProfileScreen(
             ) {
                 Text(text = "Новая вакансия")
             }
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

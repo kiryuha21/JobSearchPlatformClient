@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -129,6 +130,15 @@ fun NavGraphBuilder.addMainApp(
             navController,
             TokenDataStore(LocalContext.current)
         )
+
+        LaunchedEffect(key1 = Unit) {
+            CallbacksRegistry.logoutCallback.value = {
+                viewModel.processIntent(MainAppContract.MainAppIntent.LogOut)
+            }
+            CallbacksRegistry.setProfileImageCallback.value = {
+                viewModel.processIntent(MainAppContract.MainAppIntent.SetUserImage(it))
+            }
+        }
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerHomeScreen(
@@ -260,24 +270,10 @@ fun NavGraphBuilder.addMainApp(
 fun NavigationController() {
     val navController = rememberNavController()
     val shouldShowTopBar = rememberSaveable { mutableStateOf(false) }
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     MainAppScaffold(
         navigateFunction = navController::navigate,
-        onLogOut = {
-            val tokenDatasourceProvider = TokenDataStore(ctx)
-            scope.launch {
-                withContext(Dispatchers.IO) {
-                    tokenDatasourceProvider.deleteRefreshToken()
-                }
-                navController.navigate(NavigationGraph.Authentication.LOG_IN) {
-                    popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
-                        inclusive = true
-                    }
-                }
-            }
-        },
+        onLogOut = CallbacksRegistry.logoutCallback.value,
         shouldShowTopBar = shouldShowTopBar.value
     ) { paddingValues ->
         NavHost(
