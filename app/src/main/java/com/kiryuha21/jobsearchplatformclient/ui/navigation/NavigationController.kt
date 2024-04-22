@@ -1,13 +1,11 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import android.graphics.Bitmap
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -38,10 +36,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun NavGraphBuilder.addAuthentication(
     navController: NavController,
@@ -132,10 +126,10 @@ fun NavGraphBuilder.addMainApp(
         )
 
         LaunchedEffect(key1 = Unit) {
-            CallbacksRegistry.logoutCallback.value = {
+            CallbacksRegistry.logoutCallback = {
                 viewModel.processIntent(MainAppContract.MainAppIntent.LogOut)
             }
-            CallbacksRegistry.setProfileImageCallback.value = {
+            CallbacksRegistry.setProfileImageCallback = {
                 viewModel.processIntent(MainAppContract.MainAppIntent.SetUserImage(it))
             }
         }
@@ -273,7 +267,7 @@ fun NavigationController() {
 
     MainAppScaffold(
         navigateFunction = navController::navigate,
-        onLogOut = CallbacksRegistry.logoutCallback.value,
+        onLogOut = CallbacksRegistry.logoutCallback,
         shouldShowTopBar = shouldShowTopBar.value
     ) { paddingValues ->
         NavHost(

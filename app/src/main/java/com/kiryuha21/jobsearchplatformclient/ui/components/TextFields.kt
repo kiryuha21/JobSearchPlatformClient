@@ -102,6 +102,7 @@ fun ValidateableTextField(
     errorMessage: String,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    maxLength: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
@@ -130,9 +131,11 @@ fun ValidateableTextField(
         leadingIcon = leadingIcon,
         visualTransformation = visualTransformation,
         onValueChange = {
-            text = it
-            supportingText = if (isValid(it)) "" else errorMessage
-            onUpdate(text, supportingText.isEmpty())
+            if (it.length <= maxLength) {
+                text = it
+                supportingText = if (isValid(it)) "" else errorMessage
+                onUpdate(text, supportingText.isEmpty())
+            }
         }
     )
 }
@@ -219,6 +222,8 @@ fun PhoneField(
     mask: String = "000 000 00 00",
     maskNumber: Char = '0'
 ) {
+    val transformation = PhoneVisualTransformation(mask, maskNumber)
+
     ValidateableTextField(
         placeholder = placeholder,
         initString = initString,
@@ -229,14 +234,14 @@ fun PhoneField(
         isValid = isValid,
         errorMessage = errorMessage,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        visualTransformation = PhoneVisualTransformation(mask, maskNumber),
-        modifier = modifier
+        visualTransformation = transformation,
+        modifier = modifier,
+        maxLength = transformation.maxLength
     )
 }
 
 class PhoneVisualTransformation(private val mask: String, private val maskNumber: Char) : VisualTransformation {
-
-    private val maxLength = mask.count { it == maskNumber }
+    val maxLength = mask.count { it == maskNumber }
 
     override fun filter(text: AnnotatedString): TransformedText {
         val trimmed = if (text.length > maxLength) text.take(maxLength) else text

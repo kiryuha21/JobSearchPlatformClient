@@ -9,7 +9,6 @@ object RetrofitObject {
     val retrofit: Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(UnsafeHttpClient.instance)  // TODO: replace with safe client
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 }

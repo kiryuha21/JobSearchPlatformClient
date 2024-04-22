@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
@@ -61,6 +60,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerMiniProfile(modifier: Modifier = Modifier) {
+    if (CurrentUser.info.username.isBlank()) {
+        return
+    }
+
     val context = LocalContext.current
     var selectedImageUri by remember {
         mutableStateOf(if (CurrentUser.info.imageUrl != null) Uri.parse(CurrentUser.info.imageUrl) else null)
@@ -71,7 +74,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
         if (it != null) {
             context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             selectedImageUri = it
-            CallbacksRegistry.setProfileImageCallback.value(it.getBitmap(context))
+            CallbacksRegistry.setProfileImageCallback(it.getBitmap(context))
         }
     }
 
