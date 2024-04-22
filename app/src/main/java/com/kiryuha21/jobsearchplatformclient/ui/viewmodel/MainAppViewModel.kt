@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
@@ -32,8 +34,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 
-class MainAppViewModel(private val navController: NavController) :
-    BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
+class MainAppViewModel(
+    private val navController: NavController,
+    private val tokenDatasourceProvider : TokenDataStore
+) : BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
     private val resumeRetrofit by lazy { RetrofitObject.retrofit.create(ResumeAPI::class.java) }
     private val vacancyRetrofit by lazy { RetrofitObject.retrofit.create(VacancyAPI::class.java) }
     private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
@@ -276,22 +280,29 @@ class MainAppViewModel(private val navController: NavController) :
     }
 
     private fun logOut() {
-        navController.navigate(NavigationGraph.Authentication.LOG_IN) {
-            popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
-                inclusive = true
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Log.d("tag1", "refresh token is ${tokenDatasourceProvider.getRefreshToken(this)}")
+                tokenDatasourceProvider.deleteRefreshToken()
+                Log.d("tag1", "refresh token is ${tokenDatasourceProvider.getRefreshToken(this)}")
+            }
+            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
+                    inclusive = true
+                }
             }
         }
     }
 
     companion object {
-        fun provideFactory(navController: NavController) =
+        fun provideFactory(navController: NavController, tokenDatasourceProvider: TokenDataStore) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return MainAppViewModel(navController) as T
+                    return MainAppViewModel(navController, tokenDatasourceProvider) as T
                 }
             }
     }

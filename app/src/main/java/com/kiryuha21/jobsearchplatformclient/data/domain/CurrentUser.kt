@@ -21,7 +21,7 @@ object CurrentUser {
         return withContext(Dispatchers.IO) {
             try {
                 AuthToken.createToken(login, password)
-                _info.value = userRetrofit.getUserByUsername(login).toDomainUser()
+                loadUserInfo(login)
                 true
             } catch (e: Exception) {
                 Log.d("tag1", e.toString())
@@ -40,6 +40,12 @@ object CurrentUser {
                 Log.d("tag1", e.toString())
                 false
             }
+        }
+    }
+
+    suspend fun loadUserInfo(username: String) {
+        withContext(Dispatchers.IO) {
+            _info.value = userRetrofit.getUserByUsername(username).toDomainUser()
         }
     }
 }

@@ -32,5 +32,6 @@ class AuthContract {
         data class EditRole(val newRole: UserRole): AuthIntent()
 
         data object FixError : AuthIntent()
+        data object CheckRefreshToken : AuthIntent()
     }
 }

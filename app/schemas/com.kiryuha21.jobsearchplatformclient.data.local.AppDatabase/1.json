@@ -2,28 +2,8 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1da8e7e3ec28f6fd0a0c24e9111f93bb",
+    "identityHash": "ba1124d8ac995fbd8f8017fbf3b87e38",
     "entities": [
-      {
-        "tableName": "refreshToken",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`token` TEXT NOT NULL, PRIMARY KEY(`token`))",
-        "fields": [
-          {
-            "fieldPath": "token",
-            "columnName": "token",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "token"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
       {
         "tableName": "resume",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, PRIMARY KEY(`id`))",
@@ -92,7 +72,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1da8e7e3ec28f6fd0a0c24e9111f93bb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ba1124d8ac995fbd8f8017fbf3b87e38')"
     ]
   }
 }

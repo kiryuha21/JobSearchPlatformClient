@@ -1,16 +1,15 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import android.graphics.Bitmap
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -21,13 +20,12 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeEditScreen
@@ -35,8 +33,14 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SignUpScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyEditScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 fun NavGraphBuilder.addAuthentication(
     navController: NavController,
@@ -47,7 +51,14 @@ fun NavGraphBuilder.addAuthentication(
             shouldShowAppBar.value = false
         }
 
-        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
+
+        LaunchedEffect(key1 = Unit) {
+            viewModel.processIntent(AuthContract.AuthIntent.CheckRefreshToken)
+        }
 
         LogInScreen(
             state = viewModel.viewState,
@@ -64,7 +75,10 @@ fun NavGraphBuilder.addAuthentication(
         )
     }
     composable(SIGN_UP) {
-        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
 
         SignUpScreen(
             state = viewModel.viewState,
@@ -87,7 +101,10 @@ fun NavGraphBuilder.addAuthentication(
             onRegister = { viewModel.processIntent(AuthContract.AuthIntent.SignUp) })
     }
     composable(RESET_PASSWORD) {
-        val viewModel: AuthViewModel = it.sharedAuthViewModel(navController)
+        val viewModel: AuthViewModel = it.sharedAuthViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
 
         ResetPasswordScreen(
             state = viewModel.viewState,
@@ -108,7 +125,10 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerHomeScreen(
@@ -129,7 +149,10 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerProfileScreen(
@@ -154,7 +177,10 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = true
         }
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
         SettingsScreen({}, {}, {})
     }
     composable(VACANCY_DETAILS) { backStack ->
@@ -162,7 +188,10 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = false
         }
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
 
         VacancyDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Employer,
@@ -175,7 +204,11 @@ fun NavGraphBuilder.addMainApp(
             shouldShowAppBar.value = false
         }
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
+
         ResumeDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Worker,
             resumeId = backStack.arguments?.getString("resumeId"),
@@ -185,7 +218,10 @@ fun NavGraphBuilder.addMainApp(
         )
     }
     composable(RESUME_EDIT) { backStack ->
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
         val resume = viewModel.viewState.openedResume!!
 
         val onUpdateResume: (Resume, Bitmap?) -> Unit = if (resume.id.isNotEmpty()) {
@@ -201,7 +237,10 @@ fun NavGraphBuilder.addMainApp(
         )
     }
     composable(VACANCY_EDIT) { backStack ->
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
+            navController,
+            TokenDataStore(LocalContext.current)
+        )
         val vacancy = viewModel.viewState.openedVacancy!!
 
         val onUpdateVacancy: (Vacancy, Bitmap?) -> Unit = if (vacancy.id.isNotEmpty()) {
@@ -221,13 +260,21 @@ fun NavGraphBuilder.addMainApp(
 fun NavigationController() {
     val navController = rememberNavController()
     val shouldShowTopBar = rememberSaveable { mutableStateOf(false) }
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     MainAppScaffold(
         navigateFunction = navController::navigate,
         onLogOut = {
-            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
-                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
-                    inclusive = true
+            val tokenDatasourceProvider = TokenDataStore(ctx)
+            scope.launch {
+                withContext(Dispatchers.IO) {
+                    tokenDatasourceProvider.deleteRefreshToken()
+                }
+                navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+                    popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
+                        inclusive = true
+                    }
                 }
             }
         },

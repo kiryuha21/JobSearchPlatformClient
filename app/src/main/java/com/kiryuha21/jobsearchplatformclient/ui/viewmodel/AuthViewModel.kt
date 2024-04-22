@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
@@ -14,12 +17,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AuthViewModel(private val navController: NavController) :
-    BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
+class AuthViewModel(
+    private val navController: NavController,
+    private val tokenDatasourceProvider: TokenDataStore
+) : BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
 
     override fun initialState(): AuthContract.AuthState {
         return AuthContract.AuthState(
-            isLoading = false,
+            isLoading = true,
             isError = false,
             email = "",
             username = "",
@@ -57,6 +62,33 @@ class AuthViewModel(private val navController: NavController) :
             is AuthContract.AuthIntent.LogIn -> tryLogIn()
             is AuthContract.AuthIntent.SignUp -> createNewUser()
             is AuthContract.AuthIntent.ResetPassword -> resetPassword()
+            is AuthContract.AuthIntent.CheckRefreshToken -> checkRefreshToken()
+        }
+    }
+
+    private fun navigateToMainApp() {
+        navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
+            popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
+                inclusive = true
+            }
+        }
+    }
+
+    private fun checkRefreshToken() {
+        viewModelScope.launch {
+            val token = tokenDatasourceProvider.getRefreshToken(this).value
+            val username = if (token != null) {
+                withContext(Dispatchers.IO) {
+                    AuthToken.getLoginFromStoredToken(token)
+                }
+            } else null
+
+            if (username != null) {
+                CurrentUser.loadUserInfo(username)
+                navigateToMainApp()
+            } else {
+                setState { copy(isLoading = false) }
+            }
         }
     }
 
@@ -72,11 +104,10 @@ class AuthViewModel(private val navController: NavController) :
             }
 
             if (successfulLogin) {
-                navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
-                    popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
-                        inclusive = true
-                    }
+                withContext(Dispatchers.IO) {
+                    tokenDatasourceProvider.updateRefreshToken(AuthToken.getRefreshToken() ?: throw Exception("this shouldn't happen"))
                 }
+                navigateToMainApp()
             } else {
                 setState { copy(isLoading = false, isError = true) }
             }
@@ -98,11 +129,10 @@ class AuthViewModel(private val navController: NavController) :
             }
 
             if (successfulRegister) {
-                navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
-                    popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
-                        inclusive = true
-                    }
+                withContext(Dispatchers.IO) {
+                    tokenDatasourceProvider.updateRefreshToken(AuthToken.getRefreshToken() ?: throw Exception("this shouldn't happen"))
                 }
+                navigateToMainApp()
             } else {
                 setState { copy(isLoading = false, isError = true) }
             }
@@ -114,14 +144,14 @@ class AuthViewModel(private val navController: NavController) :
     }
 
     companion object {
-        fun provideFactory(navController: NavController) =
+        fun provideFactory(navController: NavController, tokenDatasourceProvider: TokenDataStore) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return AuthViewModel(navController) as T
+                    return AuthViewModel(navController, tokenDatasourceProvider) as T
                 }
             }
     }

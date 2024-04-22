@@ -6,27 +6,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(navController: NavController): T {
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
+    navController: NavController,
+    tokenDatasourceProvider: TokenDataStore
+): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = AuthViewModel.provideFactory(navController)
+        factory = AuthViewModel.provideFactory(navController, tokenDatasourceProvider)
     )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry, factory = AuthViewModel.provideFactory(navController))
+    return viewModel(parentEntry, factory = AuthViewModel.provideFactory(navController, tokenDatasourceProvider))
 }
 
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedMainAppViewModel(navController: NavController): T {
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedMainAppViewModel(
+    navController: NavController,
+    tokenDatasourceProvider: TokenDataStore
+): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = MainAppViewModel.provideFactory(navController)
+        factory = MainAppViewModel.provideFactory(navController, tokenDatasourceProvider)
     )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
-    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController))
+    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController, tokenDatasourceProvider))
 }

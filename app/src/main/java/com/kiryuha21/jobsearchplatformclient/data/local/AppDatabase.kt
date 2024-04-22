@@ -2,16 +2,12 @@ package com.kiryuha21.jobsearchplatformclient.data.local
 
 import android.content.Context
 import androidx.room.Database
-import androidx.room.DatabaseConfiguration
-import androidx.room.InvalidationTracker
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteOpenHelper
-import com.kiryuha21.jobsearchplatformclient.data.local.entity.RefreshTokenEntity
 import com.kiryuha21.jobsearchplatformclient.data.local.entity.ResumeEntity
 import com.kiryuha21.jobsearchplatformclient.data.local.entity.VacancyEntity
 
-@Database(entities = [RefreshTokenEntity::class, ResumeEntity::class, VacancyEntity::class], version = 1)
+@Database(entities = [ResumeEntity::class, VacancyEntity::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
     companion object {
         @Volatile
