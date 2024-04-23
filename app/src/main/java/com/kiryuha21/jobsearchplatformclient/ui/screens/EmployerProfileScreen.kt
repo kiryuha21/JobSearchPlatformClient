@@ -33,6 +33,10 @@ fun EmployerProfileScreen(
     openVacancyEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(Unit) {
+        loadVacancies()
+    }
+
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
@@ -53,10 +57,6 @@ fun EmployerProfileScreen(
             Title(text = "Мои вакансии", fontSize = 30.sp)
             Title(text = "Вы вошли как ${CurrentUser.info.username}", fontSize = 20.sp)
             Spacer(modifier = Modifier.height(20.dp))
-
-            LaunchedEffect(Unit) {
-                loadVacancies()
-            }
 
             when {
                 state.vacancies == null -> LoadingComponent()

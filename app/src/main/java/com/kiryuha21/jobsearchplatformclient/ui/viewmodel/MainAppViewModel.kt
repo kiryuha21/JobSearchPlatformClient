@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
@@ -19,11 +20,14 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.PROFILE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_EDIT
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.VACANCY_EDIT
+import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
+import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import com.kiryuha21.jobsearchplatformclient.util.toRequestBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,7 +36,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 
 class MainAppViewModel(
-    private val navController: NavController
+    private val navController: NavController,
+    private val tokenDatasourceProvider : TokenDataStore
 ) : BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
     private val resumeRetrofit by lazy { RetrofitObject.retrofit.create(ResumeAPI::class.java) }
     private val vacancyRetrofit by lazy { RetrofitObject.retrofit.create(VacancyAPI::class.java) }
@@ -71,53 +76,75 @@ class MainAppViewModel(
             is MainAppContract.MainAppIntent.EditVacancy -> editVacancy(intent.vacancy, intent.bitmap)
             is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy.id)
             is MainAppContract.MainAppIntent.SetUserImage -> setUserImage(intent.bitmap)
+            is MainAppContract.MainAppIntent.LogOut -> logOut()
         }
     }
 
     private fun setUserImage(bitmap: Bitmap) {
         val token = viewModelScope.async(Dispatchers.IO) {
-            "Bearer ${AuthToken.getToken()}"
+            networkCallWithReturnWrapper(networkCall = {
+                "Bearer ${AuthToken.getToken()}"
+            })
         }
 
         viewModelScope.launch(Dispatchers.IO) {
             val body = MultipartBody.Part.createFormData(
-                "picture",
-                CurrentUser.info.username,
-                bitmap.toRequestBody(100)
+                name = "picture",
+                filename = CurrentUser.info.username,
+                body = bitmap.toRequestBody(100)
             )
-            userRetrofit.setPicture(token.await(), CurrentUser.info.username, body)
+
+            networkCallWrapper(
+                networkCall = { userRetrofit.setPicture(token.await().toString(), CurrentUser.info.username, body) }
+            )
         }
     }
 
     private fun findMatchingVacancies() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val vacancies = vacancyRetrofit.getMatchingVacancies().map { it.toDomainVacancy() }
-            setState { copy(isLoading = false, vacancies = vacancies) }
+            val vacanciesResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = { vacancyRetrofit.getMatchingVacancies().map { it.toDomainVacancy() } }
+                )
+            }
+            setState { copy(isLoading = false, vacancies = vacanciesResult) }
         }
     }
 
     private fun findMatchingResumes() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val resumes = resumeRetrofit.getMatchingResumes().map { it.toDomainResume() }
-            setState { copy(isLoading = false, resumes = resumes) }
+            val resumesResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = { resumeRetrofit.getMatchingResumes().map { it.toDomainResume() } }
+                )
+            }
+            setState { copy(isLoading = false, resumes = resumesResult) }
         }
     }
 
     private fun loadProfileResumes() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val resumes = resumeRetrofit.getResumesByWorkerLogin(CurrentUser.info.username).map { it.toDomainResume() }
-            setState { copy(isLoading = false, resumes = resumes) }
+            val resumesResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = { resumeRetrofit.getResumesByWorkerLogin(CurrentUser.info.username).map { it.toDomainResume() } }
+                )
+            }
+            setState { copy(isLoading = false, resumes = resumesResult) }
         }
     }
 
     private fun loadProfileVacancies() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val vacancies = vacancyRetrofit.getVacanciesByEmployerLogin(CurrentUser.info.username).map { it.toDomainVacancy() }
-            setState { copy(isLoading = false, vacancies = vacancies) }
+            val vacanciesResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = { vacancyRetrofit.getVacanciesByEmployerLogin(CurrentUser.info.username).map { it.toDomainVacancy() } }
+                )
+            }
+            setState { copy(isLoading = false, vacancies = vacanciesResult) }
         }
     }
 
@@ -125,29 +152,45 @@ class MainAppViewModel(
         navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
         viewModelScope.launch {
             setState { copy(isLoading = true) }
-            val resume = resumeRetrofit.getResumeById(resumeId).toDomainResume()
-            setState { copy(isLoading = false, openedResume = resume) }
+            val resumeResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = { resumeRetrofit.getResumeById(resumeId).toDomainResume() }
+                )
+            }
+            setState { copy(isLoading = false, openedResume = resumeResult) }
         }
     }
 
     private fun createNewResume(resume: Resume, bitmap: Bitmap?) {
         val token = viewModelScope.async(Dispatchers.IO) {
-            "Bearer ${AuthToken.getToken()}"
+            networkCallWithReturnWrapper(
+                networkCall = { "Bearer ${AuthToken.getToken()}" }
+            )
         }
 
         viewModelScope.launch {
             setState { copy(isLoading = true) }
 
-            withContext(Dispatchers.IO) {
-                val newResume = resumeRetrofit.createNewResume(token.await(), resume.toResumeDTO())
+            val resumeResult = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = {
+                        resumeRetrofit.createNewResume(token.await().toString(), resume.toResumeDTO())
+                    }
+                )
+            }
 
-                if (bitmap != null) {
-                    val body = MultipartBody.Part.createFormData(
-                        "picture",
-                        resume.id,
-                        bitmap.toRequestBody(100)
+            if (bitmap != null && resumeResult != null) {
+                val body = MultipartBody.Part.createFormData(
+                    name = "picture",
+                    filename = resume.id,
+                    body = bitmap.toRequestBody(100)
+                )
+                withContext(Dispatchers.IO) {
+                    networkCallWrapper(
+                        networkCall = {
+                            resumeRetrofit.setPicture(token.await().toString(), resumeResult.id, body)
+                        }
                     )
-                    resumeRetrofit.setPicture(token.await(), newResume.id, body)
                 }
             }
 
@@ -159,7 +202,9 @@ class MainAppViewModel(
 
     private fun editResume(resume: Resume, bitmap: Bitmap?) {
         val token = viewModelScope.async(Dispatchers.IO) {
-            "Bearer ${AuthToken.getToken()}"
+            networkCallWithReturnWrapper(
+                networkCall = { "Bearer ${AuthToken.getToken()}" }
+            )
         }
 
         val job = if (bitmap != null) {
@@ -169,7 +214,9 @@ class MainAppViewModel(
                     filename = resume.id,
                     body = bitmap.toRequestBody(100)
                 )
-                resumeRetrofit.setPicture(token.await(), resume.id, body)
+                networkCallWrapper(
+                    networkCall = { resumeRetrofit.setPicture(token.await().toString(), resume.id, body) }
+                )
             }
         } else null
 
@@ -177,10 +224,12 @@ class MainAppViewModel(
             setState { copy(isLoading = true) }
 
             val editedResume = withContext(Dispatchers.IO) {
-                resumeRetrofit.editResume(token.await(), resume.id, resume.toResumeDTO())
+                networkCallWithReturnWrapper(
+                    networkCall = { resumeRetrofit.editResume(token.await().toString(), resume.id, resume.toResumeDTO()) }
+                )
             }
             job?.join()
-            setState { copy(openedResume = editedResume.toDomainResume(), isLoading = false) }
+            setState { copy(openedResume = editedResume?.toDomainResume(), isLoading = false) }
             navController.navigate(PROFILE)
         }
     }
@@ -188,8 +237,11 @@ class MainAppViewModel(
     private fun deleteResume(resumeId: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId)
+                networkCallWrapper(
+                    networkCall = { resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId) }
+                )
             }
+
             navController.popBackStack()
             navController.navigate(PROFILE)
         }
@@ -200,7 +252,9 @@ class MainAppViewModel(
         viewModelScope.launch {
             setState { copy(isLoading = true) }
             val vacancy = withContext(Dispatchers.IO) {
-                vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy()
+                networkCallWithReturnWrapper(
+                    networkCall = { vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy() }
+                )
             }
             setState { copy(isLoading = false, openedVacancy = vacancy) }
         }
@@ -208,24 +262,34 @@ class MainAppViewModel(
 
     private fun createNewVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
         val token = viewModelScope.async(Dispatchers.IO) {
-            "Bearer ${AuthToken.getToken()}"
+            networkCallWithReturnWrapper(
+                networkCall = { "Bearer ${AuthToken.getToken()}" }
+            )
         }
 
         viewModelScope.launch {
             setState { copy(isLoading = true) }
 
-            withContext(Dispatchers.IO) {
-                val newResume =
-                    vacancyRetrofit.createNewVacancy(token.await(), vacancy.toVacancyDTO())
+            val newVacancy = withContext(Dispatchers.IO) {
+                networkCallWithReturnWrapper(
+                    networkCall = {
+                        vacancyRetrofit.createNewVacancy(
+                            token.await().toString(),
+                            vacancy.toVacancyDTO()
+                        )
+                    }
+                )
+            }
 
-                if (bitmap != null) {
-                    val body = MultipartBody.Part.createFormData(
-                        "picture",
-                        vacancy.id,
-                        bitmap.toRequestBody(100)
-                    )
-                    vacancyRetrofit.setPicture(token.await(), newResume.id, body)
-                }
+            if (bitmap != null && newVacancy != null) {
+                val body = MultipartBody.Part.createFormData(
+                    name = "picture",
+                    filename = vacancy.id,
+                    body = bitmap.toRequestBody(100)
+                )
+                networkCallWrapper(
+                    networkCall = { vacancyRetrofit.setPicture(token.await().toString(), newVacancy.id, body) }
+                )
             }
 
             setState { copy(isLoading = false) }
@@ -236,7 +300,9 @@ class MainAppViewModel(
 
     private fun editVacancy(vacancy: Vacancy, bitmap: Bitmap?) {
         val token = viewModelScope.async(Dispatchers.IO) {
-            "Bearer ${AuthToken.getToken()}"
+            networkCallWithReturnWrapper(
+                networkCall = { "Bearer ${AuthToken.getToken()}" }
+            )
         }
 
         val job = if (bitmap != null) {
@@ -246,7 +312,9 @@ class MainAppViewModel(
                     filename = vacancy.id,
                     body = bitmap.toRequestBody(100)
                 )
-                vacancyRetrofit.setPicture(token.await(), vacancy.id, body)
+                networkCallWrapper(
+                    networkCall = { vacancyRetrofit.setPicture(token.await().toString(), vacancy.id, body) }
+                )
             }
         } else null
 
@@ -254,11 +322,13 @@ class MainAppViewModel(
             setState { copy(isLoading = true) }
 
             val editedVacancy = withContext(Dispatchers.IO) {
-                vacancyRetrofit.editVacancy(token.await(), vacancy.id, vacancy.toVacancyDTO())
+                networkCallWithReturnWrapper(
+                    networkCall = { vacancyRetrofit.editVacancy(token.await().toString(), vacancy.id, vacancy.toVacancyDTO()) }
+                )
             }
             job?.join()
 
-            setState { copy(openedVacancy = editedVacancy.toDomainVacancy(), isLoading = false) }
+            setState { copy(openedVacancy = editedVacancy?.toDomainVacancy(), isLoading = false) }
             navController.navigate(PROFILE)
         }
     }
@@ -266,22 +336,37 @@ class MainAppViewModel(
     private fun deleteVacancy(vacancyId: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId)
+                networkCallWrapper(
+                    networkCall = { vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId) }
+                )
             }
             navController.popBackStack()
             navController.navigate(PROFILE)
         }
     }
 
+    private fun logOut() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tokenDatasourceProvider.deleteRefreshToken()
+            }
+            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     companion object {
-        fun provideFactory(navController: NavController) =
+        fun provideFactory(navController: NavController, tokenDatasourceProvider : TokenDataStore) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return MainAppViewModel(navController) as T
+                    return MainAppViewModel(navController, tokenDatasourceProvider) as T
                 }
             }
     }
