@@ -1,6 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.kiryuha21.jobsearchplatformclient.R
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.launch
 
 @Composable
 fun NoItemsCard(modifier: Modifier = Modifier) {
@@ -130,4 +135,22 @@ fun ClickableAsyncUriImage(
             .border(2.dp, Color.Gray, RoundedCornerShape(10.dp))
             .clickable { onClick() }
     )
+}
+
+@Composable
+fun OnBackPressedWithSuper(
+    onBackPressed: () -> Unit
+) {
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    var backPressHandled by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    BackHandler(enabled = !backPressHandled) {
+        onBackPressed()
+        backPressHandled = true
+        coroutineScope.launch {
+            awaitFrame()
+            onBackPressedDispatcher?.onBackPressed()
+            backPressHandled = false
+        }
+    }
 }

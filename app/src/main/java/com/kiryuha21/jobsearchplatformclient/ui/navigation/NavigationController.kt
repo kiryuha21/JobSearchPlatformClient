@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
@@ -21,6 +22,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
@@ -37,6 +39,8 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.NavigationViewModel
+import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 
 fun NavGraphBuilder.addAuthentication(
     navController: NavController,
@@ -114,12 +118,15 @@ fun NavGraphBuilder.addAuthentication(
 
 fun NavGraphBuilder.addMainApp(
     navController: NavController,
-    shouldShowAppBar: MutableState<Boolean>
+    shouldShowAppBar: MutableState<Boolean>,
+    onNavigateBack: () -> Unit,
+    onNavigationForward: (String) -> Unit
 ) = with(NavigationGraph.MainApp) {
     composable(HOME_SCREEN) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
+        OnBackPressedWithSuper(onNavigateBack)
 
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
@@ -140,13 +147,19 @@ fun NavGraphBuilder.addMainApp(
             UserRole.Worker -> WorkerHomeScreen(
                 state = viewModel.viewState,
                 loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingVacancies) },
-                openVacancyDetails = {viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) }
+                openVacancyDetails = { vacancyId ->
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(vacancyId))
+                    onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
+                }
             )
 
             UserRole.Employer -> EmployerHomeScreen(
                 state = viewModel.viewState,
                 loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingResumes) },
-                openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) }
+                openResumeDetails = { resumeId ->
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(resumeId))
+                    onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
+                }
             )
         }
     }
@@ -154,6 +167,7 @@ fun NavGraphBuilder.addMainApp(
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
+        OnBackPressedWithSuper(onNavigateBack)
 
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
@@ -165,17 +179,27 @@ fun NavGraphBuilder.addMainApp(
             UserRole.Worker -> WorkerProfileScreen(
                 state = viewModel.viewState,
                 loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileResumes) },
-                openResumeDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(it)) },
-                openResumeEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(Resume())) }
+                openResumeDetails = { resumeId ->
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(resumeId))
+                    onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
+                },
+                openResumeEdit = {
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(Resume()))
+                    onNavigationForward(RESUME_EDIT)
+                }
             )
 
             UserRole.Employer -> EmployerProfileScreen(
                 state = viewModel.viewState,
                 loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileVacancies) },
-                openVacancyDetails = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(it)) },
-                openVacancyEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit(
-                    Vacancy()
-                )) }
+                openVacancyDetails = { vacancyId ->
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(vacancyId))
+                    onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
+                },
+                openVacancyEdit = {
+                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit(Vacancy()))
+                    onNavigationForward(VACANCY_EDIT)
+                }
             )
         }
     }
@@ -183,6 +207,7 @@ fun NavGraphBuilder.addMainApp(
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
+        OnBackPressedWithSuper(onNavigateBack)
 
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
@@ -195,6 +220,7 @@ fun NavGraphBuilder.addMainApp(
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
+        OnBackPressedWithSuper(onNavigateBack)
 
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
@@ -212,6 +238,7 @@ fun NavGraphBuilder.addMainApp(
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
+        OnBackPressedWithSuper(onNavigateBack)
 
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
@@ -222,12 +249,23 @@ fun NavGraphBuilder.addMainApp(
         ResumeDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Worker,
             resumeId = backStack.arguments?.getString("resumeId"),
-            onEdit = { viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(it)) },
-            onDelete = { viewModel.processIntent(MainAppContract.MainAppIntent.DeleteResume(it)) },
+            onEdit = {
+                viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeEdit(it))
+                onNavigationForward(RESUME_EDIT)
+            },
+            onDelete = {
+                viewModel.processIntent(MainAppContract.MainAppIntent.DeleteResume(it))
+                onNavigationForward(PROFILE)
+            },
             state = viewModel.viewState
         )
     }
     composable(RESUME_EDIT) { backStack ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+        OnBackPressedWithSuper(onNavigateBack)
+
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
             navController,
@@ -244,10 +282,18 @@ fun NavGraphBuilder.addMainApp(
         ResumeEditScreen(
             initResume = viewModel.viewState.openedResume!!,
             isLoading = viewModel.viewState.isLoading,
-            onUpdateResume = onUpdateResume
+            onUpdateResume = { updatedResume, bitmap ->
+                onUpdateResume(updatedResume, bitmap)
+                onNavigationForward(PROFILE)
+            }
         )
     }
     composable(VACANCY_EDIT) { backStack ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+        OnBackPressedWithSuper(onNavigateBack)
+
         val ctx = LocalContext.current
         val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
             navController,
@@ -263,7 +309,10 @@ fun NavGraphBuilder.addMainApp(
 
         VacancyEditScreen(
             initVacancy = viewModel.viewState.openedVacancy!!,
-            onUpdateVacancy = onUpdateVacancy
+            onUpdateVacancy = { updatedVacancy, bitmap ->
+                onUpdateVacancy(updatedVacancy, bitmap)
+                onNavigationForward(PROFILE)
+            }
         )
     }
 }
@@ -273,10 +322,25 @@ fun NavigationController() {
     val navController = rememberNavController()
     val shouldShowTopBar = rememberSaveable { mutableStateOf(false) }
 
+    val ctx = LocalContext.current
+    val navigationVM: NavigationViewModel = viewModel(
+        factory = NavigationViewModel.provideFactory(TokenDataStore(ctx)) {
+            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
+                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+
     MainAppScaffold(
-        navigateFunction = navController::navigate,
+        navigateFunction = {
+            navigationVM.navigateTo(it)
+            navController.navigate(it)
+        },
         onLogOut = CallbacksRegistry.logoutCallback,
-        shouldShowTopBar = shouldShowTopBar.value
+        shouldShowTopBar = shouldShowTopBar.value,
+        selectedNavigationIndex = navigationVM.currentIndex
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -294,7 +358,12 @@ fun NavigationController() {
                 startDestination = NavigationGraph.MainApp.HOME_SCREEN,
                 route = NavigationGraph.MainApp.NAV_ROUTE
             ) {
-                addMainApp(navController, shouldShowTopBar)
+                addMainApp(
+                    navController = navController,
+                    shouldShowAppBar = shouldShowTopBar,
+                    onNavigateBack = { navigationVM.navigateBack() },
+                    onNavigationForward = { navigationVM.navigateTo(it) }
+                )
             }
         }
     }

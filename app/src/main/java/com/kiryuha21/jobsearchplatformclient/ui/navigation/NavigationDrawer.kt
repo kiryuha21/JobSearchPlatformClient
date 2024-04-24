@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -30,11 +28,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,10 +46,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerMiniProfile(modifier: Modifier = Modifier) {
-    if (CurrentUser.info.username.isBlank()) {
-        return
-    }
-
     val context = LocalContext.current
     var selectedImageUri by remember {
         mutableStateOf(if (CurrentUser.info.imageUrl != null) Uri.parse(CurrentUser.info.imageUrl) else null)
@@ -117,20 +109,20 @@ fun NavigationDrawer(
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
     gesturesEnabled: Boolean,
+    selectedNavigationIndex: Int,
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedItemIndex by rememberSaveable {
-        mutableIntStateOf(0)
-    }
 
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
-                DrawerMiniProfile()
-                Spacer(modifier = Modifier.height(20.dp))
+                if (CurrentUser.info.username.isNotEmpty()) {
+                    DrawerMiniProfile(modifier = Modifier.padding(bottom = 20.dp))
+                }
+
                 navigationDrawerItems.forEachIndexed { index, item ->
                     NavigationDrawerItem(
                         label = {
@@ -139,10 +131,9 @@ fun NavigationDrawer(
                                 Text(text = item.text)
                             }
                         },
-                        selected = index == selectedItemIndex,
+                        selected = index == selectedNavigationIndex,
                         onClick = {
-                            if (index != selectedItemIndex) {
-                                selectedItemIndex = index
+                            if (index != selectedNavigationIndex) {
                                 navigateFunction(item.navigationRoute)
                             }
 
@@ -156,7 +147,7 @@ fun NavigationDrawer(
 
                 val logOutIndex = navigationDrawerItems.size
                 LogOutNavigationItem(
-                    selected = selectedItemIndex == logOutIndex,
+                    selected = selectedNavigationIndex == logOutIndex,
                     onClick = {
                         scope.launch {
                             drawerState.close()
@@ -204,12 +195,14 @@ fun MainAppScaffold(
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
     shouldShowTopBar: Boolean,
+    selectedNavigationIndex: Int,
     content: @Composable (PaddingValues) -> Unit
 ) {
     NavigationDrawer(
         navigateFunction = navigateFunction,
         onLogOut = onLogOut,
-        gesturesEnabled = shouldShowTopBar
+        gesturesEnabled = shouldShowTopBar,
+        selectedNavigationIndex = selectedNavigationIndex
     ) { onOpenDrawer ->
         Scaffold(
             topBar = {
