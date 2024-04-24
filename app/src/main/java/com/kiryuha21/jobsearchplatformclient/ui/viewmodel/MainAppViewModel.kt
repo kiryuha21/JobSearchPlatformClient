@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
@@ -17,10 +16,8 @@ import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
-import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
-import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.PROFILE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_DETAILS_BASE
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph.MainApp.RESUME_EDIT
@@ -36,12 +33,10 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 
 class MainAppViewModel(
-    private val navController: NavController,
-    private val tokenDatasourceProvider : TokenDataStore
+    private val navController: NavController
 ) : BaseViewModel<MainAppContract.MainAppIntent, MainAppContract.MainAppState>() {
     private val resumeRetrofit by lazy { RetrofitObject.retrofit.create(ResumeAPI::class.java) }
     private val vacancyRetrofit by lazy { RetrofitObject.retrofit.create(VacancyAPI::class.java) }
-    private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
 
     override fun initialState(): MainAppContract.MainAppState {
         return MainAppContract.MainAppState(
@@ -75,28 +70,6 @@ class MainAppViewModel(
             is MainAppContract.MainAppIntent.CreateNewVacancy -> createNewVacancy(intent.vacancy, intent.bitmap)
             is MainAppContract.MainAppIntent.EditVacancy -> editVacancy(intent.vacancy, intent.bitmap)
             is MainAppContract.MainAppIntent.DeleteVacancy -> deleteVacancy(intent.vacancy.id)
-            is MainAppContract.MainAppIntent.SetUserImage -> setUserImage(intent.bitmap)
-            is MainAppContract.MainAppIntent.LogOut -> logOut()
-        }
-    }
-
-    private fun setUserImage(bitmap: Bitmap) {
-        val token = viewModelScope.async(Dispatchers.IO) {
-            networkCallWithReturnWrapper(networkCall = {
-                "Bearer ${AuthToken.getToken()}"
-            })
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val body = MultipartBody.Part.createFormData(
-                name = "picture",
-                filename = CurrentUser.info.username,
-                body = bitmap.toRequestBody(100)
-            )
-
-            networkCallWrapper(
-                networkCall = { userRetrofit.setPicture(token.await().toString(), CurrentUser.info.username, body) }
-            )
         }
     }
 
@@ -354,28 +327,15 @@ class MainAppViewModel(
         }
     }
 
-    private fun logOut() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                tokenDatasourceProvider.deleteRefreshToken()
-            }
-            navController.navigate(NavigationGraph.Authentication.LOG_IN) {
-                popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
-                    inclusive = true
-                }
-            }
-        }
-    }
-
     companion object {
-        fun provideFactory(navController: NavController, tokenDatasourceProvider : TokenDataStore) =
+        fun provideFactory(navController: NavController) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return MainAppViewModel(navController, tokenDatasourceProvider) as T
+                    return MainAppViewModel(navController) as T
                 }
             }
     }

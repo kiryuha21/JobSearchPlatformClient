@@ -1,7 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +39,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.NavigationViewModel
-import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 
 fun NavGraphBuilder.addAuthentication(
     navController: NavController,
@@ -128,20 +126,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
-
-        LaunchedEffect(key1 = Unit) {
-            CallbacksRegistry.logoutCallback = {
-                viewModel.processIntent(MainAppContract.MainAppIntent.LogOut)
-            }
-            CallbacksRegistry.setProfileImageCallback = {
-                viewModel.processIntent(MainAppContract.MainAppIntent.SetUserImage(it))
-            }
-        }
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerHomeScreen(
@@ -169,11 +154,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> WorkerProfileScreen(
@@ -209,11 +190,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         SettingsScreen({}, {}, {})
     }
     composable(VACANCY_DETAILS) { backStack ->
@@ -222,11 +199,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
 
         VacancyDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Employer,
@@ -240,11 +213,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
 
         ResumeDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Worker,
@@ -266,11 +235,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val resume = viewModel.viewState.openedResume!!
 
         val onUpdateResume: (Resume, Bitmap?) -> Unit = if (resume.id.isNotEmpty()) {
@@ -294,11 +259,7 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val ctx = LocalContext.current
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(
-            navController,
-            TokenDataStore(ctx)
-        )
+        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
         val vacancy = viewModel.viewState.openedVacancy!!
 
         val onUpdateVacancy: (Vacancy, Bitmap?) -> Unit = if (vacancy.id.isNotEmpty()) {
@@ -338,7 +299,8 @@ fun NavigationController() {
             navigationVM.navigateTo(it)
             navController.navigate(it)
         },
-        onLogOut = CallbacksRegistry.logoutCallback,
+        onLogOut = { navigationVM.logOut() },
+        onSetImage = { navigationVM.setUserImage(it) },
         shouldShowTopBar = shouldShowTopBar.value,
         selectedNavigationIndex = navigationVM.currentIndex
     ) { paddingValues ->

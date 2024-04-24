@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -45,7 +46,10 @@ import com.kiryuha21.jobsearchplatformclient.util.getBitmap
 import kotlinx.coroutines.launch
 
 @Composable
-fun DrawerMiniProfile(modifier: Modifier = Modifier) {
+fun DrawerMiniProfile(
+    onSetImage: (Bitmap) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     var selectedImageUri by remember {
         mutableStateOf(if (CurrentUser.info.imageUrl != null) Uri.parse(CurrentUser.info.imageUrl) else null)
@@ -56,7 +60,7 @@ fun DrawerMiniProfile(modifier: Modifier = Modifier) {
         if (it != null) {
             context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             selectedImageUri = it
-            CallbacksRegistry.setProfileImageCallback(it.getBitmap(context))
+            onSetImage(it.getBitmap(context))
         }
     }
 
@@ -108,6 +112,7 @@ fun LogOutNavigationItem(selected: Boolean, onClick: () -> Unit, modifier: Modif
 fun NavigationDrawer(
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
+    onSetImage: (Bitmap) -> Unit,
     gesturesEnabled: Boolean,
     selectedNavigationIndex: Int,
     modifier: Modifier = Modifier,
@@ -120,7 +125,10 @@ fun NavigationDrawer(
         drawerContent = {
             ModalDrawerSheet {
                 if (CurrentUser.info.username.isNotEmpty()) {
-                    DrawerMiniProfile(modifier = Modifier.padding(bottom = 20.dp))
+                    DrawerMiniProfile(
+                        onSetImage = onSetImage,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
                 }
 
                 navigationDrawerItems.forEachIndexed { index, item ->
@@ -194,6 +202,7 @@ fun AppBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
 fun MainAppScaffold(
     navigateFunction: (String) -> Unit,
     onLogOut: () -> Unit,
+    onSetImage: (Bitmap) -> Unit,
     shouldShowTopBar: Boolean,
     selectedNavigationIndex: Int,
     content: @Composable (PaddingValues) -> Unit
@@ -201,6 +210,7 @@ fun MainAppScaffold(
     NavigationDrawer(
         navigateFunction = navigateFunction,
         onLogOut = onLogOut,
+        onSetImage = onSetImage,
         gesturesEnabled = shouldShowTopBar,
         selectedNavigationIndex = selectedNavigationIndex
     ) { onOpenDrawer ->
