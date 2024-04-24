@@ -1,12 +1,13 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote
 
 import com.auth0.android.jwt.JWT
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.TokenAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.TokenDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+// IMPORTANT: Do not wrap any functions in try catch wrapper
+//  this should be done on higher level
 object AuthToken {
     private val retrofit by lazy { RetrofitObject.retrofit.create(TokenAPI::class.java) }
     private var token: JWT? = null
@@ -29,23 +30,17 @@ object AuthToken {
         }
     }
 
-    suspend fun storeRefreshToken(datasourceProvider: TokenDataStore) {
-        if (refreshToken == null) {
-            throw Exception("refresh token shouldn't be null")
-        }
-
-        datasourceProvider.updateRefreshToken(refreshToken!!.toString())
-    }
-
-    suspend fun getLoginFromStoredToken(token: String) : String? {
+    suspend fun getLoginFromStoredToken(token: String) : String {
         val jwtToken = JWT(token)
         if (jwtToken.isExpired(0)) {
-            return null
+            throw Exception("refresh token is expired")
         }
 
         refreshToken = jwtToken
         refreshToken()
-        return this.token?.getClaim("sub")?.asString()
+
+        val tokenValue = this.token ?: throw Exception("token is missing")
+        return tokenValue.getClaim("sub").asString() ?: throw Exception("sub should present in token")
     }
 
     private suspend fun refreshToken(): JWT? {
@@ -54,13 +49,11 @@ object AuthToken {
 
         withContext(Dispatchers.IO) {
             if (refreshTokenValue.isExpired(5 * 60 * 60 * 24)) {  // in 5 days or less
-                val tokenDTO =
-                    retrofit.renewRefreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
+                val tokenDTO = retrofit.renewRefreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
                 token = JWT(tokenDTO.token)
                 refreshToken = JWT(tokenDTO.refreshToken)
             } else {
-                val tokenDTO =
-                    retrofit.refreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
+                val tokenDTO = retrofit.refreshToken(TokenDTO.TokenRefreshRequestDTO(refreshTokenString))
                 token = JWT(tokenDTO.token)
             }
         }

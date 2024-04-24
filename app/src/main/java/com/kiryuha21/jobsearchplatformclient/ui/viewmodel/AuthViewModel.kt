@@ -12,6 +12,8 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
+import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
+import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,12 +80,13 @@ class AuthViewModel(
             val token = tokenDatasourceProvider.getRefreshToken(this).value
             val username = if (token != null) {
                 withContext(Dispatchers.IO) {
-                    AuthToken.getLoginFromStoredToken(token)
+                    networkCallWithReturnWrapper(
+                        networkCall = { AuthToken.getLoginFromStoredToken(token) }
+                    )
                 }
             } else null
 
-            if (username != null) {
-                CurrentUser.loadUserInfo(username)
+            if (username != null && networkCallWrapper({ CurrentUser.loadUserInfo(username) })) {
                 navigateToMainApp()
             } else {
                 setState { copy(isLoading = false) }

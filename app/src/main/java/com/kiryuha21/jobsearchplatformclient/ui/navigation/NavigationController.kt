@@ -129,7 +129,6 @@ fun NavGraphBuilder.addMainApp(
 
         LaunchedEffect(key1 = Unit) {
             CallbacksRegistry.logoutCallback = {
-                Log.d("tag1", "here")
                 viewModel.processIntent(MainAppContract.MainAppIntent.LogOut)
             }
             CallbacksRegistry.setProfileImageCallback = {

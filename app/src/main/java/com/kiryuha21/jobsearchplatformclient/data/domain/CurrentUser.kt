@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainUser
@@ -14,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 object CurrentUser {
     private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
-    private val _info: MutableState<User> = mutableStateOf(User("", "", UserRole.Worker, UserStatus.Active, null))
+    private val _info = mutableStateOf(User("", "", UserRole.Worker, UserStatus.Active, null))
     val info by _info
 
     suspend fun tryLogIn(login: String, password: String): Boolean {
@@ -39,11 +38,11 @@ object CurrentUser {
         }
     }
 
+    // IMPORTANT: Do not wrap in try catch wrapper
+    //  this should be done on higher level
     suspend fun loadUserInfo(username: String) {
         withContext(Dispatchers.IO) {
-            networkCallWrapper(
-                networkCall = { _info.value = userRetrofit.getUserByUsername(username).toDomainUser() }
-            )
+            _info.value = userRetrofit.getUserByUsername(username).toDomainUser()
         }
     }
 }

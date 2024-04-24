@@ -229,7 +229,12 @@ class MainAppViewModel(
                 )
             }
             job?.join()
-            setState { copy(openedResume = editedResume?.toDomainResume(), isLoading = false) }
+
+            if (editedResume != null) {
+                setState { copy(openedResume = editedResume.toDomainResume(), isLoading = false) }
+            } else {
+                setState { copy(isLoading = false) }
+            }
             navController.navigate(PROFILE)
         }
     }
@@ -328,7 +333,11 @@ class MainAppViewModel(
             }
             job?.join()
 
-            setState { copy(openedVacancy = editedVacancy?.toDomainVacancy(), isLoading = false) }
+            if (editedVacancy != null) {
+                setState { copy(openedVacancy = editedVacancy.toDomainVacancy(), isLoading = false) }
+            } else {
+                setState { copy(isLoading = false) }
+            }
             navController.navigate(PROFILE)
         }
     }
