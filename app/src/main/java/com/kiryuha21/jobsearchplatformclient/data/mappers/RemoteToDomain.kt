@@ -22,7 +22,7 @@ fun UserDTO.UserDTO.toDomainUser() =
         imageUrl = imageUrl
     )
 
-fun ResumeDTO.toDomainResume() =
+fun ResumeDTO.ResumeResponseDTO.toDomainResume() =
     Resume(
         id = id,
         firstName = firstName,
@@ -56,7 +56,7 @@ fun CompanyDTO.toDomainCompany() =
         name = name
     )
 
-fun VacancyDTO.toDomainVacancy() =
+fun VacancyDTO.VacancyResponseDTO.toDomainVacancy() =
     Vacancy(
         id = id,
         title = title,

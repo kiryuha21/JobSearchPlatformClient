@@ -13,7 +13,7 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 
 fun Resume.toResumeDTO() =
-    ResumeDTO(
+    ResumeDTO.ResumeRequestDTO(
         id = id,
         workerLogin = CurrentUser.info.username,
         firstName = firstName,
@@ -23,8 +23,7 @@ fun Resume.toResumeDTO() =
         applyPosition = applyPosition,
         skills = skills.map { it.toSkillDTO() },
         workExperience = workExperience.map { it.toWorkExperienceDTO() },
-        publicationStatus = publicationStatus,
-        imageUrl = imageUrl
+        publicationStatus = publicationStatus
     )
 
 fun Skill.toSkillDTO() =
@@ -48,7 +47,7 @@ fun Company.toCompanyDTO() =
     )
 
 fun Vacancy.toVacancyDTO() =
-    VacancyDTO(
+    VacancyDTO.VacancyRequestDTO(
         id = id,
         employerLogin = CurrentUser.info.username,
         title = title,
@@ -56,6 +55,5 @@ fun Vacancy.toVacancyDTO() =
         company = company.toCompanyDTO(),
         minSalary = minSalary,
         maxSalary = maxSalary,
-        publicationStatus = publicationStatus,
-        imageUrl = imageUrl
+        publicationStatus = publicationStatus
     )

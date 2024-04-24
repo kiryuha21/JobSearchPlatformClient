@@ -16,19 +16,19 @@ import retrofit2.http.Path
 
 interface ResumeAPI {
     @GET("resume/worker_username/{login}")
-    suspend fun getResumesByWorkerLogin(@Path("login") login: String): List<ResumeDTO>
+    suspend fun getResumesByWorkerLogin(@Path("login") login: String): List<ResumeDTO.ResumeResponseDTO>
 
     @GET("resume/{resumeId}")
-    suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO
+    suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO.ResumeResponseDTO
 
     @GET("resume")
-    suspend fun getMatchingResumes(): List<ResumeDTO>
+    suspend fun getMatchingResumes(): List<ResumeDTO.ResumeResponseDTO>
 
     @POST("resume")
     suspend fun createNewResume(
         @Header("Authorization") authToken: String,
-        @Body resume: ResumeDTO
-    ): ResumeDTO
+        @Body resume: ResumeDTO.ResumeRequestDTO
+    ): ResumeDTO.ResumeResponseDTO
 
     @Multipart
     @POST("resume/picture/{id}")
@@ -42,8 +42,8 @@ interface ResumeAPI {
     suspend fun editResume(
         @Header("Authorization") authToken: String,
         @Path("id") id: String,
-        @Body resume: ResumeDTO
-    ): ResumeDTO
+        @Body resume: ResumeDTO.ResumeRequestDTO
+    ): ResumeDTO.ResumeResponseDTO
 
     @DELETE("resume/{id}")
     suspend fun deleteResume(

@@ -15,19 +15,19 @@ import retrofit2.http.Path
 
 interface VacancyAPI {
     @GET("vacancy/employer_username/{login}")
-    suspend fun getVacanciesByEmployerLogin(@Path("login") login: String): List<VacancyDTO>
+    suspend fun getVacanciesByEmployerLogin(@Path("login") login: String): List<VacancyDTO.VacancyResponseDTO>
 
     @GET("vacancy/{vacancyId}")
-    suspend fun getVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO
+    suspend fun getVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO.VacancyResponseDTO
 
     @GET("vacancy")
-    suspend fun getMatchingVacancies(): List<VacancyDTO>
+    suspend fun getMatchingVacancies(): List<VacancyDTO.VacancyResponseDTO>
 
     @POST("vacancy")
     suspend fun createNewVacancy(
         @Header("Authorization") authToken: String,
-        @Body vacancy: VacancyDTO
-    ): VacancyDTO
+        @Body vacancy: VacancyDTO.VacancyRequestDTO
+    ): VacancyDTO.VacancyResponseDTO
 
     @Multipart
     @POST("vacancy/picture/{id}")
@@ -41,8 +41,8 @@ interface VacancyAPI {
     suspend fun editVacancy(
         @Header("Authorization") authToken: String,
         @Path("id") id: String,
-        @Body vacancy: VacancyDTO
-    ): VacancyDTO
+        @Body vacancy: VacancyDTO.VacancyRequestDTO
+    ): VacancyDTO.VacancyResponseDTO
 
     @DELETE("vacancy/{id}")
     suspend fun deleteVacancy(
