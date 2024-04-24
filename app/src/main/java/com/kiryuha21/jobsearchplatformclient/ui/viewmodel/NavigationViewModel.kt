@@ -10,8 +10,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
-import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.userRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
@@ -27,7 +26,6 @@ class NavigationViewModel(
     private val tokenDatasourceProvider : TokenDataStore,
     private val logoutCallback : () -> Unit
 ) : ViewModel() {
-    private val userRetrofit by lazy { RetrofitObject.retrofit.create(UserAPI::class.java) }
     private val navigationIndexStack = Stack<Int>()
     private val _currentIndex = mutableIntStateOf(0)
     val currentIndex by _currentIndex

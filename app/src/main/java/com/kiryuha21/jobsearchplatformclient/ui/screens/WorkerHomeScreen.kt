@@ -10,10 +10,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.ShimmeringVacancyListItem
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 
 @Composable
 fun WorkerHomeScreen(
-    state: MainAppContract.MainAppState,
+    state: WorkerHomeContract.State,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit,
     modifier: Modifier = Modifier

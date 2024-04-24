@@ -21,7 +21,6 @@ sealed class MainAppContract {
         data object LoadProfileVacancies: MainAppIntent()
         data object FindMatchingResumes: MainAppIntent()
         data object LoadProfileResumes: MainAppIntent()
-        data object LogOut: MainAppIntent()
         data class OpenVacancyEdit(val vacancy: Vacancy): MainAppIntent()
         data class CreateNewVacancy(val vacancy: Vacancy, val bitmap: Bitmap?): MainAppIntent()
         data class EditVacancy(val vacancy: Vacancy, val bitmap: Bitmap?): MainAppIntent()
@@ -32,6 +31,5 @@ sealed class MainAppContract {
         data class DeleteResume(val resume: Resume): MainAppIntent()
         data class OpenVacancyDetails(val vacancyId: String): MainAppIntent()
         data class OpenResumeDetails(val resumeId: String): MainAppIntent()
-        data class SetUserImage(val bitmap: Bitmap): MainAppIntent()
     }
 }

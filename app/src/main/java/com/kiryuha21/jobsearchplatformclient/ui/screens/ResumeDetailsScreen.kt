@@ -13,27 +13,18 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeDetails
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
-import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
 
 @Composable
 fun ResumeDetailsScreen(
     editable: Boolean,
-    resumeId: String?,
     onEdit: (Resume) -> Unit,
     onDelete: (Resume) -> Unit,
-    state: MainAppContract.MainAppState
+    state: ResumeDetailsContract.State
 ) {
-    if (resumeId == null) {
-        throw Exception("resumeId shouldn't be null!")
-    }
-
-    when (state.isLoading) {
-        true -> LoadingComponent(modifier = Modifier.fillMaxSize())
-        false -> {
-            if (state.openedResume == null) {
-                throw Exception("opened resume shouldn't be null by now")
-            }
-
+    when (state.openedResume) {
+        null -> LoadingComponent(modifier = Modifier.fillMaxSize())
+        else -> {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
