@@ -9,6 +9,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 fun VacancyEditScreen(
     initVacancy: Vacancy,
     isLoading: Boolean,
+    loadingText: String,
     onUpdateVacancy: (Vacancy, Bitmap?) -> Unit
 ) {
 

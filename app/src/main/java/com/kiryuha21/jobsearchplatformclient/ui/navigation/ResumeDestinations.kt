@@ -58,6 +58,7 @@ fun AnimatedContentScope.ResumeCommonEditScreen(
     ResumeEditScreen(
         initResume = resume,
         isLoading = viewModel.viewState.isSavingResume,
+        loadingText = viewModel.viewState.loadingText,
         onUpdateResume = { updatedResume, bitmap ->
             if (isNewResume) {
                 viewModel.processIntent(ResumeDetailsContract.Intent.CreateResume(updatedResume, bitmap))

@@ -9,7 +9,8 @@ sealed class ResumeDetailsContract {
     data class State(
         val isLoadingResume: Boolean,
         val isSavingResume: Boolean,
-        val openedResume: Resume?
+        val openedResume: Resume?,
+        val loadingText: String
     ) : ViewState
 
     sealed class Intent : ViewIntent {

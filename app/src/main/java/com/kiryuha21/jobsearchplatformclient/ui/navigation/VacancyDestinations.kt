@@ -59,6 +59,7 @@ fun AnimatedContentScope.VacancyCommonEditScreen(
     VacancyEditScreen(
         initVacancy = vacancy,
         isLoading = viewModel.viewState.isSavingVacancy,
+        loadingText = viewModel.viewState.loadingText,
         onUpdateVacancy = { updatedVacancy, bitmap ->
             if (isNewVacancy) {
                 viewModel.processIntent(VacancyDetailsContract.Intent.CreateVacancy(updatedVacancy, bitmap))
@@ -106,8 +107,8 @@ fun NavGraphBuilder.addVacancyDestinations(
 
         VacancyDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Employer,
-            onEdit = { viewModel.processIntent(VacancyDetailsContract.Intent.OpenEdit(it)) },
-            onDelete = { viewModel.processIntent(VacancyDetailsContract.Intent.DeleteVacancy(it.id)) },
+            onEdit = { viewModel.processIntent(VacancyDetailsContract.Intent.OpenEdit) },
+            onDelete = { viewModel.processIntent(VacancyDetailsContract.Intent.DeleteVacancy) },
             state = viewModel.viewState
         )
     }

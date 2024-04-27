@@ -22,8 +22,10 @@ fun VacancyDetailsScreen(
     onDelete: (Vacancy) -> Unit,
     state: VacancyDetailsContract.State
 ) {
-    when (state.openedVacancy) {
-        null -> LoadingComponent(modifier = Modifier.fillMaxSize())
+    when {
+        state.openedVacancy == null || state.isLoadingVacancy -> {
+            LoadingComponent(modifier = Modifier.fillMaxSize(), description = state.loadingText)
+        }
         else -> {
             Column(
                 modifier = Modifier.fillMaxSize()

@@ -29,7 +29,8 @@ class ResumeDetailsViewModel(
         return ResumeDetailsContract.State(
             isLoadingResume = false,
             isSavingResume = false,
-            openedResume = null
+            openedResume = null,
+            loadingText = ""
         )
     }
 
@@ -47,12 +48,15 @@ class ResumeDetailsViewModel(
         val resumeId = viewState.openedResume?.id ?: throw Exception("resume can't be null here")
 
         viewModelScope.launch {
+            setState { copy(isLoadingResume = true, loadingText = "Удаление резюме...") }
+
             withContext(Dispatchers.IO) {
                 networkCallWrapper(
                     networkCall = { resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId) }
                 )
             }
 
+            setState { copy(isLoadingResume = false) }
             navigateToProfileWithPop()
         }
     }
@@ -78,7 +82,7 @@ class ResumeDetailsViewModel(
         } else null
 
         viewModelScope.launch {
-            setState { copy(isSavingResume = true) }
+            setState { copy(isSavingResume = true, loadingText = "Сохранение изменений...") }
 
             val editedResume = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -104,7 +108,7 @@ class ResumeDetailsViewModel(
         }
 
         viewModelScope.launch {
-            setState { copy(isSavingResume = true) }
+            setState { copy(isSavingResume = true, loadingText = "Создание резюме...") }
 
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -136,7 +140,7 @@ class ResumeDetailsViewModel(
 
     private fun loadResume(resumeId: String) {
         viewModelScope.launch {
-            setState { copy(isLoadingResume = true) }
+            setState { copy(isLoadingResume = true, loadingText = "Загрузка резюме...") }
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
                     networkCall = { resumeRetrofit.getResumeById(resumeId).toDomainResume() }

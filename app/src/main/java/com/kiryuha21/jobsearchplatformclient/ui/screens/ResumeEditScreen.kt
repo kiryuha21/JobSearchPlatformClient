@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 fun ResumeEditScreen(
     initResume: Resume,
     isLoading: Boolean,
+    loadingText: String,
     onUpdateResume: (Resume, Bitmap?) -> Unit
 ) {
     var validName by remember { mutableStateOf(initResume.firstName.isNotBlank()) }
@@ -311,6 +312,6 @@ fun ResumeEditScreenPreview() {
                 )
             ),
             PublicationStatus.Published
-        ), true
+        ), true, ""
     ) { _, _ -> }
 }

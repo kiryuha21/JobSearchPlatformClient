@@ -9,14 +9,15 @@ class VacancyDetailsContract {
     data class State(
         val isLoadingVacancy: Boolean,
         val isSavingVacancy: Boolean,
+        val loadingText: String,
         val openedVacancy: Vacancy?
     ) : ViewState
 
     sealed class Intent : ViewIntent {
         data class EditVacancy(val vacancy: Vacancy, val bitmap: Bitmap?) : Intent()
         data class CreateVacancy(val vacancy: Vacancy, val bitmap: Bitmap?) : Intent()
-        data class DeleteVacancy(val vacancyId: String) : Intent()
         data class LoadVacancy(val vacancyId: String) : Intent()
-        data class OpenEdit(val vacancy: Vacancy) : Intent()
+        data object OpenEdit : Intent()
+        data object DeleteVacancy : Intent()
     }
 }

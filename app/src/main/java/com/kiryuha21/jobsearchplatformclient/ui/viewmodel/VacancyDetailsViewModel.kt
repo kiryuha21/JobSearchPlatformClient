@@ -29,6 +29,7 @@ class VacancyDetailsViewModel(
         return VacancyDetailsContract.State(
             isLoadingVacancy = false,
             isSavingVacancy = false,
+            loadingText = "",
             openedVacancy = null
         )
     }
@@ -37,12 +38,9 @@ class VacancyDetailsViewModel(
         when (intent) {
             is VacancyDetailsContract.Intent.EditVacancy -> editVacancy(intent.vacancy, intent.bitmap)
             is VacancyDetailsContract.Intent.CreateVacancy -> createVacancy(intent.vacancy, intent.bitmap)
-            is VacancyDetailsContract.Intent.DeleteVacancy -> deleteVacancy(intent.vacancyId)
+            is VacancyDetailsContract.Intent.DeleteVacancy -> deleteVacancy()
             is VacancyDetailsContract.Intent.LoadVacancy -> loadVacancy(intent.vacancyId)
-            is VacancyDetailsContract.Intent.OpenEdit -> {
-                setState { copy(openedVacancy = intent.vacancy) }
-                navigateToEdit()
-            }
+            is VacancyDetailsContract.Intent.OpenEdit -> { navigateToEdit() }
         }
     }
 
@@ -67,7 +65,7 @@ class VacancyDetailsViewModel(
         } else null
 
         viewModelScope.launch {
-            setState { copy(isSavingVacancy = true) }
+            setState { copy(isSavingVacancy = true, loadingText = "Сохранение изменений...") }
 
             val editedVacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -93,7 +91,7 @@ class VacancyDetailsViewModel(
         }
 
         viewModelScope.launch {
-            setState { copy(isSavingVacancy = true) }
+            setState { copy(isSavingVacancy = true, loadingText = "Создание вакансии...") }
 
             val newVacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -122,13 +120,19 @@ class VacancyDetailsViewModel(
         }
     }
 
-    private fun deleteVacancy(vacancyId: String) {
+    private fun deleteVacancy() {
+        val vacancyId = viewState.openedVacancy?.id ?: throw Exception("resume can't be null here")
+
         viewModelScope.launch {
+            setState { copy(isLoadingVacancy = true, loadingText = "Удаление вакансии...") }
+
             withContext(Dispatchers.IO) {
                 networkCallWrapper(
                     networkCall = { vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId) }
                 )
             }
+
+            setState { copy(isLoadingVacancy = false) }
             navigateToProfileWithPop()
         }
     }

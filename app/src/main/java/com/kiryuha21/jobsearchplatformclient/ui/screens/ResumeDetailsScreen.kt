@@ -21,8 +21,10 @@ fun ResumeDetailsScreen(
     onDelete: () -> Unit,
     state: ResumeDetailsContract.State
 ) {
-    when (state.openedResume) {
-        null -> LoadingComponent(modifier = Modifier.fillMaxSize())
+    when {
+        state.openedResume == null || state.isLoadingResume -> {
+            LoadingComponent(modifier = Modifier.fillMaxSize(), description = state.loadingText)
+        }
         else -> {
             Column(
                 modifier = Modifier.fillMaxSize()
