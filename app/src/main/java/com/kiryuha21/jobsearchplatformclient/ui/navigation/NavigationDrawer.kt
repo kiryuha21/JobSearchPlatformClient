@@ -51,15 +51,12 @@ fun DrawerMiniProfile(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var selectedImageUri by remember {
-        mutableStateOf(if (CurrentUser.info.imageUrl != null) Uri.parse(CurrentUser.info.imageUrl) else null)
-    }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
             context.contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            selectedImageUri = it
+            CurrentUser.setImageUri(it)
             onSetImage(it.getBitmap(context))
         }
     }
@@ -69,7 +66,7 @@ fun DrawerMiniProfile(
         modifier = modifier.padding(start = 15.dp, top = 10.dp)
     ) {
         ClickableAsyncUriImage(
-            selectedImageUri = selectedImageUri,
+            selectedImageUri = CurrentUser.selectedImageUri,
             defaultResourceId = R.drawable.upload_photo,
             onClick = {
                 photoPickerLauncher.launch(

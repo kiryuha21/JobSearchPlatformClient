@@ -12,7 +12,7 @@ class EmployerProfileContract {
 
     sealed class Intent : ViewIntent {
         data object LoadVacancies: Intent()
-        data object OpenVacancyForm: Intent()
+        data object CreateVacancy: Intent()
         data class OpenVacancyDetails(val vacancyId: String): Intent()
     }
 }

@@ -76,6 +76,7 @@ class NavigationViewModel(
             withContext(Dispatchers.IO) {
                 tokenDatasourceProvider.deleteRefreshToken()
             }
+            CurrentUser.logOut()
             logoutCallback()
         }
     }

@@ -13,7 +13,6 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyDetails
-import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 
 @Composable

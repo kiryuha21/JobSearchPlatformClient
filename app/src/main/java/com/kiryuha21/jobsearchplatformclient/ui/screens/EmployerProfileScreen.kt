@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,11 +22,11 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.Title
-import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 
 @Composable
 fun EmployerProfileScreen(
-    state: MainAppContract.MainAppState,
+    state: EmployerProfileContract.State,
     loadVacancies: () -> Unit,
     openVacancyDetails: (String) -> Unit,
     openVacancyEdit: () -> Unit,

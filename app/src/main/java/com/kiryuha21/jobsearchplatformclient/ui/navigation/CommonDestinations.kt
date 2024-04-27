@@ -7,11 +7,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.data.domain.ResumeFilter
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.VacancyFilter
 import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
-import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
@@ -19,7 +20,9 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerProfileViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.SettingsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
 
@@ -35,8 +38,6 @@ fun NavGraphBuilder.addCommonDestinations(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-
         when (CurrentUser.info.role) {
             UserRole.Worker -> {
                 val vm : WorkerHomeViewModel = backStack.sharedWorkerHomeViewModel(
@@ -49,31 +50,41 @@ fun NavGraphBuilder.addCommonDestinations(
 
                 WorkerHomeScreen(
                     state = vm.viewState,
-                    loadVacancies = { vm.processIntent(
-                        WorkerHomeContract.Intent.LoadVacancies(
-                            VacancyFilter()
-                        )) }, // TODO: should be a parameter of callback
-                    openVacancyDetails = { vacancyId -> vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId)) }
+                    loadVacancies = {
+                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(VacancyFilter())) // TODO: real filter should be here
+                    },
+                    openVacancyDetails = {
+                        vacancyId -> vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
+                    }
                 )
             }
 
-            UserRole.Employer -> EmployerHomeScreen(
-                state = viewModel.viewState,
-                loadResumes = { viewModel.processIntent(MainAppContract.MainAppIntent.FindMatchingResumes) },
-                openResumeDetails = { resumeId ->
-                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenResumeDetails(resumeId))
-                    onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
-                }
-            )
+            UserRole.Employer -> {
+                val vm : EmployerHomeViewModel = backStack.sharedEmployerHomeViewModel(
+                    navController = navController,
+                    openResumeCallback = { resumeId ->
+                        navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
+                        onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
+                    }
+                )
+
+                EmployerHomeScreen(
+                    state = vm.viewState,
+                    loadResumes = {
+                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(ResumeFilter())) // TODO: real filter should be here
+                    },
+                    openResumeDetails = {
+                        resumeId -> vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))
+                    }
+                )
+            }
         }
     }
-    composable(PROFILE) { backStack ->
+    composable(PROFILE) {
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
         OnBackPressedWithSuper(onNavigateBack)
-
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> {
@@ -100,18 +111,29 @@ fun NavGraphBuilder.addCommonDestinations(
                 )
             }
 
-            UserRole.Employer -> EmployerProfileScreen(
-                state = viewModel.viewState,
-                loadVacancies = { viewModel.processIntent(MainAppContract.MainAppIntent.LoadProfileVacancies) },
-                openVacancyDetails = { vacancyId ->
-                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyDetails(vacancyId))
-                    onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
-                },
-                openVacancyEdit = {
-                    viewModel.processIntent(MainAppContract.MainAppIntent.OpenVacancyEdit(Vacancy()))
-                    onNavigationForward(VACANCY_EDIT)
-                }
-            )
+            UserRole.Employer -> {
+                val vm : EmployerProfileViewModel = viewModel(factory = EmployerProfileViewModel.provideFactory(
+                    openVacancyDetailsCallback = { vacancyId ->
+                        navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
+                        onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
+                    },
+                    createVacancyCallback = {
+                        navController.navigate(VACANCY_CREATION)
+                        onNavigationForward(VACANCY_CREATION)
+                    }
+                ))
+
+                EmployerProfileScreen(
+                    state = vm.viewState,
+                    loadVacancies = { vm.processIntent(EmployerProfileContract.Intent.LoadVacancies) },
+                    openVacancyDetails = { vacancyId ->
+                        vm.processIntent(EmployerProfileContract.Intent.OpenVacancyDetails(vacancyId))
+                    },
+                    openVacancyEdit = {
+                        vm.processIntent(EmployerProfileContract.Intent.CreateVacancy)
+                    }
+                )
+            }
         }
     }
     composable(SETTINGS) { backStack ->
@@ -120,7 +142,7 @@ fun NavGraphBuilder.addCommonDestinations(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: SettingsViewModel = viewModel()
         SettingsScreen({}, {}, {})
     }
 }

@@ -1,10 +1,12 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.ResumeFilter
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
-import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
+import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +16,6 @@ import kotlinx.coroutines.withContext
 class EmployerHomeViewModel(
     private val openResumeCallback: (String) -> Unit
 ) : BaseViewModel<EmployerHomeContract.Intent, EmployerHomeContract.State>() {
-    private val resumeRetrofit by lazy { RetrofitObject.retrofit.create(ResumeAPI::class.java) }
-
     override fun initialState(): EmployerHomeContract.State {
         return EmployerHomeContract.State(
             isLoading = true,
@@ -46,5 +46,18 @@ class EmployerHomeViewModel(
 
     private fun openResumeDetails(resumeId: String) {
         openResumeCallback(resumeId)
+    }
+
+    companion object {
+        fun provideFactory(openResumeCallback: (String) -> Unit) =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    return EmployerHomeViewModel(openResumeCallback) as T
+                }
+            }
     }
 }

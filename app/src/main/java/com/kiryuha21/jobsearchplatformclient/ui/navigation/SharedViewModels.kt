@@ -8,7 +8,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
@@ -28,19 +28,6 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
 }
 
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedMainAppViewModel(
-    navController: NavController
-): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = MainAppViewModel.provideFactory(navController)
-    )
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return viewModel(parentEntry, factory = MainAppViewModel.provideFactory(navController))
-}
-
-@Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedWorkerHomeViewModel(
     navController: NavController,
     noinline openVacancyCallback: (String) -> Unit
@@ -52,6 +39,20 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedWorkerHomeViewModel(
         navController.getBackStackEntry(navGraphRoute)
     }
     return viewModel(parentEntry, factory = WorkerHomeViewModel.provideFactory(openVacancyCallback))
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedEmployerHomeViewModel(
+    navController: NavController,
+    noinline openResumeCallback: (String) -> Unit
+): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel(
+        factory = EmployerHomeViewModel.provideFactory(openResumeCallback)
+    )
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry, factory = EmployerHomeViewModel.provideFactory(openResumeCallback))
 }
 
 @Composable

@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableResumeCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.ShimmeringVacancyListItem
-import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 
 @Composable
 fun EmployerHomeScreen(
-    state: MainAppContract.MainAppState,
+    state: EmployerHomeContract.State,
     loadResumes: () -> Unit,
     openResumeDetails: (String) -> Unit,
     modifier: Modifier = Modifier

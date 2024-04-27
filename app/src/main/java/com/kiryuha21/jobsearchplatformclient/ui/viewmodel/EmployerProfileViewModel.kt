@@ -27,7 +27,7 @@ class EmployerProfileViewModel(
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is EmployerProfileContract.Intent.LoadVacancies -> loadProfileVacancies()
-            is EmployerProfileContract.Intent.OpenVacancyForm -> createVacancyCallback()
+            is EmployerProfileContract.Intent.CreateVacancy -> createVacancyCallback()
             is EmployerProfileContract.Intent.OpenVacancyDetails -> openVacancyDetailsCallback(intent.vacancyId)
         }
     }
