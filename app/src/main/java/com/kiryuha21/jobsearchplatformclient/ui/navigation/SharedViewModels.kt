@@ -10,6 +10,7 @@ import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 
 @Composable
@@ -63,7 +64,7 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedResumeDetailsViewMode
     val navGraphRoute = destination.parent?.route ?: return viewModel(
         factory = ResumeDetailsViewModel.provideFactory(
             navigateToProfile = navigateToProfile,
-            navigateToProfileWithCallback = navigateToProfileWithPop,
+            navigateToProfileWithPop = navigateToProfileWithPop,
             navigateToEdit = navigateToEdit
         )
     )
@@ -72,7 +73,31 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedResumeDetailsViewMode
     }
     return viewModel(parentEntry, factory = ResumeDetailsViewModel.provideFactory(
         navigateToProfile = navigateToProfile,
-        navigateToProfileWithCallback = navigateToProfileWithPop,
+        navigateToProfileWithPop = navigateToProfileWithPop,
+        navigateToEdit = navigateToEdit
+    ))
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedVacancyDetailsViewModel(
+    navController: NavController,
+    noinline navigateToProfile: () -> Unit,
+    noinline navigateToProfileWithPop: () -> Unit,
+    noinline navigateToEdit: () -> Unit
+): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel(
+        factory = VacancyDetailsViewModel.provideFactory(
+            navigateToProfile = navigateToProfile,
+            navigateToProfileWithPop = navigateToProfileWithPop,
+            navigateToEdit = navigateToEdit
+        )
+    )
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry, factory = VacancyDetailsViewModel.provideFactory(
+        navigateToProfile = navigateToProfile,
+        navigateToProfileWithPop = navigateToProfileWithPop,
         navigateToEdit = navigateToEdit
     ))
 }

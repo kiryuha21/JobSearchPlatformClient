@@ -8,6 +8,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 @Composable
 fun VacancyEditScreen(
     initVacancy: Vacancy,
+    isLoading: Boolean,
     onUpdateVacancy: (Vacancy, Bitmap?) -> Unit
 ) {
 

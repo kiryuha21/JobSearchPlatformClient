@@ -4,34 +4,35 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
-import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
-import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeEditScreen
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
+import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyDetailsScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.VacancyEditScreen
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
 
 @Composable
-fun AnimatedContentScope.ResumeCommonEditScreen(
+fun AnimatedContentScope.VacancyCommonEditScreen(
     navController: NavController,
     backStackEntry: NavBackStackEntry,
     shouldShowAppBar: MutableState<Boolean>,
     onNavigateBack: () -> Unit,
     onNavigationForward: (String) -> Unit,
-    isNewResume: Boolean
+    isNewVacancy: Boolean
 ) {
     LaunchedEffect(Unit) {
         shouldShowAppBar.value = false
     }
     OnBackPressedWithSuper(onNavigateBack)
 
-    val viewModel: ResumeDetailsViewModel = backStackEntry.sharedResumeDetailsViewModel(
+    val viewModel: VacancyDetailsViewModel = backStackEntry.sharedVacancyDetailsViewModel(
         navController = navController,
         navigateToProfile = {
             navController.navigate(NavigationGraph.MainApp.PROFILE)
@@ -44,45 +45,44 @@ fun AnimatedContentScope.ResumeCommonEditScreen(
             onNavigationForward(NavigationGraph.MainApp.PROFILE)
         },
         navigateToEdit = {
-            navController.navigate(NavigationGraph.MainApp.RESUME_EDIT)
-            onNavigationForward(NavigationGraph.MainApp.RESUME_EDIT)
+            navController.navigate(NavigationGraph.MainApp.VACANCY_EDIT)
+            onNavigationForward(NavigationGraph.MainApp.VACANCY_EDIT)
         }
     )
 
-    val resume = if (isNewResume) {
-        Resume()
+    val vacancy = if (isNewVacancy) {
+        Vacancy()
     } else {
-        viewModel.viewState.openedResume ?: throw Exception("resume can't be null here")
+        viewModel.viewState.openedVacancy ?: throw Exception("vacancy can't be null here")
     }
 
-    ResumeEditScreen(
-        initResume = resume,
-        isLoading = viewModel.viewState.isSavingResume,
-        onUpdateResume = { updatedResume, bitmap ->
-            if (isNewResume) {
-                viewModel.processIntent(ResumeDetailsContract.Intent.CreateResume(updatedResume, bitmap))
+    VacancyEditScreen(
+        initVacancy = vacancy,
+        isLoading = viewModel.viewState.isSavingVacancy,
+        onUpdateVacancy = { updatedVacancy, bitmap ->
+            if (isNewVacancy) {
+                viewModel.processIntent(VacancyDetailsContract.Intent.CreateVacancy(updatedVacancy, bitmap))
             } else {
-                viewModel.processIntent(ResumeDetailsContract.Intent.EditResume(updatedResume, bitmap))
+                viewModel.processIntent(VacancyDetailsContract.Intent.EditVacancy(updatedVacancy, bitmap))
             }
             onNavigationForward(NavigationGraph.MainApp.PROFILE)
         }
     )
 }
 
-fun NavGraphBuilder.addResumeDestinations(
+fun NavGraphBuilder.addVacancyDestinations(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>,
     onNavigateBack: () -> Unit,
     onNavigationForward: (String) -> Unit
 ) = with(NavigationGraph.MainApp) {
-    composable(RESUME_DETAILS) { backStack ->
+    composable(VACANCY_DETAILS) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: ResumeDetailsViewModel = backStack.sharedResumeDetailsViewModel(
-            navController = navController,
+        val viewModel: VacancyDetailsViewModel = viewModel(factory = VacancyDetailsViewModel.provideFactory(
             navigateToProfile = {
                 navController.navigate(PROFILE)
                 onNavigationForward(PROFILE)
@@ -94,41 +94,41 @@ fun NavGraphBuilder.addResumeDestinations(
                 onNavigationForward(PROFILE)
             },
             navigateToEdit = {
-                navController.navigate(RESUME_EDIT)
-                onNavigationForward(RESUME_EDIT)
+                navController.navigate(VACANCY_EDIT)
+                onNavigationForward(VACANCY_EDIT)
             }
-        )
+        ))
 
-        val resumeId = backStack.arguments?.getString("resumeId") ?: throw Exception("resumeId should be passed via backstack!")
+        val vacancyId = backStack.arguments?.getString("vacancyId") ?: throw Exception("vacancyId should be passed via backstack!")
         LaunchedEffect(key1 = Unit) {
-            viewModel.processIntent(ResumeDetailsContract.Intent.LoadResume(resumeId))
+            viewModel.processIntent(VacancyDetailsContract.Intent.LoadVacancy(vacancyId))
         }
 
-        ResumeDetailsScreen(
-            editable = CurrentUser.info.role == UserRole.Worker,
-            onEdit = { viewModel.processIntent(ResumeDetailsContract.Intent.OpenEdit) },
-            onDelete = { viewModel.processIntent(ResumeDetailsContract.Intent.DeleteResume) },
+        VacancyDetailsScreen(
+            editable = CurrentUser.info.role == UserRole.Employer,
+            onEdit = { viewModel.processIntent(VacancyDetailsContract.Intent.OpenEdit(it)) },
+            onDelete = { viewModel.processIntent(VacancyDetailsContract.Intent.DeleteVacancy(it.id)) },
             state = viewModel.viewState
         )
     }
-    composable(RESUME_CREATION) { backStack ->
-        ResumeCommonEditScreen(
+    composable(VACANCY_EDIT) { backStack ->
+        VacancyCommonEditScreen(
             navController = navController,
             backStackEntry = backStack,
             shouldShowAppBar = shouldShowAppBar,
             onNavigateBack = onNavigateBack,
             onNavigationForward = onNavigationForward,
-            isNewResume = true
+            isNewVacancy = false
         )
     }
-    composable(RESUME_EDIT) { backStack ->
-        ResumeCommonEditScreen(
+    composable(VACANCY_CREATION) {backStack ->
+        VacancyCommonEditScreen(
             navController = navController,
             backStackEntry = backStack,
             shouldShowAppBar = shouldShowAppBar,
             onNavigateBack = onNavigateBack,
             onNavigationForward = onNavigationForward,
-            isNewResume = false
+            isNewVacancy = true
         )
     }
 }

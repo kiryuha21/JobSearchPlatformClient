@@ -149,7 +149,7 @@ class ResumeDetailsViewModel(
     companion object {
         fun provideFactory(
             navigateToProfile: () -> Unit,
-            navigateToProfileWithCallback: () -> Unit,
+            navigateToProfileWithPop: () -> Unit,
             navigateToEdit: () -> Unit
         ) =
             object : ViewModelProvider.Factory {
@@ -160,7 +160,7 @@ class ResumeDetailsViewModel(
                 ): T {
                     return ResumeDetailsViewModel(
                         navigateToProfile = navigateToProfile,
-                        navigateToProfileWithPop = navigateToProfileWithCallback,
+                        navigateToProfileWithPop = navigateToProfileWithPop,
                         navigateToEdit = navigateToEdit
                     ) as T
                 }

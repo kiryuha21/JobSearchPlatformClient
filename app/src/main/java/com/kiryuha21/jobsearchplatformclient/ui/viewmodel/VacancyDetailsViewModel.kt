@@ -22,12 +22,13 @@ import okhttp3.MultipartBody
 
 class VacancyDetailsViewModel(
     private val navigateToEdit: () -> Unit,
-    private val navigateWithPopCallback: () -> Unit,
-    private val navigateCallback: () -> Unit,
+    private val navigateToProfileWithPop: () -> Unit,
+    private val navigateToProfile: () -> Unit,
 ) : BaseViewModel<VacancyDetailsContract.Intent, VacancyDetailsContract.State>() {
     override fun initialState(): VacancyDetailsContract.State {
         return VacancyDetailsContract.State(
-            isLoading = false,
+            isLoadingVacancy = false,
+            isSavingVacancy = false,
             openedVacancy = null
         )
     }
@@ -66,7 +67,7 @@ class VacancyDetailsViewModel(
         } else null
 
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isSavingVacancy = true) }
 
             val editedVacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -76,11 +77,11 @@ class VacancyDetailsViewModel(
             job?.join()
 
             if (editedVacancy != null) {
-                setState { copy(openedVacancy = editedVacancy.toDomainVacancy(), isLoading = false) }
+                setState { copy(openedVacancy = editedVacancy.toDomainVacancy(), isSavingVacancy = false) }
             } else {
-                setState { copy(isLoading = false) }
+                setState { copy(isSavingVacancy = false) }
             }
-            navigateCallback()
+            navigateToProfile()
         }
     }
 
@@ -92,7 +93,7 @@ class VacancyDetailsViewModel(
         }
 
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isSavingVacancy = true) }
 
             val newVacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -116,8 +117,8 @@ class VacancyDetailsViewModel(
                 )
             }
 
-            setState { copy(isLoading = false) }
-            navigateWithPopCallback()
+            setState { copy(isSavingVacancy = false) }
+            navigateToProfileWithPop()
         }
     }
 
@@ -128,27 +129,27 @@ class VacancyDetailsViewModel(
                     networkCall = { vacancyRetrofit.deleteVacancy("Bearer ${AuthToken.getToken()}", vacancyId) }
                 )
             }
-            navigateWithPopCallback()
+            navigateToProfileWithPop()
         }
     }
 
     private fun loadVacancy(vacancyId: String) {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isLoadingVacancy = true) }
             val vacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
                     networkCall = { vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy() }
                 )
             }
-            setState { copy(isLoading = false, openedVacancy = vacancy) }
+            setState { copy(isLoadingVacancy = false, openedVacancy = vacancy) }
         }
     }
 
     companion object {
         fun provideFactory(
             navigateToEdit: () -> Unit,
-            navigateCallback: () -> Unit,
-            navigateWithPopCallback: () -> Unit
+            navigateToProfile: () -> Unit,
+            navigateToProfileWithPop: () -> Unit
         ) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -158,8 +159,8 @@ class VacancyDetailsViewModel(
                 ): T {
                     return VacancyDetailsViewModel(
                         navigateToEdit = navigateToEdit,
-                        navigateCallback = navigateCallback,
-                        navigateWithPopCallback = navigateWithPopCallback
+                        navigateToProfile = navigateToProfile,
+                        navigateToProfileWithPop = navigateToProfileWithPop
                     ) as T
                 }
             }

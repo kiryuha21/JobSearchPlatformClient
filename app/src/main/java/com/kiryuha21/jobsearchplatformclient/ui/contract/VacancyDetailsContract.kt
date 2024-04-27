@@ -7,7 +7,8 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 
 class VacancyDetailsContract {
     data class State(
-        val isLoading: Boolean,
+        val isLoadingVacancy: Boolean,
+        val isSavingVacancy: Boolean,
         val openedVacancy: Vacancy?
     ) : ViewState
 
