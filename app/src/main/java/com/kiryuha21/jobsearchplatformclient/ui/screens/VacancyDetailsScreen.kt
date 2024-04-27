@@ -9,28 +9,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyDetails
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 
 @Composable
 fun VacancyDetailsScreen(
     editable: Boolean,
-    vacancyId: String?,
-    state: MainAppContract.MainAppState
+    onEdit: (Vacancy) -> Unit,
+    onDelete: (Vacancy) -> Unit,
+    state: VacancyDetailsContract.State
 ) {
-    if (vacancyId == null) {
-        throw Exception("vacancyId shouldn't be null!")
-    }
-
-    when (state.isLoading) {
-        true -> LoadingComponent(modifier = Modifier.fillMaxSize())
-        false -> {
+    when (state.openedVacancy) {
+        null -> LoadingComponent(modifier = Modifier.fillMaxSize())
+        else -> {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                VacancyDetails(vacancy = state.openedVacancy!!, modifier = Modifier.fillMaxWidth())
+                VacancyDetails(vacancy = state.openedVacancy, modifier = Modifier.fillMaxWidth())
                 if (editable) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -38,8 +37,8 @@ fun VacancyDetailsScreen(
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp)
                     ) {
-                        StyledDefaultButton(text = "Редактировать", onClick = { /*TODO*/ })
-                        StyledDefaultButton(text = "Удалить", onClick = { /*TODO*/ })
+                        StyledDefaultButton(text = "Редактировать", onClick = { onEdit(state.openedVacancy) })
+                        StyledDefaultButton(text = "Удалить", onClick = { onDelete(state.openedVacancy) })
                     }
                 }
             }

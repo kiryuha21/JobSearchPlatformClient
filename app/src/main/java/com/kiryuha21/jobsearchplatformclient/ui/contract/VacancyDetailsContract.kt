@@ -14,6 +14,8 @@ class VacancyDetailsContract {
     sealed class Intent : ViewIntent {
         data class EditVacancy(val vacancy: Vacancy, val bitmap: Bitmap?) : Intent()
         data class CreateVacancy(val vacancy: Vacancy, val bitmap: Bitmap?) : Intent()
-        data class DeleteVacancy(val vacancyId: String)
+        data class DeleteVacancy(val vacancyId: String) : Intent()
+        data class LoadVacancy(val vacancyId: String) : Intent()
+        data class OpenEdit(val vacancy: Vacancy) : Intent()
     }
 }

@@ -11,7 +11,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
@@ -57,44 +56,23 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedWorkerHomeViewModel(
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedResumeDetailsViewModel(
     navController: NavController,
-    noinline navigateToEdit: () -> Unit,
-    noinline navigateCallback: () -> Unit,
-    noinline navigateWithPopCallback: () -> Unit
+    noinline navigateToProfile: () -> Unit,
+    noinline navigateToProfileWithPop: () -> Unit,
+    noinline navigateToEdit: () -> Unit
 ): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
         factory = ResumeDetailsViewModel.provideFactory(
-            navigateToEdit = navigateToEdit,
-            navigateCallback = navigateCallback,
-            navigateWithPopCallback = navigateWithPopCallback
+            navigateToProfile = navigateToProfile,
+            navigateToProfileWithCallback = navigateToProfileWithPop,
+            navigateToEdit = navigateToEdit
         )
     )
     val parentEntry = remember(this) {
         navController.getBackStackEntry(navGraphRoute)
     }
     return viewModel(parentEntry, factory = ResumeDetailsViewModel.provideFactory(
-        navigateToEdit = navigateToEdit,
-        navigateCallback = navigateCallback,
-        navigateWithPopCallback = navigateWithPopCallback
-    ))
-}
-
-@Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedWorkerProfileViewModel(
-    navController: NavController,
-    noinline openResumeDetailsCallback: (String) -> Unit,
-    noinline createResumeCallback: () -> Unit
-): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = WorkerProfileViewModel.provideFactory(
-            openResumeDetailsCallback = openResumeDetailsCallback,
-            createResumeCallback = createResumeCallback
-        )
-    )
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return viewModel(parentEntry, factory = WorkerProfileViewModel.provideFactory(
-        openResumeDetailsCallback = openResumeDetailsCallback,
-        createResumeCallback = createResumeCallback
+        navigateToProfile = navigateToProfile,
+        navigateToProfileWithCallback = navigateToProfileWithPop,
+        navigateToEdit = navigateToEdit
     ))
 }

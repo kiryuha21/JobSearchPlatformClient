@@ -19,5 +19,6 @@ object NavigationGraph {
         const val RESUME_DETAILS_BASE = "Resume"
         const val RESUME_DETAILS = "$RESUME_DETAILS_BASE/{resumeId}"
         const val RESUME_EDIT = "ResumeEdit"
+        const val RESUME_CREATION = "ResumeCreation"
     }
 }

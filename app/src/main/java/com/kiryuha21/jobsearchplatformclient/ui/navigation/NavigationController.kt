@@ -26,6 +26,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSupe
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.MainAppContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
@@ -44,6 +45,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.MainAppViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.NavigationViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
 
@@ -139,19 +141,18 @@ fun NavGraphBuilder.addMainApp(
             UserRole.Worker -> {
                 val vm : WorkerHomeViewModel = backStack.sharedWorkerHomeViewModel(
                     navController = navController,
-                    openVacancyCallback = { navController.navigate("$VACANCY_DETAILS_BASE/$it") }
+                    openVacancyCallback = { vacancyId ->
+                        navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
+                        onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
+                    }
                 )
 
                 WorkerHomeScreen(
                     state = vm.viewState,
                     loadVacancies = { vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(VacancyFilter())) }, // TODO: should be a parameter of callback
-                    openVacancyDetails = { vacancyId ->
-                        vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
-                        onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
-                    }
+                    openVacancyDetails = { vacancyId -> vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId)) }
                 )
             }
-
 
             UserRole.Employer -> EmployerHomeScreen(
                 state = viewModel.viewState,
@@ -173,22 +174,25 @@ fun NavGraphBuilder.addMainApp(
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> {
-                val vm : WorkerProfileViewModel = backStack.sharedWorkerProfileViewModel(
-                    navController = navController,
-                    openResumeDetailsCallback = { navController.navigate("$RESUME_DETAILS_BASE/$it") },
-                    createResumeCallback = { navController.navigate(RESUME_EDIT) }
-                )
+                val vm : WorkerProfileViewModel = viewModel(factory = WorkerProfileViewModel.provideFactory(
+                    openResumeDetailsCallback = { resumeId ->
+                        navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
+                        onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
+                    },
+                    createResumeCallback = {
+                        navController.navigate(RESUME_CREATION)
+                        onNavigationForward(RESUME_CREATION)
+                    }
+                ))
 
                 WorkerProfileScreen(
                     state = vm.viewState,
                     loadResumes = { vm.processIntent(WorkerProfileContract.Intent.LoadResumes) },
                     openResumeDetails = { resumeId ->
                         vm.processIntent(WorkerProfileContract.Intent.OpenResumeDetails(resumeId))
-                        onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
                     },
                     openResumeEdit = {
                         vm.processIntent(WorkerProfileContract.Intent.CreateResume)
-                        onNavigationForward(RESUME_EDIT)
                     }
                 )
             }
@@ -222,78 +226,27 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
+        val viewModel: VacancyDetailsViewModel = viewModel(factory = VacancyDetailsViewModel.provideFactory(
+            navigateCallback = { navController.navigate(PROFILE) },
+            navigateToEdit = { navController.navigate(RESUME_EDIT) },
+            navigateWithPopCallback = {
+                navController.popBackStack()
+                navController.navigate(PROFILE)
+                onNavigateBack()
+            }
+        ))
 
         VacancyDetailsScreen(
             editable = CurrentUser.info.role == UserRole.Employer,
-            vacancyId = backStack.arguments?.getString("vacancyId"),
-            state = viewModel.viewState
-        )
-    }
-    composable(RESUME_DETAILS) { backStack ->
-        LaunchedEffect(Unit) {
-            shouldShowAppBar.value = false
-        }
-        OnBackPressedWithSuper(onNavigateBack)
-
-        val viewModel: ResumeDetailsViewModel = backStack.sharedResumeDetailsViewModel(
-            navController = navController,
-            navigateCallback = { navController.navigate(PROFILE) },
-            navigateToEdit = { navController.navigate(RESUME_EDIT) },
-            navigateWithPopCallback = {
-                navController.popBackStack()
-                navController.navigate(PROFILE)
-            }
-        )
-
-        val resumeId = backStack.arguments?.getString("resumeId") ?: throw Exception("resumeId should be passed via backstack!")
-        LaunchedEffect(Unit) {
-            viewModel.processIntent(ResumeDetailsContract.Intent.LoadResume(resumeId))
-        }
-
-        ResumeDetailsScreen(
-            editable = CurrentUser.info.role == UserRole.Worker,
             onEdit = {
-                viewModel.processIntent(ResumeDetailsContract.Intent.OpenEdit(it))
-                onNavigationForward(RESUME_EDIT)
+                viewModel.processIntent(VacancyDetailsContract.Intent.OpenEdit(it))
+                onNavigationForward(VACANCY_EDIT)
             },
             onDelete = {
-                viewModel.processIntent(ResumeDetailsContract.Intent.DeleteResume(it.id))
+                viewModel.processIntent(VacancyDetailsContract.Intent.DeleteVacancy(it.id))
                 onNavigationForward(PROFILE)
             },
             state = viewModel.viewState
-        )
-    }
-    composable(RESUME_EDIT) { backStack ->
-        LaunchedEffect(Unit) {
-            shouldShowAppBar.value = false
-        }
-        OnBackPressedWithSuper(onNavigateBack)
-
-        val viewModel: ResumeDetailsViewModel = backStack.sharedResumeDetailsViewModel(
-            navController = navController,
-            navigateCallback = { navController.navigate(PROFILE) },
-            navigateToEdit = { navController.navigate(RESUME_EDIT) },
-            navigateWithPopCallback = {
-                navController.popBackStack()
-                navController.navigate(PROFILE)
-            }
-        )
-
-        val resume = viewModel.viewState.openedResume ?: Resume()
-        val onUpdateResume: (Resume, Bitmap?) -> Unit = if (resume.id.isNotEmpty()) {
-            { res, bitmap -> viewModel.processIntent(ResumeDetailsContract.Intent.EditResume(res, bitmap)) }
-        } else {
-            { res, bitmap -> viewModel.processIntent(ResumeDetailsContract.Intent.CreateResume(res, bitmap)) }
-        }
-
-        ResumeEditScreen(
-            initResume = viewModel.viewState.openedResume ?: Resume(),
-            isLoading = viewModel.viewState.isLoading,
-            onUpdateResume = { updatedResume, bitmap ->
-                onUpdateResume(updatedResume, bitmap)
-                onNavigationForward(PROFILE)
-            }
         )
     }
     composable(VACANCY_EDIT) { backStack ->
@@ -302,8 +255,15 @@ fun NavGraphBuilder.addMainApp(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: MainAppViewModel = backStack.sharedMainAppViewModel(navController)
-        val vacancy = viewModel.viewState.openedVacancy!!
+        val viewModel: VacancyDetailsViewModel = viewModel(factory = VacancyDetailsViewModel.provideFactory(
+            navigateCallback = { navController.navigate(PROFILE) },
+            navigateToEdit = { navController.navigate(RESUME_EDIT) },
+            navigateWithPopCallback = {
+                navController.popBackStack()
+                navController.navigate(PROFILE)
+            }
+        ))
+        val vacancy = viewModel.viewState.openedVacancy ?: Vacancy()
 
         val onUpdateVacancy: (Vacancy, Bitmap?) -> Unit = if (vacancy.id.isNotEmpty()) {
             { vac, bitmap -> viewModel.processIntent(MainAppContract.MainAppIntent.EditVacancy(vac, bitmap)) }
@@ -312,7 +272,7 @@ fun NavGraphBuilder.addMainApp(
         }
 
         VacancyEditScreen(
-            initVacancy = viewModel.viewState.openedVacancy!!,
+            initVacancy = viewModel.viewState.openedVacancy ?: Vacancy(),
             onUpdateVacancy = { updatedVacancy, bitmap ->
                 onUpdateVacancy(updatedVacancy, bitmap)
                 onNavigationForward(PROFILE)
@@ -364,6 +324,12 @@ fun NavigationController() {
                 route = NavigationGraph.MainApp.NAV_ROUTE
             ) {
                 addMainApp(
+                    navController = navController,
+                    shouldShowAppBar = shouldShowTopBar,
+                    onNavigateBack = { navigationVM.navigateBack() },
+                    onNavigationForward = { navigationVM.navigateTo(it) }
+                )
+                addResumeDestinations(
                     navController = navController,
                     shouldShowAppBar = shouldShowTopBar,
                     onNavigateBack = { navigationVM.navigateBack() },

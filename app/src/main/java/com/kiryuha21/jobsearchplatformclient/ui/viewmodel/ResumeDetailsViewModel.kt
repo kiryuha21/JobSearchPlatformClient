@@ -21,13 +21,14 @@ import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 
 class ResumeDetailsViewModel(
+    private val navigateToProfileWithPop: () -> Unit,
+    private val navigateToProfile: () -> Unit,
     private val navigateToEdit: () -> Unit,
-    private val navigateWithPopCallback: () -> Unit,
-    private val navigateCallback: () -> Unit,
 ) : BaseViewModel<ResumeDetailsContract.Intent, ResumeDetailsContract.State>() {
     override fun initialState(): ResumeDetailsContract.State {
         return ResumeDetailsContract.State(
-            isLoading = false,
+            isLoadingResume = false,
+            isSavingResume = false,
             openedResume = null
         )
     }
@@ -36,12 +37,23 @@ class ResumeDetailsViewModel(
         when (intent) {
             is ResumeDetailsContract.Intent.EditResume -> editResume(intent.resume, intent.bitmap)
             is ResumeDetailsContract.Intent.CreateResume -> createResume(intent.resume, intent.bitmap)
-            is ResumeDetailsContract.Intent.DeleteResume -> deleteResume(intent.resumeId)
             is ResumeDetailsContract.Intent.LoadResume -> loadResume(intent.resumeId)
-            is ResumeDetailsContract.Intent.OpenEdit -> {
-                setState { copy(openedResume = intent.resume) }
-                navigateToEdit()
+            is ResumeDetailsContract.Intent.OpenEdit -> navigateToEdit()
+            is ResumeDetailsContract.Intent.DeleteResume -> deleteResume()
+        }
+    }
+
+    private fun deleteResume() {
+        val resumeId = viewState.openedResume?.id ?: throw Exception("resume can't be null here")
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                networkCallWrapper(
+                    networkCall = { resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId) }
+                )
             }
+
+            navigateToProfileWithPop()
         }
     }
 
@@ -66,7 +78,7 @@ class ResumeDetailsViewModel(
         } else null
 
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isSavingResume = true) }
 
             val editedResume = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -76,11 +88,11 @@ class ResumeDetailsViewModel(
             job?.join()
 
             if (editedResume != null) {
-                setState { copy(openedResume = editedResume.toDomainResume(), isLoading = false) }
+                setState { copy(openedResume = editedResume.toDomainResume(), isSavingResume = false) }
             } else {
-                setState { copy(isLoading = false) }
+                setState { copy(isSavingResume = false) }
             }
-            navigateCallback()
+            navigateToProfile()
         }
     }
 
@@ -92,7 +104,7 @@ class ResumeDetailsViewModel(
         }
 
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isSavingResume = true) }
 
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
@@ -117,40 +129,28 @@ class ResumeDetailsViewModel(
                 }
             }
 
-            setState { copy(isLoading = false) }
-            navigateWithPopCallback()
-        }
-    }
-
-    private fun deleteResume(resumeId: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                networkCallWrapper(
-                    networkCall = { resumeRetrofit.deleteResume("Bearer ${AuthToken.getToken()}", resumeId) }
-                )
-            }
-
-            navigateWithPopCallback()
+            setState { copy(isSavingResume = false) }
+            navigateToProfileWithPop()
         }
     }
 
     private fun loadResume(resumeId: String) {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isLoadingResume = true) }
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
                     networkCall = { resumeRetrofit.getResumeById(resumeId).toDomainResume() }
                 )
             }
-            setState { copy(isLoading = false, openedResume = resumeResult) }
+            setState { copy(isLoadingResume = false, openedResume = resumeResult) }
         }
     }
 
     companion object {
         fun provideFactory(
-            navigateToEdit: () -> Unit,
-            navigateCallback: () -> Unit,
-            navigateWithPopCallback: () -> Unit
+            navigateToProfile: () -> Unit,
+            navigateToProfileWithCallback: () -> Unit,
+            navigateToEdit: () -> Unit
         ) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -159,9 +159,9 @@ class ResumeDetailsViewModel(
                     extras: CreationExtras
                 ): T {
                     return ResumeDetailsViewModel(
-                        navigateToEdit = navigateToEdit,
-                        navigateCallback = navigateCallback,
-                        navigateWithPopCallback = navigateWithPopCallback
+                        navigateToProfile = navigateToProfile,
+                        navigateToProfileWithPop = navigateToProfileWithCallback,
+                        navigateToEdit = navigateToEdit
                     ) as T
                 }
             }

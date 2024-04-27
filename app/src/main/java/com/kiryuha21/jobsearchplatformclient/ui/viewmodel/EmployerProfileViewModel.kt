@@ -1,6 +1,9 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.vacancyRetrofit
@@ -11,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EmployerProfileViewModel(
-    private val openVacancyCallback: () -> Unit,
+    private val createVacancyCallback: () -> Unit,
     private val openVacancyDetailsCallback: (String) -> Unit
 ): BaseViewModel<EmployerProfileContract.Intent, EmployerProfileContract.State>() {
     override fun initialState(): EmployerProfileContract.State {
@@ -24,7 +27,7 @@ class EmployerProfileViewModel(
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is EmployerProfileContract.Intent.LoadVacancies -> loadProfileVacancies()
-            is EmployerProfileContract.Intent.OpenVacancyForm -> openVacancyCallback()
+            is EmployerProfileContract.Intent.OpenVacancyForm -> createVacancyCallback()
             is EmployerProfileContract.Intent.OpenVacancyDetails -> openVacancyDetailsCallback(intent.vacancyId)
         }
     }
@@ -39,5 +42,24 @@ class EmployerProfileViewModel(
             }
             setState { copy(isLoading = false, vacancies = vacanciesResult) }
         }
+    }
+
+    companion object {
+        fun provideFactory(
+            openVacancyDetailsCallback: (String) -> Unit,
+            createVacancyCallback: () -> Unit
+        ) =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    return EmployerProfileViewModel(
+                        createVacancyCallback = createVacancyCallback,
+                        openVacancyDetailsCallback = openVacancyDetailsCallback
+                    ) as T
+                }
+            }
     }
 }
