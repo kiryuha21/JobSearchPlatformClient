@@ -51,6 +51,10 @@ object CurrentUser {
         }
     }
 
+    fun updateUserFromDTO(userDTO: UserDTO.UserDTO) {
+        _info.value = userDTO.toDomainUser()
+    }
+
     fun setImageUri(uri: Uri) {
         _selectedImageUri.value = uri
     }

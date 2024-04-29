@@ -13,6 +13,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.VacancyFilter
 import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
@@ -136,13 +137,24 @@ fun NavGraphBuilder.addCommonDestinations(
             }
         }
     }
-    composable(SETTINGS) { backStack ->
+    composable(SETTINGS) {
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
         OnBackPressedWithSuper(onNavigateBack)
 
         val viewModel: SettingsViewModel = viewModel()
-        SettingsScreen({}, {}, {})
+        SettingsScreen(
+            state = viewModel.viewState,
+            onUsernameFieldEdited = { viewModel.processIntent(SettingsContract.Intent.EditUsername(it)) },
+            onEmailFieldEdited = { viewModel.processIntent(SettingsContract.Intent.EditEmail(it)) },
+            onPasswordFieldEdited = { viewModel.processIntent(SettingsContract.Intent.EditPassword(it)) },
+            onShowPasswordDialog = { viewModel.processIntent(SettingsContract.Intent.ShowPasswordDialog) },
+            onPasswordDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HidePasswordDialog) },
+            onPasswordDialogConfirmed = { viewModel.processIntent(SettingsContract.Intent.CheckPassword(it)) },
+            onSaveChangesClicked = { viewModel.processIntent(SettingsContract.Intent.ShowAreYouSureDialog) },
+            onAreYouSureDialogConfirmed = { viewModel.processIntent(SettingsContract.Intent.CommitChanges) },
+            onAreYouSureDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HideAreYouSureDialog) }
+        )
     }
 }

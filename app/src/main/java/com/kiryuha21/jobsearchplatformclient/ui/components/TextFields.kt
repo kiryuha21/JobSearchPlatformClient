@@ -165,7 +165,7 @@ fun SecuredPasswordTextField(
         enabled = enabled,
         isError = isError,
         supportingText = {
-            if (supportingText.isNotEmpty()) {
+            if (isError) {
                 Text(text = supportingText)
             }
         },

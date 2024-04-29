@@ -76,8 +76,13 @@ class NavigationViewModel(
             withContext(Dispatchers.IO) {
                 tokenDatasourceProvider.deleteRefreshToken()
             }
+
             CurrentUser.logOut()
             logoutCallback()
+
+            _currentIndex.intValue = 0
+            lastIndex = 0
+            navigationIndexStack.clear()
         }
     }
 

@@ -39,6 +39,9 @@ fun SecuredFields(
     onLoginFieldEdit: (String) -> Unit,
     onEmailFieldEdit: (String) -> Unit,
     onPasswordFieldEdit: (String) -> Unit,
+    initUsername: String,
+    initEmail: String,
+    initPassword: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,21 +53,21 @@ fun SecuredFields(
             icon = Icons.Filled.Abc,
             enabled = enabled,
             placeholder = "my_login",
-            initString = CurrentUser.info.username,
+            initString = initUsername,
             onUpdate = onLoginFieldEdit
         )
         SecuredTextField(
             icon = Icons.Filled.Email,
             enabled = enabled,
             placeholder = "example@gmail.com",
-            initString = CurrentUser.info.email,
+            initString = initEmail,
             onUpdate = onEmailFieldEdit
         )
         SecuredPasswordTextField(
             icon = Icons.Filled.Password,
             enabled = enabled,
             placeholder = "",
-            initString = "",
+            initString = initPassword,
             isError = false,
             supportingText = "",
             onUpdate = onPasswordFieldEdit

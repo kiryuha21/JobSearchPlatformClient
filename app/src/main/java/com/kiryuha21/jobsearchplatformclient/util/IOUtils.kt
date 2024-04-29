@@ -35,7 +35,7 @@ suspend fun networkCallWrapper(
     onHttpError: (HttpException) -> Unit = {},
     onIOError: (IOException) -> Unit = {},
     onOtherErrors: (Exception) -> Unit = {},
-    afterAnyError: () -> Unit = {},
+    onAnyError: () -> Unit = {},
 ): Boolean {
     try {
         networkCall()
@@ -50,7 +50,7 @@ suspend fun networkCallWrapper(
         Log.d(DEBUG_TAG, e.message.toString())
         onOtherErrors(e)
     }
-    afterAnyError()
+    onAnyError()
     return false
 }
 
@@ -59,7 +59,7 @@ suspend fun <T : Any> networkCallWithReturnWrapper(
     onHttpError: (HttpException) -> Unit = {},
     onIOError: (IOException) -> Unit = {},
     onOtherErrors: (Exception) -> Unit = {},
-    afterAnyError: () -> Unit = {},
+    onAnyError: () -> Unit = {},
 ): T? {
     try {
         return networkCall()
@@ -73,6 +73,6 @@ suspend fun <T : Any> networkCallWithReturnWrapper(
         Log.d(DEBUG_TAG, e.message.toString())
         onOtherErrors(e)
     }
-    afterAnyError()
+    onAnyError()
     return null
 }
