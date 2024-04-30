@@ -7,6 +7,8 @@ data class Vacancy(
     val company: Company = Company(""),
     val minSalary: Int = 0,
     val maxSalary: Int = 0,
+    val requiredWorkExperience: List<WorkExperience> = emptyList(),
+    val requiredSkills: List<Skill> = emptyList(),
     val publicationStatus: PublicationStatus = PublicationStatus.Published,
     val imageUrl: String? = null
 )

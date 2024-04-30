@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
+import android.util.Log
 import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
@@ -12,6 +13,7 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
+import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 
 fun UserDTO.UserDTO.toDomainUser() =
     User(
@@ -65,5 +67,7 @@ fun VacancyDTO.VacancyResponseDTO.toDomainVacancy() =
         minSalary = minSalary,
         maxSalary = maxSalary,
         publicationStatus = publicationStatus,
+        requiredWorkExperience = requiredWorkExperience.map { it.toDomainWorkExperience() },
+        requiredSkills = requiredSkills.map { it.toDomainSkill() },
         imageUrl = imageUrl
     )

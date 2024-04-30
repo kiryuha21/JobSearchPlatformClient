@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,9 +27,16 @@ import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 fun DefaultButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: Shape = ButtonDefaults.shape
 ) {
-    SecuredButton(text = text, onClick = onClick, enabled = true, modifier = modifier)
+    SecuredButton(
+        text = text,
+        onClick = onClick,
+        enabled = true,
+        modifier = modifier,
+        shape = shape
+    )
 }
 
 @Composable
@@ -36,12 +44,14 @@ fun SecuredButton(
     text: String,
     onClick: () -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: Shape = ButtonDefaults.shape
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier,
+        shape = shape
     ) {
         Text(text = text)
     }

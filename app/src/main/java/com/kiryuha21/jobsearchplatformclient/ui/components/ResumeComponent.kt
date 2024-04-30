@@ -10,18 +10,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.WorkOutline
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,8 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,78 +41,6 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlin.math.min
-
-@Composable
-fun ResumeImageHintCard(modifier: Modifier = Modifier) {
-    Card(
-        colors = CardColors(
-            containerColor = Color.LightGray,
-            contentColor = Color.Black,
-            disabledContainerColor = Color.LightGray,
-            disabledContentColor = Color.Gray
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
-            Text(text = "Фото значительно повышает статус резюме")
-        }
-    }
-}
-
-@Composable
-fun ClickableSkillsList(
-    skills: List<Skill>,
-    imageVector: ImageVector,
-    onClick: (Int) -> Unit
-) {
-    if (skills.isNotEmpty()) {
-        Text(text = "Навыки:", modifier = Modifier.padding(top = 10.dp))
-        skills.forEachIndexed { index, skill ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = skill.toString(), modifier = Modifier.fillMaxWidth(0.8f))
-                IconButton(
-                    onClick = { onClick(index) }
-                ) {
-                    Icon(imageVector = imageVector, contentDescription = "delete")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ClickableWorkExperienceList(
-    workExperience: List<WorkExperience>,
-    imageVector: ImageVector,
-    onClick: (Int) -> Unit
-) {
-    if (workExperience.isNotEmpty()) {
-        Text(text = "Опыт работы", modifier = Modifier.padding(top = 10.dp))
-        workExperience.forEachIndexed { index, exp ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = exp.toString(), modifier = Modifier.fillMaxWidth(0.8f))
-                IconButton(
-                    onClick = { onClick(index) }
-                ) {
-                    Icon(imageVector = imageVector, contentDescription = "delete")
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {
@@ -214,69 +136,73 @@ fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier 
 }
 
 @Composable
-fun SkillForm(
-    onSubmit: (Skill) -> Unit,
-    onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+fun ResumeEditForm(
+    resume: Resume,
+    comboBoxItems: List<ComboBoxItem>,
+    onFirstNameUpdate: (String, Boolean) -> Unit,
+    onLastNameUpdate: (String, Boolean) -> Unit,
+    onPhoneUpdate: (String, Boolean) -> Unit,
+    onEmailUpdate: (String, Boolean) -> Unit,
+    onPositionUpdate: (String, Boolean) -> Unit,
 ) {
-    var validName by remember { mutableStateOf(false) }
-    var skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
-
-    val comboBoxItems = listOf(
-        ComboBoxItem("Имею представление") {
-            skill = skill.copy(skillLevel = SkillLevel.AwareOf)
-        },
-        ComboBoxItem("Имел дело") {
-            skill = skill.copy(skillLevel = SkillLevel.Tested)
-        },
-        ComboBoxItem("Есть пет-проекты") {
-            skill = skill.copy(skillLevel = SkillLevel.HasPetProjects)
-        },
-        ComboBoxItem("Есть коммерческие проекты") {
-            skill = skill.copy(skillLevel = SkillLevel.HasCommercialProjects)
-        },
-    )
-
-    Column(
-        modifier = modifier
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        ValidateableTextField(
-            icon = Icons.Default.Abc,
-            placeholder = "Названия навыка",
-            initString = "",
-            onUpdate = { value, valid ->
-                if (valid) {
-                    validName = true
-                    skill = skill.copy(name = value)
-                } else {
-                    validName = false
-                }
-            },
-            isValid = { it.isNotBlank() },
-            errorMessage = "Название навыка не может быть пустым",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Уровень навыка")
-            ComboBox(items = comboBoxItems)
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            SecuredButton(text = "Сохранить", onClick = { onSubmit(skill) }, enabled = validName)
-            DefaultButton(text = "Отменить", onClick = onCancel)
-        }
+        Text(text = "Статус резюме")
+        ComboBox(items = comboBoxItems)
     }
+    ValidateableTextField(
+        placeholder = "Имя",
+        initString = resume.firstName,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Имя не может быть пустым",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Abc,
+        onUpdate = onFirstNameUpdate
+    )
+    ValidateableTextField(
+        placeholder = "Фамилия",
+        initString = resume.lastName,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Фамилия не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Abc,
+        onUpdate = onLastNameUpdate
+    )
+    PhoneField(
+        initString = resume.phoneNumber,
+        placeholder = "Номер телефона",
+        icon = Icons.Default.Phone,
+        mask = "0-(000)-000-00-00",
+        onUpdate = onPhoneUpdate,
+        errorMessage = "Введите корректный телефон",
+        isValid = { it.isNotBlank() && it.isNumeric() },
+        modifier = Modifier.fillMaxWidth()
+    )
+    ValidateableTextField(
+        placeholder = "E-mail",
+        initString = resume.contactEmail,
+        isValid = { it.isNotBlank() },
+        errorMessage = "E-mail не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Email,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        onUpdate = onEmailUpdate
+    )
+    ValidateableTextField(
+        placeholder = "Позиция",
+        initString = resume.applyPosition,
+        isValid = { it.isNotBlank() },
+        errorMessage = "Позиция не может быть пустой",
+        modifier = Modifier.fillMaxWidth(),
+        icon = Icons.Default.Work,
+        onUpdate = onPositionUpdate
+    )
 }
 
 @Composable
-fun WorkExperienceForm(
+fun ResumeWorkExperienceForm(
     onSubmit: (WorkExperience) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
@@ -393,84 +319,10 @@ fun WorkExperienceForm(
     }
 }
 
-@Composable
-fun ResumeEditForm(
-    resume: Resume,
-    comboBoxItems: List<ComboBoxItem>,
-    onFirstNameUpdate: (String, Boolean) -> Unit,
-    onLastNameUpdate: (String, Boolean) -> Unit,
-    onPhoneUpdate: (String, Boolean) -> Unit,
-    onEmailUpdate: (String, Boolean) -> Unit,
-    onPositionUpdate: (String, Boolean) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = "Статус резюме")
-        ComboBox(items = comboBoxItems)
-    }
-    ValidateableTextField(
-        placeholder = "Имя",
-        initString = resume.firstName,
-        isValid = { it.isNotBlank() },
-        errorMessage = "Имя не может быть пустым",
-        modifier = Modifier.fillMaxWidth(),
-        icon = Icons.Default.Abc,
-        onUpdate = onFirstNameUpdate
-    )
-    ValidateableTextField(
-        placeholder = "Фамилия",
-        initString = resume.lastName,
-        isValid = { it.isNotBlank() },
-        errorMessage = "Фамилия не может быть пустой",
-        modifier = Modifier.fillMaxWidth(),
-        icon = Icons.Default.Abc,
-        onUpdate = onLastNameUpdate
-    )
-    PhoneField(
-        initString = resume.phoneNumber,
-        placeholder = "Номер телефона",
-        icon = Icons.Default.Phone,
-        mask = "0-(000)-000-00-00",
-        onUpdate = onPhoneUpdate,
-        errorMessage = "Введите корректный телефон",
-        isValid = { it.isNotBlank() && it.isNumeric() },
-        modifier = Modifier.fillMaxWidth()
-    )
-    ValidateableTextField(
-        placeholder = "E-mail",
-        initString = resume.contactEmail,
-        isValid = { it.isNotBlank() },
-        errorMessage = "E-mail не может быть пустой",
-        modifier = Modifier.fillMaxWidth(),
-        icon = Icons.Default.Email,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        onUpdate = onEmailUpdate
-    )
-    ValidateableTextField(
-        placeholder = "Позиция",
-        initString = resume.applyPosition,
-        isValid = { it.isNotBlank() },
-        errorMessage = "Позиция не может быть пустой",
-        modifier = Modifier.fillMaxWidth(),
-        icon = Icons.Default.Work,
-        onUpdate = onPositionUpdate
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun WorkExperienceFormPreview() {
-    WorkExperienceForm({}, {})
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SkillFormPreview() {
-    SkillForm({}, {})
+    ResumeWorkExperienceForm({}, {})
 }
 
 @Preview(showBackground = true)

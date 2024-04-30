@@ -2,6 +2,7 @@ package com.kiryuha21.jobsearchplatformclient.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -58,7 +59,7 @@ fun EmployerProfileScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             when {
-                state.vacancies == null -> LoadingComponent()
+                state.vacancies == null -> LoadingComponent(description = "Загрузка профиля...")
                 state.vacancies.isEmpty() -> NoItemsCard()
                 else -> {
                     LazyColumn {

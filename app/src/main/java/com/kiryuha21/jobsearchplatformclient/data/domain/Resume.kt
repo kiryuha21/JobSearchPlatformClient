@@ -7,8 +7,8 @@ data class Resume(
     val phoneNumber: String = "",
     val contactEmail: String = "",
     val applyPosition: String = "",
-    val skills: List<Skill> = listOf(),
-    val workExperience: List<WorkExperience> = listOf(),
+    val skills: List<Skill> = emptyList(),
+    val workExperience: List<WorkExperience> = emptyList(),
     val publicationStatus: PublicationStatus = PublicationStatus.Published,
     val imageUrl: String? = null
 ) {

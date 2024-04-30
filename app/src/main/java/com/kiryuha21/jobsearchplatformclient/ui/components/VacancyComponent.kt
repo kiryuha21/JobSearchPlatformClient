@@ -1,6 +1,5 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,12 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,61 +29,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import com.valentinilk.shimmer.shimmer
-
-@Composable
-fun LoadedVacancyItem(vacancy: Vacancy, modifier: Modifier = Modifier) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    Card(
-        shape = RoundedCornerShape(3.dp),
-        modifier = modifier.padding(5.dp)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = vacancy.title,
-                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            )
-
-            val salaryText =
-                if (vacancy.minSalary == vacancy.maxSalary) "${vacancy.minSalary}"
-                else "От ${vacancy.minSalary} до ${vacancy.maxSalary}"
-            Text(text = salaryText, fontFamily = FontFamily.Cursive)
-
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Work,
-                    contentDescription = "work",
-                )
-                Text(text = vacancy.company.name, modifier = Modifier.padding(start = 20.dp))
-            }
-
-            TextButton(onClick = { isExpanded = !isExpanded }) {
-                Text(
-                    text = vacancy.description,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
-                    modifier = Modifier.animateContentSize()
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun VacancyDetails(vacancy: Vacancy, modifier: Modifier = Modifier) {
@@ -149,6 +107,193 @@ fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifi
     }
 }
 
+@Composable
+fun VacancyEditForm(
+    vacancy: Vacancy,
+    comboBoxItems: List<ComboBoxItem>,
+    onTitleUpdate: (String, Boolean) -> Unit,
+    onCompanyNameUpdate: (String, Boolean) -> Unit,
+    onMinSalaryUpdate: (String, Boolean) -> Unit,
+    onMaxSalaryUpdate: (String, Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Статус Вакансии")
+            ComboBox(items = comboBoxItems)
+        }
+        ValidateableTextField(
+            placeholder = "Название вакансии",
+            initString = vacancy.title,
+            isValid = { it.isNotBlank() },
+            errorMessage = "Название вакансии не может быть пустым",
+            modifier = Modifier.fillMaxWidth(),
+            icon = Icons.Default.Abc,
+            onUpdate = onTitleUpdate
+        )
+        ValidateableTextField(
+            placeholder = "Название компании",
+            initString = vacancy.company.name,
+            isValid = { it.isNotBlank() },
+            errorMessage = "Название компании не может быть пустым",
+            modifier = Modifier.fillMaxWidth(),
+            icon = Icons.Default.Abc,
+            onUpdate = onCompanyNameUpdate
+        )
+
+        HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+
+        Text(
+            text = "Ожидаемая зарплата",
+            fontSize = 16.sp,
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                ValidateableTextField(
+                    placeholder = "Минимум, ₽",
+                    initString = vacancy.minSalary.toString(),
+                    isValid = { it.isNotBlank() && it.isNumeric() },
+                    errorMessage = "Некорректное число",
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    onUpdate = onMinSalaryUpdate
+                )
+            }
+
+            Text(
+                text = Typography.lessOrEqual.toString(),
+                fontSize = 28.sp,
+                modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 20.dp)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                ValidateableTextField(
+                    placeholder = "Максимум, ₽",
+                    initString = vacancy.maxSalary.toString(),
+                    isValid = { it.isNotBlank() && it.isNumeric() },
+                    errorMessage = "Некорректное число",
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    onUpdate = onMaxSalaryUpdate
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun VacancyWorkExperienceForm(
+    onSubmit: (WorkExperience) -> Unit,
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var validMonths by remember { mutableStateOf(false) }
+    var validPosition by remember { mutableStateOf(false) }
+
+    var workExperience by remember {
+        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
+    }
+    val comboBoxItems = listOf(
+        ComboBoxItem("Джуниор") {
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Junior)
+        },
+        ComboBoxItem("Мидл") {
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Middle)
+        },
+        ComboBoxItem("Сеньор") {
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Senior)
+        },
+        ComboBoxItem("Лид") {
+            workExperience = workExperience.copy(positionLevel = PositionLevel.Lead)
+        },
+    )
+
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Минимальный уровень позиции")
+            ComboBox(items = comboBoxItems)
+        }
+
+        ValidateableTextField(
+            icon = Icons.Default.Abc,
+            placeholder = "Желаемая Позиция",
+            initString = "",
+            onUpdate = { value, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(position = value)
+                }
+                validPosition = valid
+            },
+            isValid = { it.isNotBlank() },
+            errorMessage = "Позиция не может быть пустой",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        ValidateableTextField(
+            placeholder = "Минимум месяцев проработано",
+            initString = "",
+            onUpdate = { text, valid ->
+                if (valid) {
+                    workExperience = workExperience.copy(months = text.toInt())
+                }
+                validMonths = valid
+            },
+            isValid = { it.isNotEmpty() && it.isNumeric() },
+            errorMessage = "Введите корректное число",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+        ) {
+            val valid = validPosition && validMonths
+
+            SecuredButton(
+                text = "Сохранить",
+                onClick = { onSubmit(workExperience) },
+                enabled = valid
+            )
+            DefaultButton(text = "Отменить", onClick = onCancel)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun VacancyFormPreview() {
+    VacancyEditForm(
+        vacancy = Vacancy(),
+        comboBoxItems = listOf(ComboBoxItem("preview", {})),
+        onTitleUpdate = {_, _ ->},
+        onCompanyNameUpdate = {_, _ ->},
+        onMinSalaryUpdate = {_, _ ->},
+        onMaxSalaryUpdate = {_, _ ->}
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
 fun ShimmeringVacancyListItem(
     modifier: Modifier = Modifier

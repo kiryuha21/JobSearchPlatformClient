@@ -54,8 +54,8 @@ fun NavGraphBuilder.addCommonDestinations(
                     loadVacancies = {
                         vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(VacancyFilter())) // TODO: real filter should be here
                     },
-                    openVacancyDetails = {
-                        vacancyId -> vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
+                    openVacancyDetails = { vacancyId ->
+                        vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
                     }
                 )
             }

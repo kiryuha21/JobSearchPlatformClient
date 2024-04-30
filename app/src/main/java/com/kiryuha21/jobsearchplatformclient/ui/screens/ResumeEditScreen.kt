@@ -51,9 +51,9 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeEditForm
-import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeImageHintCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.ImageHintCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.SkillForm
-import com.kiryuha21.jobsearchplatformclient.ui.components.WorkExperienceForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.ResumeWorkExperienceForm
 import com.kiryuha21.jobsearchplatformclient.util.getBitmap
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.coroutines.launch
@@ -110,14 +110,12 @@ fun ResumeEditScreen(
             ExtendedFloatingActionButton(
                 containerColor = if (enabled) FloatingActionButtonDefaults.containerColor else Color.LightGray,
                 onClick = {
-                    if (!enabled) {
-                        return@ExtendedFloatingActionButton
-                    }
-
-                    if (selectedImageUri == null || (initResume.imageUrl != null && selectedImageUri == Uri.parse(initResume.imageUrl))) {
-                        onUpdateResume(resume, null)
-                    } else {
-                        onUpdateResume(resume, selectedImageUri?.getBitmap(context))
+                    if (enabled) {
+                        if (selectedImageUri == null || (initResume.imageUrl != null && selectedImageUri == Uri.parse(initResume.imageUrl))) {
+                            onUpdateResume(resume, null)
+                        } else {
+                            onUpdateResume(resume, selectedImageUri?.getBitmap(context))
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(0.4f)
@@ -135,10 +133,8 @@ fun ResumeEditScreen(
         ) {
             if (isLoading) {
                 LoadingComponent(
-                    description = "Сохранение резюме...",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1F)
+                    description = loadingText,
+                    modifier = Modifier.fillMaxSize().weight(1F)
                 )
             } else {
                 Row(
@@ -156,7 +152,10 @@ fun ResumeEditScreen(
                         }
                     )
 
-                    ResumeImageHintCard(modifier = Modifier.padding(start = 20.dp))
+                    ImageHintCard(
+                        hintText = "Фото значительно повышает статус резюме",
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
                 }
 
                 ResumeEditForm(
@@ -164,47 +163,38 @@ fun ResumeEditScreen(
                     comboBoxItems = comboBoxItems,
                     onFirstNameUpdate = { value, valid ->
                         if (valid) {
-                            validName = true
                             resume = resume.copy(firstName = value)
-                        } else {
-                            validName = false
                         }
+                        validName = valid
                     },
                     onLastNameUpdate = { value, valid ->
                         if (valid) {
-                            validSurname = true
                             resume = resume.copy(lastName = value)
-                        } else {
-                            validSurname = false
                         }
+                        validSurname = valid
                     },
                     onPhoneUpdate = { value, valid ->
                         if (valid) {
-                            validPhone = true
                             resume = resume.copy(phoneNumber = value)
-                        } else {
-                            validPhone = false
                         }
+                        validPhone = valid
                     },
                     onEmailUpdate = { value, valid ->
                         if (valid) {
-                            validEmail = true
                             resume = resume.copy(contactEmail = value)
-                        } else {
-                            validEmail = false
                         }
+                        validEmail = valid
                     },
                     onPositionUpdate = { value, valid ->
                         if (valid) {
-                            validPosition = true
                             resume = resume.copy(applyPosition = value)
-                        } else {
-                            validPosition = false
                         }
+                        validPosition = valid
                     }
                 )
 
                 ClickableSkillsList(
+                    description = "Навыки:",
                     skills = resume.skills,
                     imageVector = Icons.Default.Delete,
                     onClick = { index ->
@@ -215,8 +205,10 @@ fun ResumeEditScreen(
                 )
 
                 ClickableWorkExperienceList(
+                    description = "Опыт работы:",
                     workExperience = resume.workExperience,
                     imageVector = Icons.Default.Delete,
+                    isRequirementView = false,
                     onClick = { index ->
                         resume = resume.copy(
                             workExperience = resume.workExperience.filterIndexed { ind, _ -> index != ind }
@@ -255,7 +247,7 @@ fun ResumeEditScreen(
                 }
 
                 AnimatedVisibility(visible = experienceFormVisible) {
-                    WorkExperienceForm(
+                    ResumeWorkExperienceForm(
                         onSubmit = {
                             resume = resume.copy(workExperience = resume.workExperience + it)
                             experienceFormVisible = false
@@ -267,6 +259,7 @@ fun ResumeEditScreen(
 
                 AnimatedVisibility(visible = skillFormVisible) {
                     SkillForm(
+                        skillLevelText = "Уровень навыка",
                         onSubmit = {
                             resume = resume.copy(skills = resume.skills + it)
                             skillFormVisible = false
@@ -312,6 +305,6 @@ fun ResumeEditScreenPreview() {
                 )
             ),
             PublicationStatus.Published
-        ), true, ""
+        ), false, ""
     ) { _, _ -> }
 }

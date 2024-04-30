@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -83,7 +82,8 @@ fun NavGraphBuilder.addVacancyDestinations(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: VacancyDetailsViewModel = viewModel(factory = VacancyDetailsViewModel.provideFactory(
+        val viewModel: VacancyDetailsViewModel = backStack.sharedVacancyDetailsViewModel(
+            navController = navController,
             navigateToProfile = {
                 navController.navigate(PROFILE)
                 onNavigationForward(PROFILE)
@@ -98,7 +98,7 @@ fun NavGraphBuilder.addVacancyDestinations(
                 navController.navigate(VACANCY_EDIT)
                 onNavigationForward(VACANCY_EDIT)
             }
-        ))
+        )
 
         val vacancyId = backStack.arguments?.getString("vacancyId") ?: throw Exception("vacancyId should be passed via backstack!")
         LaunchedEffect(key1 = Unit) {

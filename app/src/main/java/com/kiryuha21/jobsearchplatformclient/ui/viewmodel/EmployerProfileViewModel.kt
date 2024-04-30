@@ -19,7 +19,7 @@ class EmployerProfileViewModel(
 ): BaseViewModel<EmployerProfileContract.Intent, EmployerProfileContract.State>() {
     override fun initialState(): EmployerProfileContract.State {
         return EmployerProfileContract.State(
-            isLoading = true,
+            isLoading = false,
             vacancies = null
         )
     }

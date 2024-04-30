@@ -63,7 +63,7 @@ fun WorkerProfileScreen(
             )
 
             when {
-                state.resumes == null -> LoadingComponent()
+                state.resumes == null -> LoadingComponent(description = "Загрузка профиля...")
                 state.resumes.isEmpty() -> NoItemsCard()
                 else -> LazyColumn {
                     items(state.resumes) {

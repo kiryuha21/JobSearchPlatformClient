@@ -17,6 +17,9 @@ data class WorkExperience(
     fun positionFormatted() =
         "${positionLevel.name} $position"
 
+    fun formattedAsRequirement() =
+        "${positionFormatted()} в течение ${workMonthsFormatted()}"
+
     override fun toString() =
         "${positionFormatted()} в ${company.name} в течение ${workMonthsFormatted()}"
 }

@@ -55,5 +55,7 @@ fun Vacancy.toVacancyDTO() =
         company = company.toCompanyDTO(),
         minSalary = minSalary,
         maxSalary = maxSalary,
-        publicationStatus = publicationStatus
+        publicationStatus = publicationStatus,
+        requiredSkills = requiredSkills.map { it.toSkillDTO() },
+        requiredWorkExperience = requiredWorkExperience.map { it.toWorkExperienceDTO() }
     )

@@ -7,7 +7,7 @@ sealed class VacancyDTO {
     data class VacancyRequestDTO(
         @SerializedName("id")
         val id: String,
-        @SerializedName("employerLogin")
+        @SerializedName("employerUsername")
         val employerLogin: String,
         @SerializedName("title")
         val title: String,
@@ -19,6 +19,10 @@ sealed class VacancyDTO {
         val minSalary: Int,
         @SerializedName("maxSalary")
         val maxSalary: Int,
+        @SerializedName("requiredWorkExperience")
+        val requiredWorkExperience: List<WorkExperienceDTO> = emptyList(),
+        @SerializedName("requiredSkills")
+        val requiredSkills: List<SkillDTO> = emptyList(),
         @SerializedName("status")
         val publicationStatus: PublicationStatus
     )
@@ -26,7 +30,7 @@ sealed class VacancyDTO {
     data class VacancyResponseDTO(
         @SerializedName("id")
         val id: String,
-        @SerializedName("employerLogin")
+        @SerializedName("employerUsername")
         val employerLogin: String,
         @SerializedName("title")
         val title: String,
@@ -38,6 +42,10 @@ sealed class VacancyDTO {
         val minSalary: Int,
         @SerializedName("maxSalary")
         val maxSalary: Int,
+        @SerializedName("requiredWorkExperience")
+        val requiredWorkExperience: List<WorkExperienceDTO> = emptyList(),
+        @SerializedName("requiredSkills")
+        val requiredSkills: List<SkillDTO> = emptyList(),
         @SerializedName("status")
         val publicationStatus: PublicationStatus,
         @SerializedName("imageUrl")

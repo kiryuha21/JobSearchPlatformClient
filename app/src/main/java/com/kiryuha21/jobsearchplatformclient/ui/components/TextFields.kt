@@ -46,13 +46,40 @@ fun Title(text: String, fontSize: TextUnit, modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun TextBox(
+    placeholder: String,
+    initString: String,
+    onUpdate: (String) -> Unit,
+    minLines: Int,
+    modifier: Modifier = Modifier,
+) {
+    val focusManager = LocalFocusManager.current
+    var text by remember { mutableStateOf(initString) }
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            text = it
+            onUpdate(text)
+        },
+        keyboardActions = KeyboardActions(onNext = {
+            focusManager.moveFocus(FocusDirection.Down)
+        }),
+        minLines = minLines,
+        modifier = modifier,
+        placeholder = { Text(text = placeholder) },
+        label = { Text(placeholder) },
+    )
+}
+
+@Composable
 fun SecuredTextField(
-    icon: ImageVector,
+    icon: ImageVector?,
     enabled: Boolean,
     placeholder: String,
     initString: String,
     onUpdate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     var text by remember { mutableStateOf(initString) }
@@ -62,7 +89,9 @@ fun SecuredTextField(
         modifier = modifier,
         enabled = enabled,
         label = { Text(placeholder) },
-        leadingIcon = { Icon(imageVector = icon, contentDescription = "icon") },
+        leadingIcon = if (icon != null) {
+            { Icon(imageVector = icon, contentDescription = "icon") }
+        } else null,
         placeholder = { Text(text = placeholder) },
         singleLine = true,
         keyboardActions = KeyboardActions(onNext = {
@@ -77,7 +106,7 @@ fun SecuredTextField(
 
 @Composable
 fun DefaultTextField(
-    icon: ImageVector,
+    icon: ImageVector?,
     placeholder: String,
     initString: String,
     onUpdate: (String) -> Unit,
@@ -110,12 +139,6 @@ fun ValidateableTextField(
     var text by remember { mutableStateOf(initString) }
     var supportingText by remember { mutableStateOf(if (isValid(initString)) "" else errorMessage) }
 
-    val leadingIcon: @Composable (() -> Unit)? = if (icon == null) {
-        null
-    } else {
-        { Icon(imageVector = icon, contentDescription = "icon") }
-    }
-
     OutlinedTextField(
         value = text,
         modifier = modifier,
@@ -128,7 +151,9 @@ fun ValidateableTextField(
         singleLine = true,
         isError = supportingText.isNotEmpty(),
         supportingText = { Text(text = supportingText, color = Color.Red) },
-        leadingIcon = leadingIcon,
+        leadingIcon = if (icon != null) {
+            { Icon(imageVector = icon, contentDescription = "icon") }
+        } else null,
         visualTransformation = visualTransformation,
         onValueChange = {
             if (it.length <= maxLength) {
