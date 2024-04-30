@@ -46,9 +46,9 @@ class ExampleUnitTest {
                     userRetrofit.getUserByUsername(user.username)
                 }
             }
-        }.onFailure {
-            Log.i(DEBUG_TAG, it.message.toString())
-            throw it
+        }.onFailure { exception ->
+            Log.i(DEBUG_TAG, exception.message.toString())
+            throw exception
         }
     }
 }
