@@ -48,6 +48,7 @@ class ExampleUnitTest {
             }
         }.onFailure {
             Log.i(DEBUG_TAG, it.message.toString())
+            throw it
         }
     }
 }
