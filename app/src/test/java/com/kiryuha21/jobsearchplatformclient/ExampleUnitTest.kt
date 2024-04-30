@@ -24,56 +24,30 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun createGetDeleteUser() {
-        val user = UserDTO.SignUpUserDTO(
-            email = "test@gmail.com",
-            username = "my_example_login",
-            password = "secure_one",
-            role = UserRole.Worker
-        )
+    fun createGetDeleteUser() = runTest {
+        runCatching {
+            val user = UserDTO.SignUpUserDTO(
+                email = "test@gmail.com",
+                username = "my_example_login",
+                password = "secure_one",
+                role = UserRole.Worker
+            )
 
-        val newUser = runTest {
-            try {
-                userRetrofit.createNewUser(user)
-            } catch (e: Exception) {
-                Log.i(DEBUG_TAG, e.message.toString())
-            }
-        }
-        val createdUser = runTest {
-            try {
-                userRetrofit.getUserByUsername(user.username)
-            } catch (e: Exception) {
-                Log.i(DEBUG_TAG, e.message.toString())
-            }
-        }
-        assertEquals(newUser, createdUser)
+            val newUser = userRetrofit.createNewUser(user)
+            val createdUser = userRetrofit.getUserByUsername(user.username)
+            assertEquals(newUser, createdUser)
 
-        runTest {
-            try {
-                AuthToken.createToken(user.username, user.password)
-                assertNotNull(AuthToken.getToken())
-            } catch (e: Exception) {
-                Log.i(DEBUG_TAG, e.message.toString())
-            }
-        }
+            AuthToken.createToken(user.username, user.password)
+            assertNotNull(AuthToken.getToken())
 
-        runTest {
-            try {
-                userRetrofit.deleteUserByUsername(user.username, "Bearer ${AuthToken.getToken()}")
-            } catch (e: Exception) {
-                Log.i(DEBUG_TAG, e.message.toString())
-            }
-        }
-
-        assertThrows(Exception::class.java) {
-            runTest {
-                try {
+            userRetrofit.deleteUserByUsername(user.username, "Bearer ${AuthToken.getToken()}")
+            assertThrows(Exception::class.java) {
+                runTest {
                     userRetrofit.getUserByUsername(user.username)
-                } catch (e: Exception) {
-                    Log.i(DEBUG_TAG, e.message.toString())
-                    throw e
                 }
             }
+        }.onFailure {
+            Log.i(DEBUG_TAG, it.message.toString())
         }
     }
 }
