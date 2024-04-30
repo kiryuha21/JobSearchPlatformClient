@@ -71,6 +71,7 @@ class ExampleUnitTest {
                     userRetrofit.getUserByUsername(user.username)
                 } catch (e: Exception) {
                     Log.i(DEBUG_TAG, e.message.toString())
+                    throw e
                 }
             }
         }
