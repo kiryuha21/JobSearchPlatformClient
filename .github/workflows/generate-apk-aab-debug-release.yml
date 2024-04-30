@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'workflow_test_1'
 
   pull_request:
     branches:
