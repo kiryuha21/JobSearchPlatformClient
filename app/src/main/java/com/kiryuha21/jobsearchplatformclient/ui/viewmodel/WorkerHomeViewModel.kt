@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.kiryuha21.jobsearchplatformclient.data.domain.VacancyFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.vacancyRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
@@ -21,7 +21,7 @@ class WorkerHomeViewModel(
             isLoading = true,
             vacancies = null,
             openedVacancy = null,
-            filters = VacancyFilter()
+            filters = VacancyFilters()
         )
     }
 
@@ -32,7 +32,7 @@ class WorkerHomeViewModel(
         }
     }
 
-    private fun loadVacancies(filter: VacancyFilter) {
+    private fun loadVacancies(filter: VacancyFilters) {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
             val vacanciesResult = withContext(Dispatchers.IO) {

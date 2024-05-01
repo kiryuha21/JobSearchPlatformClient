@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.kiryuha21.jobsearchplatformclient.data.domain.ResumeFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
@@ -21,7 +21,7 @@ class EmployerHomeViewModel(
             isLoading = true,
             resumes = null,
             openedResume = null,
-            filters = ResumeFilter()
+            filters = ResumeFilters()
         )
     }
 
@@ -32,7 +32,7 @@ class EmployerHomeViewModel(
         }
     }
 
-    private fun loadResumes(filter: ResumeFilter) {
+    private fun loadResumes(filter: ResumeFilters) {
         viewModelScope.launch {
             setState { copy(isLoading = true) }
             val resumesResult = withContext(Dispatchers.IO) {

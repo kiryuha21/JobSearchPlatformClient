@@ -10,14 +10,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.WorkOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +40,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
@@ -146,7 +152,9 @@ fun ResumeEditForm(
     onPositionUpdate: (String, Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "Статус резюме")
@@ -317,6 +325,55 @@ fun ResumeWorkExperienceForm(
             DefaultButton(text = "Отменить", onClick = onCancel)
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ResumeSearchBar(
+    onSearch: (ResumeFilters) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var currentQuery by remember { mutableStateOf("") }
+    var bodyVisible by remember { mutableStateOf(false) }
+    var resumeFilters by remember { mutableStateOf(ResumeFilters()) }
+
+    SearchBar(
+        query = currentQuery,
+        onQueryChange = {
+            currentQuery = it
+            resumeFilters = resumeFilters.copy(applyPosition = it)
+        },
+        onSearch = { onSearch(resumeFilters) },
+        active = bodyVisible,
+        onActiveChange = { bodyVisible = !bodyVisible },
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "search")
+        },
+        trailingIcon = {
+            if (bodyVisible) {
+                IconButton(
+                    onClick = {
+                        if (currentQuery.isEmpty()) {
+                            bodyVisible = false
+                        } else {
+                            currentQuery = ""
+                        }
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = "clear")
+                }
+            }
+        },
+        modifier = modifier
+    ) {
+        Text(text = "filters here...")
+    }
+}
+
+@Preview
+@Composable
+fun ResumeSearchBarPreview() {
+    ResumeSearchBar(onSearch = {})
 }
 
 @Preview(showBackground = true)

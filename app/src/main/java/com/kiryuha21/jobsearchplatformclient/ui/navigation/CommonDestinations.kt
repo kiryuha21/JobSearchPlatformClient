@@ -7,9 +7,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.domain.ResumeFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.data.domain.VacancyFilter
 import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
@@ -52,7 +51,7 @@ fun NavGraphBuilder.addCommonDestinations(
                 WorkerHomeScreen(
                     state = vm.viewState,
                     loadVacancies = {
-                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(VacancyFilter())) // TODO: real filter should be here
+                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(it))
                     },
                     openVacancyDetails = { vacancyId ->
                         vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
@@ -72,7 +71,7 @@ fun NavGraphBuilder.addCommonDestinations(
                 EmployerHomeScreen(
                     state = vm.viewState,
                     loadResumes = {
-                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(ResumeFilter())) // TODO: real filter should be here
+                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(ResumeFilters())) // TODO: real filter should be here
                     },
                     openResumeDetails = {
                         resumeId -> vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))

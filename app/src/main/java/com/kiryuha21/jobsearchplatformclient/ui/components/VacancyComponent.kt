@@ -1,6 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,23 +11,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
+import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Work
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +54,12 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.FilterName
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.FilterSortOption
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.SortingDirection
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import com.valentinilk.shimmer.shimmer
 
@@ -278,6 +299,144 @@ fun VacancyWorkExperienceForm(
             DefaultButton(text = "Отменить", onClick = onCancel)
         }
     }
+}
+
+val filterSortOptions = listOf(
+    FilterSortOption(FilterName.Vacancy.PLACED_AT, "Дата публикации"),
+    FilterSortOption(FilterName.Vacancy.TITLE, "Название"),
+    FilterSortOption(FilterName.Vacancy.DESCRIPTION, "Описание"),
+    FilterSortOption(FilterName.Vacancy.MAX_SALARY, "Минимальная зарплата"),
+    FilterSortOption(FilterName.Vacancy.MIN_SALARY, "Максимальная зарплата")
+)
+
+@Composable
+fun FilterSortChooser(
+    initPageRequestFilter: PageRequestFilter,
+    onChoose: (PageRequestFilter) -> Unit
+) {
+    var selectedItemIndex by remember {
+        mutableIntStateOf(filterSortOptions.indexOfFirst { it.description == initPageRequestFilter.sortProperty })
+    }
+    var ascSortingDirection by remember {
+        mutableStateOf(initPageRequestFilter.sortingDirection == SortingDirection.ASC)
+    }
+
+    Column(
+        modifier = Modifier.selectableGroup()
+    ) {
+        filterSortOptions.forEachIndexed { index, option ->
+            val selected = index == selectedItemIndex
+
+            Row(
+                modifier = Modifier
+                    .selectable(
+                        selected = selected,
+                        onClick = {
+                            ascSortingDirection = if (selected) {
+                                !ascSortingDirection
+                            } else {
+                                true
+                            }
+                            selectedItemIndex = index
+                        },
+                        role = Role.RadioButton,
+                    )
+                    .background(
+                        color = if (selected) Color.LightGray else Color.Unspecified,
+                        shape = RoundedCornerShape(10)
+                    )
+            ) {
+                Text(text = option.visibleName)
+                if (selected) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowOutward,
+                        contentDescription = "sort direction",
+                        modifier = Modifier.rotate(if (ascSortingDirection) 0f else 90f)
+                    )
+                }
+            }
+        }
+
+        TextButton(
+            onClick = {
+                onChoose(PageRequestFilter(
+                    sortingDirection = if (ascSortingDirection) SortingDirection.ASC else SortingDirection.DESC,
+                    sortProperty = filterSortOptions[selectedItemIndex].description
+                ))
+            }
+        ) {
+            Text(text = "Применить сортировку")
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VacancySearchBar(
+    onSearch: (VacancyFilters) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var currentQuery by remember { mutableStateOf("") }
+    var bodyVisible by remember { mutableStateOf(false) }
+    var vacancyFilters by remember { mutableStateOf(VacancyFilters()) }
+
+    SearchBar(
+        query = currentQuery,
+        onQueryChange = {
+            currentQuery = it
+            vacancyFilters = vacancyFilters.copy(title = it)
+        },
+        onSearch = { onSearch(vacancyFilters) },
+        active = bodyVisible,
+        onActiveChange = { bodyVisible = !bodyVisible },
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "search")
+        },
+        trailingIcon = {
+            if (bodyVisible) {
+                IconButton(
+                    onClick = {
+                        if (currentQuery.isEmpty()) {
+                            bodyVisible = false
+                        } else {
+                            currentQuery = ""
+                        }
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = "clear")
+                }
+            }
+        },
+        modifier = modifier
+    ) {
+        var sortingVisible by remember { mutableStateOf(false) }
+
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().clickable { sortingVisible = !sortingVisible }
+            ) {
+                Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "filtering")
+                Text(text = "Отсортировать по параметру", modifier = Modifier.padding(start = 10.dp))
+            }
+
+            AnimatedVisibility(visible = sortingVisible) {
+                FilterSortChooser(vacancyFilters.pageRequestFilter) {
+                    vacancyFilters = vacancyFilters.copy(pageRequestFilter = it)
+                    sortingVisible = false
+                }
+            }
+
+            Text(text = "filters here...")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun VacancySearchBarPreview() {
+    VacancySearchBar(onSearch = {})
 }
 
 @Preview(showBackground = true)
