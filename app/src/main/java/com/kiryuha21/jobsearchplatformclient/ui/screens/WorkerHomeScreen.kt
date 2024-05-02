@@ -29,6 +29,7 @@ fun WorkerHomeScreen(
 
     Column {
         VacancySearchBar(
+            initFilters = state.filters,
             onSearch = { loadVacancies(it) },
             modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
         )

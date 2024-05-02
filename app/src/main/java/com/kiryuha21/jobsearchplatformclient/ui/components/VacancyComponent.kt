@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,11 +20,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Work
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,6 +40,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -61,6 +72,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.filters.SortingDirectio
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import com.valentinilk.shimmer.shimmer
+import java.util.Date
 
 @Composable
 fun VacancyDetails(vacancy: Vacancy, modifier: Modifier = Modifier) {
@@ -308,6 +320,7 @@ val filterSortOptions = listOf(
     FilterSortOption(FilterName.Vacancy.MIN_SALARY, "Максимальная зарплата")
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FilterSortChooser(
     initPageRequestFilter: PageRequestFilter,
@@ -320,38 +333,34 @@ fun FilterSortChooser(
         mutableStateOf(initPageRequestFilter.sortingDirection == SortingDirection.ASC)
     }
 
-    Column(
-        modifier = Modifier.selectableGroup()
-    ) {
-        filterSortOptions.forEachIndexed { index, option ->
-            val selected = index == selectedItemIndex
+    Column {
+        FlowRow {
+            filterSortOptions.forEachIndexed { index, option ->
+                val selected = index == selectedItemIndex
 
-            Row(
-                modifier = Modifier
-                    .selectable(
-                        selected = selected,
-                        onClick = {
-                            ascSortingDirection = if (selected) {
-                                !ascSortingDirection
-                            } else {
-                                true
-                            }
-                            selectedItemIndex = index
-                        },
-                        role = Role.RadioButton,
-                    )
-                    .background(
-                        color = if (selected) Color.LightGray else Color.Unspecified,
-                        shape = RoundedCornerShape(10)
-                    )
-            ) {
-                Text(text = option.visibleName)
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowOutward,
-                        contentDescription = "sort direction",
-                        modifier = Modifier.rotate(if (ascSortingDirection) 0f else 90f)
-                    )
+                Button(
+                    onClick = {
+                        ascSortingDirection = if (selected) {
+                            !ascSortingDirection
+                        } else {
+                            true
+                        }
+                        selectedItemIndex = index
+                    },
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = if (selected) Color.Unspecified else Color.White,
+                        contentColor = if (selected) Color.Unspecified else Color.Black
+                    ),
+                    modifier = Modifier.padding(2.dp)
+                ) {
+                    Text(text = option.visibleName)
+                    if (selected) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowOutward,
+                            contentDescription = "sort direction",
+                            modifier = Modifier.rotate(if (ascSortingDirection) 0f else 90f)
+                        )
+                    }
                 }
             }
         }
@@ -362,30 +371,36 @@ fun FilterSortChooser(
                     sortingDirection = if (ascSortingDirection) SortingDirection.ASC else SortingDirection.DESC,
                     sortProperty = filterSortOptions[selectedItemIndex].description
                 ))
-            }
+            },
+            modifier = Modifier.padding(top = 5.dp)
         ) {
-            Text(text = "Применить сортировку")
+            Text(text = "Применить сортировку", fontSize = 18.sp)
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VacancySearchBar(
+    initFilters: VacancyFilters,
     onSearch: (VacancyFilters) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var currentQuery by remember { mutableStateOf("") }
     var bodyVisible by remember { mutableStateOf(false) }
-    var vacancyFilters by remember { mutableStateOf(VacancyFilters()) }
+    var vacancyFilters by remember { mutableStateOf(initFilters) }
 
     SearchBar(
         query = currentQuery,
         onQueryChange = {
             currentQuery = it
-            vacancyFilters = vacancyFilters.copy(title = it)
+            vacancyFilters = vacancyFilters.copy(query = it)
         },
-        onSearch = { onSearch(vacancyFilters) },
+        onSearch = {
+            onSearch(vacancyFilters)
+            bodyVisible = !bodyVisible
+        },
         active = bodyVisible,
         onActiveChange = { bodyVisible = !bodyVisible },
         leadingIcon = {
@@ -409,15 +424,28 @@ fun VacancySearchBar(
         modifier = modifier
     ) {
         var sortingVisible by remember { mutableStateOf(false) }
+        var visibleWorkExperienceForm by remember { mutableStateOf(false) }
+        var visibleSkillForm by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().clickable { sortingVisible = !sortingVisible }
+            TextButton(
+                onClick = { sortingVisible = !sortingVisible },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "filtering")
-                Text(text = "Отсортировать по параметру", modifier = Modifier.padding(start = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "filtering")
+                    Text(
+                        text = "Отсортировать по параметру",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight(700),
+                        modifier = Modifier.padding(start = 10.dp)
+                    )
+                }
             }
 
             AnimatedVisibility(visible = sortingVisible) {
@@ -427,7 +455,147 @@ fun VacancySearchBar(
                 }
             }
 
-            Text(text = "filters here...")
+            HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+            Text(text = "Фильтры", fontSize = 18.sp, fontWeight = FontWeight(700))
+
+            ValidateableTextField(
+                placeholder = "Минимальная зарплата (₽)",
+                initString = vacancyFilters.minSalary?.toString() ?: "",
+                onUpdate = { text, valid ->
+                    if (valid) {
+                        vacancyFilters = vacancyFilters.copy(minSalary = if (text.isEmpty()) null else text.toInt())
+                    }
+                },
+                isValid = { it.isEmpty() || it.isNumeric() },
+                errorMessage = "Введите корректное число",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            ValidateableTextField(
+                placeholder = "Максимальная зарплата (₽)",
+                initString = vacancyFilters.maxSalary?.toString() ?: "",
+                onUpdate = { text, valid ->
+                    if (valid) {
+                        vacancyFilters = vacancyFilters.copy(maxSalary = if (text.isEmpty()) null else text.toInt())
+                    }
+                },
+                isValid = { it.isEmpty() || it.isNumeric() },
+                errorMessage = "Введите корректное число",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            vacancyFilters.requiredSkills?.let {
+                ClickableSkillsList(
+                    description = "Нужные навыки:",
+                    skills = it,
+                    imageVector = Icons.Default.Delete
+                ) {
+                    vacancyFilters = vacancyFilters.copy(requiredSkills =
+                        vacancyFilters.requiredSkills?.filterIndexed { index, _ -> it != index }
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = visibleSkillForm) {
+                SkillForm(
+                    skillLevelText = "Нужный навык",
+                    onSubmit = {
+                        vacancyFilters = vacancyFilters.copy(requiredSkills =
+                            vacancyFilters.requiredSkills?.let { skills -> skills + it } ?: listOf(it)
+                        )
+                        visibleSkillForm = !visibleSkillForm
+                    },
+                    onCancel = { visibleSkillForm = !visibleSkillForm }
+                )
+            }
+
+            TextButton(onClick = { visibleSkillForm = !visibleSkillForm }) {
+                Text(text = "+ нужный навык", fontSize = 20.sp)
+            }
+
+            vacancyFilters.requiredWorkExperience?.let {
+                ClickableWorkExperienceList(
+                    description = "Нужный опыт работы:",
+                    workExperience = it,
+                    imageVector = Icons.Default.Delete,
+                    isRequirementView = true
+                ) {
+                    vacancyFilters = vacancyFilters.copy(requiredWorkExperience =
+                        vacancyFilters.requiredWorkExperience?.filterIndexed { index, _ -> it != index }
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = visibleWorkExperienceForm) {
+                VacancyWorkExperienceForm(
+                    onSubmit = {
+                        vacancyFilters = vacancyFilters.copy(requiredWorkExperience =
+                            vacancyFilters.requiredWorkExperience?.let { exp -> exp + it } ?: listOf(it)
+                        )
+                        visibleWorkExperienceForm = !visibleWorkExperienceForm
+                    },
+                    onCancel = { visibleWorkExperienceForm = !visibleWorkExperienceForm }
+                )
+            }
+
+            TextButton(onClick = { visibleWorkExperienceForm = !visibleWorkExperienceForm }) {
+                Text(text = "+ нужный опыт работы", fontSize = 20.sp)
+            }
+            
+            var datePickerShown by remember { mutableStateOf(false) }
+            TextButton(onClick = { datePickerShown = !datePickerShown }) {
+                Text(text = "+ минимальный срок публикации", fontSize = 20.sp)
+            }
+
+            if (datePickerShown) {
+                val state = rememberDatePickerState(initialSelectedDateMillis = vacancyFilters.placedAt)
+
+                DatePickerDialog(
+                    onDismissRequest = { datePickerShown = !datePickerShown },
+                    confirmButton = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Button(
+                                onClick = {
+                                    vacancyFilters = vacancyFilters.copy(placedAt = state.selectedDateMillis)
+                                    datePickerShown = !datePickerShown
+                                }
+                            ) {
+                                Text(text = "Выбрать")
+                            }
+                        }
+                    }
+                ) {
+                    DatePicker(state = state)
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(
+                    onClick = {
+                        vacancyFilters = VacancyFilters()
+                        bodyVisible = !bodyVisible
+                    }
+                ) {
+                    Text(text = "Сбросить фильтры")
+                }
+
+                Button(
+                    onClick = {
+                        onSearch(vacancyFilters)
+                        bodyVisible = !bodyVisible
+                    }
+                ) {
+                    Text(text = "Искать с фильтрами")
+                }
+            }
         }
     }
 }
@@ -435,7 +603,7 @@ fun VacancySearchBar(
 @Preview
 @Composable
 fun VacancySearchBarPreview() {
-    VacancySearchBar(onSearch = {})
+    VacancySearchBar(initFilters = VacancyFilters(), onSearch = {})
 }
 
 @Preview(showBackground = true)

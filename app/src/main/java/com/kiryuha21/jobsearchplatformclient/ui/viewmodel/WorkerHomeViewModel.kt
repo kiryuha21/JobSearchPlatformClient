@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyFiltersDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.vacancyRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
@@ -32,14 +33,17 @@ class WorkerHomeViewModel(
         }
     }
 
-    private fun loadVacancies(filter: VacancyFilters) {
+    private fun loadVacancies(filters: VacancyFilters) {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isLoading = true, filters = filters) }
+
             val vacanciesResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = { vacancyRetrofit.getMatchingVacancies().map { it.toDomainVacancy() } }
+                    networkCall = {
+                        vacancyRetrofit.getMatchingVacancies(filters.toVacancyFiltersDTO()).map { it.toDomainVacancy() } }
                 )
             }
+
             setState { copy(isLoading = false, vacancies = vacanciesResult) }
         }
     }

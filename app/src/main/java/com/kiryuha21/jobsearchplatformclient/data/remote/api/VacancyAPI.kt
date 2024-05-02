@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote.api
 
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyFiltersDTO
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,8 +21,8 @@ interface VacancyAPI {
     @GET("vacancy/{vacancyId}")
     suspend fun getVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO.VacancyResponseDTO
 
-    @GET("vacancy")
-    suspend fun getMatchingVacancies(): List<VacancyDTO.VacancyResponseDTO>
+    @POST("vacancy/filter")
+    suspend fun getMatchingVacancies(@Body filters: VacancyFiltersDTO): List<VacancyDTO.VacancyResponseDTO>
 
     @POST("vacancy")
     suspend fun createNewVacancy(

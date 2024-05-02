@@ -6,10 +6,14 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.PageRequestFilterDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyFiltersDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 
 fun Resume.toResumeDTO() =
@@ -58,4 +62,23 @@ fun Vacancy.toVacancyDTO() =
         publicationStatus = publicationStatus,
         requiredSkills = requiredSkills.map { it.toSkillDTO() },
         requiredWorkExperience = requiredWorkExperience.map { it.toWorkExperienceDTO() }
+    )
+
+fun PageRequestFilter.toPageRequestFilterDTO() =
+    PageRequestFilterDTO(
+        pageNumber = pageNumber,
+        pageSize = pageSize,
+        sortingDirection = sortingDirection,
+        sortProperty = sortProperty
+    )
+
+fun VacancyFilters.toVacancyFiltersDTO() =
+    VacancyFiltersDTO(
+        placedAt = placedAt,
+        query = query,
+        minSalary = minSalary,
+        maxSalary = maxSalary,
+        requiredSkills = requiredSkills,
+        requiredWorkExperience = requiredWorkExperience,
+        pageRequestFilter = pageRequestFilter.toPageRequestFilterDTO()
     )
