@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableResumeCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableResumeCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.NoItemsCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 
 @Composable

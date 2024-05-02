@@ -10,11 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.ui.components.AreYouSureDialogue
-import com.kiryuha21.jobsearchplatformclient.ui.components.PasswordConfirmation
-import com.kiryuha21.jobsearchplatformclient.ui.components.SecureConfirmAlertDialogue
-import com.kiryuha21.jobsearchplatformclient.ui.components.SecuredFields
-import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.AreYouSureDialogue
+import com.kiryuha21.jobsearchplatformclient.ui.components.settings.PasswordConfirmation
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.SecureConfirmAlertDialogue
+import com.kiryuha21.jobsearchplatformclient.ui.components.settings.SecuredFields
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 
 @Composable

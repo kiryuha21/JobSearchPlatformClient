@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,12 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.ui.components.ErrorComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.FixableErrorComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoginForm
-import com.kiryuha21.jobsearchplatformclient.ui.components.NotSignedUpHelper
-import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.FixableErrorComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.auth.LoginForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.auth.NotSignedUpHelper
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable

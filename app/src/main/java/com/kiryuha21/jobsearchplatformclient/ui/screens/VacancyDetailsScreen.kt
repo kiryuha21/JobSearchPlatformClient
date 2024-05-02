@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.StyledDefaultButton
-import com.kiryuha21.jobsearchplatformclient.ui.components.VacancyDetails
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.VacancyDetails
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 
 @Composable

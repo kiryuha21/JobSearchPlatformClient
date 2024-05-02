@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -12,6 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.MultiToggleButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.ToggleButtonElement
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.roleToggleItems
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable

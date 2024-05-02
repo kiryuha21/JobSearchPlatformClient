@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.special
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 
 @Composable
 fun SecureConfirmAlertDialogue(

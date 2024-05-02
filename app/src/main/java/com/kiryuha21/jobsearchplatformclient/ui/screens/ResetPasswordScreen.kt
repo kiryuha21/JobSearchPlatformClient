@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.ResetPasswordForm
-import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.auth.ResetPasswordForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 
 @Composable

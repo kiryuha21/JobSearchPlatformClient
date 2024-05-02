@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.FramelessButton
 
 @Composable
 fun LoginForm(

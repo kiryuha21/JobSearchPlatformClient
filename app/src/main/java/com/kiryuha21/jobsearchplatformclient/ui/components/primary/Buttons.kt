@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.primary
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

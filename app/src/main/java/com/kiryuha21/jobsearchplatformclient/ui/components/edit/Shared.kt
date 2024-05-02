@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,9 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidateableTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBox
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
 
 @Composable
 fun ImageHintCard(hintText: String, modifier: Modifier = Modifier) {
@@ -59,7 +65,7 @@ fun ClickableSkillsList(
     onClick: (Int) -> Unit
 ) {
     if (skills.isNotEmpty()) {
-        Text(text = description, modifier = Modifier.padding(top = 10.dp))
+        Text(text = description, fontSize = 18.sp, modifier = Modifier.padding(top = 10.dp))
         skills.forEachIndexed { index, skill ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -86,7 +92,7 @@ fun ClickableWorkExperienceList(
     onClick: (Int) -> Unit
 ) {
     if (workExperience.isNotEmpty()) {
-        Text(text = description, modifier = Modifier.padding(top = 10.dp))
+        Text(text = description, fontSize = 18.sp, modifier = Modifier.padding(top = 10.dp))
         workExperience.forEachIndexed { index, exp ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,

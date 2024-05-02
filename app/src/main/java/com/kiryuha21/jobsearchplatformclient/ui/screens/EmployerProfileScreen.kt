@@ -2,7 +2,6 @@ package com.kiryuha21.jobsearchplatformclient.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableVacancyCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.NoItemsCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 
 @Composable

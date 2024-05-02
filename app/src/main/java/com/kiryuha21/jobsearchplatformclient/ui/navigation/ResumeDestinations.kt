@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.ui.components.OnBackPressedWithSuper
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeEditScreen

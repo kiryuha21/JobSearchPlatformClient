@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,11 +10,11 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredPasswordTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredTextField
 
 @Composable
 fun PasswordConfirmation(

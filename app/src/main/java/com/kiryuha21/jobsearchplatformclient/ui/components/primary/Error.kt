@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.ui.components
+package com.kiryuha21.jobsearchplatformclient.ui.components.primary
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon

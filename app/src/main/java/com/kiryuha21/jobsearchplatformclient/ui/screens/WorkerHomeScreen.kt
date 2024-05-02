@@ -10,10 +10,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
-import com.kiryuha21.jobsearchplatformclient.ui.components.ClickableVacancyCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.ShimmeringVacancyListItem
-import com.kiryuha21.jobsearchplatformclient.ui.components.VacancySearchBar
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableVacancyCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.ShimmeringVacancyListItem
+import com.kiryuha21.jobsearchplatformclient.ui.components.searchbar.VacancySearchBar
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 
 @Composable
