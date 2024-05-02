@@ -39,8 +39,12 @@ jobs:
         run: chmod +x ./gradlew
 
       # Run Build Project
-      - name: Build and test gradle project
-        run: ./gradlew build
+      - name: Build gradle project
+        run: ./gradlew assembleDebug
+
+      # Run tests
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
 
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
