@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote.api
 
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeFiltersDTO
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -21,8 +21,8 @@ interface ResumeAPI {
     @GET("resume/{resumeId}")
     suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO.ResumeResponseDTO
 
-    @GET("resume")
-    suspend fun getMatchingResumes(): List<ResumeDTO.ResumeResponseDTO>
+    @POST("resume/filter")
+    suspend fun getMatchingResumes(@Body filters: ResumeFiltersDTO): List<ResumeDTO.ResumeResponseDTO>
 
     @POST("resume")
     suspend fun createNewResume(

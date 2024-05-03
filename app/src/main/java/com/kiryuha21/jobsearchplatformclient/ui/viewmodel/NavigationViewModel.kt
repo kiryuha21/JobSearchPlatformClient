@@ -77,8 +77,8 @@ class NavigationViewModel(
                 tokenDatasourceProvider.deleteRefreshToken()
             }
 
-            CurrentUser.logOut()
             logoutCallback()
+            CurrentUser.logOut()
 
             _currentIndex.intValue = 0
             lastIndex = 0

@@ -10,9 +10,13 @@ import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +29,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextF
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 
 @Composable
-fun SecureConfirmAlertDialogue(
+fun SecureConfirmAlertDialog(
     title: String,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
@@ -81,7 +85,7 @@ fun SecureConfirmAlertDialogue(
 }
 
 @Composable
-fun AreYouSureDialogue(
+fun AreYouSureDialog(
     title: String,
     modifier: Modifier = Modifier,
     onConfirm: () -> Unit,
@@ -109,4 +113,34 @@ fun AreYouSureDialogue(
         },
         modifier = modifier
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DefaultDatePickerDialog(
+    initTime: Long?,
+    onDismiss: () -> Unit,
+    onConfirm: (Long?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val state = rememberDatePickerState(initialSelectedDateMillis = initTime)
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = { onConfirm(state.selectedDateMillis) }
+                ) {
+                    Text(text = "Выбрать")
+                }
+            }
+        },
+        modifier = modifier
+    ) {
+        DatePicker(state = state)
+    }
 }

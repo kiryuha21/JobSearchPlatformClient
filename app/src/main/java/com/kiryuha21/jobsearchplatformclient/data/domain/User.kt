@@ -2,13 +2,15 @@ package com.kiryuha21.jobsearchplatformclient.data.domain
 
 enum class UserRole {
     Employer,
-    Worker
+    Worker,
+    Undefined
 }
 
 enum class UserStatus {
     Active,
     Frozen,
-    Banned
+    Banned,
+    Undefined
 }
 class User(
     val email: String,

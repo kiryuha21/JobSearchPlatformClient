@@ -1,19 +1,17 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
-import android.util.Log
-import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
+import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
-import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 
 fun UserDTO.UserDTO.toDomainUser() =
     User(
@@ -29,6 +27,7 @@ fun ResumeDTO.ResumeResponseDTO.toDomainResume() =
         id = id,
         firstName = firstName,
         lastName = lastName,
+        birthDate = birthDate,
         phoneNumber = phoneNumber,
         contactEmail = contactEmail,
         applyPosition = applyPosition,

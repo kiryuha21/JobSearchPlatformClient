@@ -29,7 +29,7 @@ class WorkerHomeViewModel(
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is WorkerHomeContract.Intent.LoadVacancies -> loadVacancies(intent.filters)
-            is WorkerHomeContract.Intent.OpenVacancyDetails -> openVacancyDetails(intent.vacancyId)
+            is WorkerHomeContract.Intent.OpenVacancyDetails -> openVacancyCallback(intent.vacancyId)
         }
     }
 
@@ -39,17 +39,12 @@ class WorkerHomeViewModel(
 
             val vacanciesResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = {
-                        vacancyRetrofit.getMatchingVacancies(filters.toVacancyFiltersDTO()).map { it.toDomainVacancy() } }
+                    networkCall = { vacancyRetrofit.getMatchingVacancies(filters.toVacancyFiltersDTO()).map { it.toDomainVacancy() } }
                 )
             }
 
             setState { copy(isLoading = false, vacancies = vacanciesResult) }
         }
-    }
-
-    private fun openVacancyDetails(vacancyId: String) {
-        openVacancyCallback(vacancyId)
     }
 
     companion object {

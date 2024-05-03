@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeFiltersDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
@@ -28,24 +29,22 @@ class EmployerHomeViewModel(
     override fun processIntent(intent: ViewIntent) {
         when (intent) {
             is EmployerHomeContract.Intent.LoadResumes -> loadResumes(intent.filters)
-            is EmployerHomeContract.Intent.OpenResumeDetails -> openResumeDetails(intent.resumeId)
+            is EmployerHomeContract.Intent.OpenResumeDetails -> openResumeCallback(intent.resumeId)
         }
     }
 
-    private fun loadResumes(filter: ResumeFilters) {
+    private fun loadResumes(filters: ResumeFilters) {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isLoading = true, filters = filters) }
+
             val resumesResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = { resumeRetrofit.getMatchingResumes().map { it.toDomainResume() } }
+                    networkCall = { resumeRetrofit.getMatchingResumes(filters.toResumeFiltersDTO()).map { it.toDomainResume() } }
                 )
             }
+
             setState { copy(isLoading = false, resumes = resumesResult) }
         }
-    }
-
-    private fun openResumeDetails(resumeId: String) {
-        openResumeCallback(resumeId)
     }
 
     companion object {

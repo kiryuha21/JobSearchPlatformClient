@@ -3,18 +3,17 @@ package com.kiryuha21.jobsearchplatformclient.ui.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.ui.components.special.AreYouSureDialogue
-import com.kiryuha21.jobsearchplatformclient.ui.components.settings.PasswordConfirmation
-import com.kiryuha21.jobsearchplatformclient.ui.components.special.SecureConfirmAlertDialogue
-import com.kiryuha21.jobsearchplatformclient.ui.components.settings.SecuredFields
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
+import com.kiryuha21.jobsearchplatformclient.ui.components.settings.PasswordConfirmation
+import com.kiryuha21.jobsearchplatformclient.ui.components.settings.SecuredFields
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.AreYouSureDialog
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.SecureConfirmAlertDialog
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 
 @Composable
@@ -35,7 +34,7 @@ fun SettingsScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         if (state.isPasswordDialogShown) {
-            SecureConfirmAlertDialogue(
+            SecureConfirmAlertDialog(
                 title = "Подтвердите пароль для дальнейших действий",
                 onConfirm = onPasswordDialogConfirmed,
                 onDismiss = onPasswordDialogDismissed,
@@ -44,7 +43,7 @@ fun SettingsScreen(
             )
         }
         if (state.isAreYouSureDialogShown) {
-            AreYouSureDialogue(
+            AreYouSureDialog(
                 title = "Вы уверены, что хотите изменить данные?",
                 onConfirm = onAreYouSureDialogConfirmed,
                 onDismiss = onAreYouSureDialogDismissed
@@ -64,9 +63,11 @@ fun SettingsScreen(
             initEmail = state.email,
             initPassword = state.password
         )
-        Button(onClick = onSaveChangesClicked) {
-            Text(text = "Подтвердить изменения")
-        }
+        SecuredButton(
+            text = "Подтвердить изменения",
+            onClick = onSaveChangesClicked,
+            enabled = state.areFieldsEnabled
+        )
     }
 }
 

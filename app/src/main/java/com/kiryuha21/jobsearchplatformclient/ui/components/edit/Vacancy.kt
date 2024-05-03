@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ fun VacancyEditForm(
             placeholder = "Название вакансии",
             initString = vacancy.title,
             isValid = { it.isNotBlank() },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Название вакансии не может быть пустым",
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Default.Abc,
@@ -66,6 +68,7 @@ fun VacancyEditForm(
             placeholder = "Название компании",
             initString = vacancy.company.name,
             isValid = { it.isNotBlank() },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Название компании не может быть пустым",
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Default.Abc,
@@ -168,6 +171,7 @@ fun VacancyWorkExperienceForm(
                 validPosition = valid
             },
             isValid = { it.isNotBlank() },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Позиция не может быть пустой",
             modifier = Modifier.fillMaxWidth()
         )

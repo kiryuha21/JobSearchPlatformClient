@@ -4,6 +4,7 @@ data class Resume(
     val id: String = "",
     val firstName: String = "",
     val lastName: String = "",
+    val birthDate: Long? = null,
     val phoneNumber: String = "",
     val contactEmail: String = "",
     val applyPosition: String = "",

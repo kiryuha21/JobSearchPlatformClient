@@ -2,7 +2,10 @@ package com.kiryuha21.jobsearchplatformclient.data.domain.filters
 
 object FilterName {
     object Resume {
-
+        const val PLACED_AT = "placedAt"
+        const val AGE = "age"
+        const val APPLY_POSITION = "applyPosition"
+        const val IS_IMAGE_SET = "isImageSet"
     }
 
     object Vacancy {

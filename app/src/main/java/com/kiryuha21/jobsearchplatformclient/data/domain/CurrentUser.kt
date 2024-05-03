@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object CurrentUser {
-    private val defaultUserState = User("", "", UserRole.Worker, UserStatus.Active, null)
+    private val defaultUserState = User("", "", UserRole.Undefined, UserStatus.Undefined, null)
     private val _info = mutableStateOf(defaultUserState)
     val info by _info
     private val _selectedImageUri = mutableStateOf<Uri?>(null)

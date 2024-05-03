@@ -1,14 +1,16 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
@@ -71,13 +73,18 @@ fun NavGraphBuilder.addCommonDestinations(
                 EmployerHomeScreen(
                     state = vm.viewState,
                     loadResumes = {
-                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(ResumeFilters())) // TODO: real filter should be here
+                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(it))
                     },
-                    openResumeDetails = {
-                        resumeId -> vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))
+                    openResumeDetails = { resumeId ->
+                        vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))
                     }
                 )
             }
+
+            UserRole.Undefined -> LoadingComponent(
+                modifier = Modifier.fillMaxSize(),
+                description = "Logging out"
+            )
         }
     }
     composable(PROFILE) {
@@ -134,6 +141,11 @@ fun NavGraphBuilder.addCommonDestinations(
                     }
                 )
             }
+
+            UserRole.Undefined -> LoadingComponent(
+                modifier = Modifier.fillMaxSize(),
+                description = "Logging out"
+            )
         }
     }
     composable(SETTINGS) {

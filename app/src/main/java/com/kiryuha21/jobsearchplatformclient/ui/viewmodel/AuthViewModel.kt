@@ -68,7 +68,7 @@ class AuthViewModel(
     }
 
     private fun navigateToMainApp() {
-        navController.navigate(NavigationGraph.MainApp.HOME_SCREEN) {
+        navController.navigate(NavigationGraph.MainApp.NAV_ROUTE) {
             popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                 inclusive = true
             }

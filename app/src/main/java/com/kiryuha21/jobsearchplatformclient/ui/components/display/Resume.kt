@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,11 +29,14 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PhoneVisualTransformation
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
 import kotlin.math.min
 
 @Composable
 fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {
+    val phoneTransformation = PhoneVisualTransformation("0-(000)-000-00-00", '0')
+
     Column(
         modifier = modifier
     ) {
@@ -44,7 +48,7 @@ fun ResumeDetails(resume: Resume, modifier: Modifier = Modifier) {
         }
         Text(text = resume.fullName())
         Text(text = resume.contactEmail)
-        Text(text = resume.phoneNumber)
+        Text(text = phoneTransformation.filter(AnnotatedString(resume.phoneNumber)).text)
         for (skill in resume.skills) {
             Text(text = skill.toString())
         }
@@ -132,6 +136,7 @@ fun ClickableCardPreview() {
             "12khe12nj1nek",
             "John",
             "Smit",
+            20,
             "12909483",
             "hey@gmail.com",
             "Senior C++ developer",

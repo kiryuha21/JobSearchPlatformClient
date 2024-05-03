@@ -7,10 +7,12 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.PageRequestFilterDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeFiltersDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyFiltersDTO
@@ -22,6 +24,7 @@ fun Resume.toResumeDTO() =
         workerLogin = CurrentUser.info.username,
         firstName = firstName,
         lastName = lastName,
+        birthDate = birthDate ?: throw Exception("birth date should be chosen"),
         phoneNumber = phoneNumber,
         contactEmail = contactEmail,
         applyPosition = applyPosition,
@@ -80,5 +83,17 @@ fun VacancyFilters.toVacancyFiltersDTO() =
         maxSalary = maxSalary,
         requiredSkills = requiredSkills,
         requiredWorkExperience = requiredWorkExperience,
+        pageRequestFilter = pageRequestFilter.toPageRequestFilterDTO()
+    )
+
+fun ResumeFilters.toResumeFiltersDTO() =
+    ResumeFiltersDTO(
+        placedAt = placedAt,
+        youngerThan = youngerThan,
+        olderThan = olderThan,
+        isImageSet = isImageSet,
+        applyPosition = applyPosition,
+        skills = skills,
+        workExperience = workExperience,
         pageRequestFilter = pageRequestFilter.toPageRequestFilterDTO()
     )

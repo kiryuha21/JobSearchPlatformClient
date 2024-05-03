@@ -50,6 +50,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsL
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.VacancyWorkExperienceForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultDatePickerDialog
 import com.kiryuha21.jobsearchplatformclient.util.isValidNullableNum
 
 val VacancyFilterSortOptions = listOf(
@@ -137,7 +138,7 @@ fun VacancySearchBar(
             }
 
             HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
-            Text(text = "Фильтры", fontSize = 18.sp, fontWeight = FontWeight(700))
+            Text(text = "Фильтры", fontSize = 18.sp, fontWeight = FontWeight(700), modifier = Modifier.padding(bottom = 10.dp))
 
             val focusManager = LocalFocusManager.current
 
@@ -178,7 +179,7 @@ fun VacancySearchBar(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Максимальная зарплата") },
                 placeholder = { Text(text = "Максимальная зарплата") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
                 singleLine = true,
                 isError = maxSalarySupportingText.isNotEmpty(),
@@ -261,28 +262,14 @@ fun VacancySearchBar(
             }
 
             if (datePickerShown) {
-                val state = rememberDatePickerState(initialSelectedDateMillis = vacancyFilters.placedAt)
-
-                DatePickerDialog(
-                    onDismissRequest = { datePickerShown = !datePickerShown },
-                    confirmButton = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Button(
-                                onClick = {
-                                    vacancyFilters = vacancyFilters.copy(placedAt = state.selectedDateMillis)
-                                    datePickerShown = !datePickerShown
-                                }
-                            ) {
-                                Text(text = "Выбрать")
-                            }
-                        }
+                DefaultDatePickerDialog(
+                    initTime = vacancyFilters.placedAt,
+                    onDismiss = { datePickerShown = !datePickerShown },
+                    onConfirm = {
+                        vacancyFilters = vacancyFilters.copy(placedAt = it)
+                        datePickerShown = !datePickerShown
                     }
-                ) {
-                    DatePicker(state = state)
-                }
+                )
             }
 
             Row(

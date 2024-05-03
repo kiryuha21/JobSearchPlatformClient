@@ -13,6 +13,8 @@ sealed class ResumeDTO {
         val firstName: String,
         @SerializedName("lastName")
         val lastName: String,
+        @SerializedName("birthDate")
+        val birthDate: Long,
         @SerializedName("phoneNumber")
         val phoneNumber: String,
         @SerializedName("contactEmail")
@@ -36,6 +38,8 @@ sealed class ResumeDTO {
         val firstName: String,
         @SerializedName("lastName")
         val lastName: String,
+        @SerializedName("birthDate")
+        val birthDate: Long,
         @SerializedName("phoneNumber")
         val phoneNumber: String,
         @SerializedName("contactEmail")
