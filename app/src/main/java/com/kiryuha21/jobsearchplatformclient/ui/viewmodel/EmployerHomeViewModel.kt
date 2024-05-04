@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeFiltersDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.resumeRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,6 @@ class EmployerHomeViewModel(
         return EmployerHomeContract.State(
             isLoading = true,
             resumes = null,
-            openedResume = null,
             filters = ResumeFilters()
         )
     }
@@ -39,7 +38,7 @@ class EmployerHomeViewModel(
 
             val resumesResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = { resumeRetrofit.getMatchingResumes(filters.toResumeFiltersDTO()).map { it.toDomainResume() } }
+                    networkCall = { resumeRetrofit.getFilteredResumes(filters.toResumeFiltersDTO()).map { it.toDomainResume() } }
                 )
             }
 

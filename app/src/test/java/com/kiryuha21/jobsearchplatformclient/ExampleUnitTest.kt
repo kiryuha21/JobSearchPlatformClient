@@ -1,9 +1,9 @@
 package com.kiryuha21.jobsearchplatformclient
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.userRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.userRetrofit
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

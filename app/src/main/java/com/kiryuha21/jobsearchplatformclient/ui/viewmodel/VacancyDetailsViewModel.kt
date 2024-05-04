@@ -8,8 +8,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.vacancyRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.vacancyRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper

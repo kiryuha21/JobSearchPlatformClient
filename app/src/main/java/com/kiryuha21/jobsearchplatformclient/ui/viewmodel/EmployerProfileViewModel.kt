@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.vacancyRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.vacancyRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import kotlinx.coroutines.Dispatchers

@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.userRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.userRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper

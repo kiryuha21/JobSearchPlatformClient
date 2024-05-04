@@ -1,7 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -13,8 +12,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainUser
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject
+import com.kiryuha21.jobsearchplatformclient.di.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationController

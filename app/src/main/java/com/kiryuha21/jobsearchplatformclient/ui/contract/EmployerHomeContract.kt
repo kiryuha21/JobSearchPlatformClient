@@ -9,7 +9,6 @@ sealed class EmployerHomeContract {
     data class State(
         val isLoading: Boolean,
         val resumes: List<Resume>?,
-        val openedResume: Resume?,
         val filters: ResumeFilters
     ): ViewState
 

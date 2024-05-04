@@ -8,8 +8,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
@@ -52,11 +52,14 @@ fun NavGraphBuilder.addCommonDestinations(
 
                 WorkerHomeScreen(
                     state = vm.viewState,
-                    loadVacancies = {
-                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(it))
+                    loadFiltered = { filters ->
+                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(filters))
                     },
                     openVacancyDetails = { vacancyId ->
                         vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
+                    },
+                    loadRecommended = { page ->
+                        vm.processIntent(WorkerHomeContract.Intent.LoadRecommendations(page))
                     }
                 )
             }

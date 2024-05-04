@@ -1,9 +1,9 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.userRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.di.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.userRetrofit
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper

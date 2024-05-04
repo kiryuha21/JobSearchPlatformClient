@@ -13,6 +13,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ResumeAPI {
     @GET("resume/worker_username/{login}")
@@ -22,7 +23,14 @@ interface ResumeAPI {
     suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO.ResumeResponseDTO
 
     @POST("resume/filter")
-    suspend fun getMatchingResumes(@Body filters: ResumeFiltersDTO): List<ResumeDTO.ResumeResponseDTO>
+    suspend fun getFilteredResumes(@Body filters: ResumeFiltersDTO): List<ResumeDTO.ResumeResponseDTO>
+
+    @GET("resume/recommendations")
+    suspend fun getResumeRecommendations(
+        @Header("Authorization") authToken: String,
+        @Query("pageNumber") pageNumber: Int,
+        @Query("pageSize") pageSize: Int = 10
+    ) : List<ResumeDTO.ResumeResponseDTO>
 
     @POST("resume")
     suspend fun createNewResume(

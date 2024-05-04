@@ -1,7 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.CurrentUser
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy

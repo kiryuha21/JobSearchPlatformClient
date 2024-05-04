@@ -40,6 +40,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBox
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultDatePickerDialog
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
+import com.kiryuha21.jobsearchplatformclient.util.toFormattedDateTime
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -86,10 +87,8 @@ fun ResumeEditForm(
         }
 
         if (resume.birthDate != null) {
-            val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(resume.birthDate), ZoneId.systemDefault())
-
             Text(
-                text = "Дата рождения - ${dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE)}",
+                text = "Дата рождения - ${resume.birthDate.toFormattedDateTime(DateTimeFormatter.ISO_LOCAL_DATE)}",
                 modifier = Modifier.padding(end = 10.dp)
             )
         } else {

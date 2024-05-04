@@ -1,11 +1,13 @@
-package com.kiryuha21.jobsearchplatformclient.data.domain
+package com.kiryuha21.jobsearchplatformclient.di
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.kiryuha21.jobsearchplatformclient.data.domain.User
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserStatus
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainUser
-import com.kiryuha21.jobsearchplatformclient.data.remote.AuthToken
-import com.kiryuha21.jobsearchplatformclient.data.remote.RetrofitObject.userRetrofit
+import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.userRetrofit
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.kiryuha21.jobsearchplatformclient.data.remote
+package com.kiryuha21.jobsearchplatformclient.di
 
 import com.auth0.android.jwt.JWT
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.TokenAPI
