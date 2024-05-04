@@ -11,16 +11,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.MoreItemsState
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.START_PAGE
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableVacancyCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.LastPaginationListItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ShimmeringVacancyListItem
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.searchbar.VacancySearchBar
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.NoItemsCard
-import com.kiryuha21.jobsearchplatformclient.ui.components.special.TrailingCard
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import kotlinx.coroutines.launch
 
@@ -73,34 +71,17 @@ fun WorkerHomeScreen(
                         }
 
                         item(key = state.moreItemsState) {
-                            when (state.moreItemsState) {
-                                MoreItemsState.Available -> {
-                                    LaunchedEffect(key1 = true) {
-                                        if (state.areRecommendationsShown) {
-                                            loadRecommended(state.pageNumber + 1)
-                                        } else {
-                                            val newFilter = state.filters.pageRequestFilter.copy(pageNumber = state.pageNumber + 1)
-                                            loadFiltered(state.filters.copy(pageRequestFilter = newFilter))
-                                        }
+                            LastPaginationListItem(
+                                state = state.moreItemsState,
+                                loadMore = {
+                                    if (state.areRecommendationsShown) {
+                                        loadRecommended(state.pageNumber + 1)
+                                    } else {
+                                        val newFilter = state.filters.pageRequestFilter.copy(pageNumber = state.pageNumber + 1)
+                                        loadFiltered(state.filters.copy(pageRequestFilter = newFilter))
                                     }
-                                    LoadingComponent(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        description = "Загружаем вакансии"
-                                    )
                                 }
-                                MoreItemsState.Unavailable -> TrailingCard(
-                                    text = "Вы просмотрели все вакансии",
-                                    modifier = Modifier.padding(10.dp)
-                                )
-                                MoreItemsState.Unreachable -> TrailingCard(
-                                    text = "Необходимо перезагрузить вакансии",
-                                    modifier = Modifier.padding(10.dp)
-                                )
-                                MoreItemsState.Undefined -> TrailingCard(
-                                    text = "Вы не должны это видеть :(",
-                                    modifier = Modifier.padding(10.dp)
-                                )
-                            }
+                            )
                         }
                     } else {
                         item {

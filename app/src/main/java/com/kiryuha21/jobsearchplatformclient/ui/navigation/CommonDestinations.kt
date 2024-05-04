@@ -75,11 +75,14 @@ fun NavGraphBuilder.addCommonDestinations(
 
                 EmployerHomeScreen(
                     state = vm.viewState,
-                    loadResumes = {
-                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(it))
+                    loadFiltered = { filters ->
+                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(filters))
                     },
                     openResumeDetails = { resumeId ->
                         vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))
+                    },
+                    loadRecommended = { page ->
+                        vm.processIntent(EmployerHomeContract.Intent.LoadRecommendations(page))
                     }
                 )
             }
