@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("androidx.room")
+
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 android {
@@ -111,4 +113,7 @@ dependencies {
 
     // shared preferences
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }

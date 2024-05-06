@@ -10,15 +10,18 @@ sealed class WorkerHomeContract {
     data class State(
         val isLoading: Boolean,
         val areRecommendationsShown: Boolean,
+        val areOnlineRecommendationsReady: Boolean,
         val moreItemsState: MoreItemsState,
-        val pageNumber: Int,
-        val vacancies: List<Vacancy>?,
+        val nextLoadPage: Int,
+        val vacancies: List<Vacancy>,
         val filters: VacancyFilters
     ): ViewState
 
-    sealed class Intent : ViewIntent {
-        data class LoadVacancies(val filters: VacancyFilters): Intent()
-        data class LoadRecommendations(val pageNumber: Int) : Intent()
-        data class OpenVacancyDetails(val vacancyId: String): Intent()
+    sealed interface Intent : ViewIntent {
+        data class LoadVacancies(val filters: VacancyFilters): Intent
+        data class LoadRecommendations(val pageNumber: Int) : Intent
+        data class OpenVacancyDetails(val vacancyId: String): Intent
+        data object SwitchToOnlineRecommendations: Intent
+        data object ResetPage: Intent
     }
 }

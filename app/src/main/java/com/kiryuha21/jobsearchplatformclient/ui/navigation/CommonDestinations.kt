@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.local.AppDatabase
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
@@ -42,24 +44,30 @@ fun NavGraphBuilder.addCommonDestinations(
 
         when (CurrentUser.info.role) {
             UserRole.Worker -> {
-                val vm : WorkerHomeViewModel = backStack.sharedWorkerHomeViewModel(
-                    navController = navController,
+                val vm : WorkerHomeViewModel = viewModel(factory = WorkerHomeViewModel.provideFactory(
                     openVacancyCallback = { vacancyId ->
                         navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
                         onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
-                    }
-                )
+                    },
+                    vacancyDAO = AppDatabase.getDatabase(LocalContext.current).vacancyDAO
+                ))
 
                 WorkerHomeScreen(
                     state = vm.viewState,
-                    loadFiltered = { filters ->
-                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(filters))
-                    },
                     openVacancyDetails = { vacancyId ->
                         vm.processIntent(WorkerHomeContract.Intent.OpenVacancyDetails(vacancyId))
                     },
                     loadRecommended = { page ->
                         vm.processIntent(WorkerHomeContract.Intent.LoadRecommendations(page))
+                    },
+                    loadFiltered = { filters ->
+                        vm.processIntent(WorkerHomeContract.Intent.LoadVacancies(filters))
+                    },
+                    switchToOnlineRecommendations = {
+                        vm.processIntent(WorkerHomeContract.Intent.SwitchToOnlineRecommendations)
+                    },
+                    resetPage = {
+                        vm.processIntent(WorkerHomeContract.Intent.ResetPage)
                     }
                 )
             }

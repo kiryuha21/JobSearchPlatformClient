@@ -11,7 +11,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
@@ -25,20 +24,6 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
         navController.getBackStackEntry(navGraphRoute)
     }
     return viewModel(parentEntry, factory = AuthViewModel.provideFactory(navController, tokenDatasourceProvider))
-}
-
-@Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedWorkerHomeViewModel(
-    navController: NavController,
-    noinline openVacancyCallback: (String) -> Unit
-): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = WorkerHomeViewModel.provideFactory(openVacancyCallback)
-    )
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return viewModel(parentEntry, factory = WorkerHomeViewModel.provideFactory(openVacancyCallback))
 }
 
 @Composable

@@ -1,5 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
+import kotlinx.serialization.Serializable
+
 enum class SkillLevel {
     AwareOf,
     Tested,
@@ -7,6 +9,7 @@ enum class SkillLevel {
     HasCommercialProjects
 }
 
+@Serializable
 data class Skill(
     val name: String,
     val skillLevel: SkillLevel

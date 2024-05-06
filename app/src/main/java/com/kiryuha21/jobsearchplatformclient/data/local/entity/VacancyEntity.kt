@@ -1,19 +1,26 @@
 package com.kiryuha21.jobsearchplatformclient.data.local.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
+import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
+import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 
 @Entity(
     tableName = "vacancy",
 )
-class VacancyEntity(
+data class VacancyEntity(
     @PrimaryKey val id: String,
-    @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "description") val description: String,
-    //@ColumnInfo(name = "company") val company: Company,
-    @ColumnInfo(name = "minSalary") val minSalary: Int,
-    @ColumnInfo(name = "maxSalary") val maxSalary: Int
+    val username: String,
+    val unixSeconds: Long,
+    val title: String,
+    val description: String,
+    val company: Company,
+    val minSalary: Int,
+    val maxSalary: Int,
+    val requiredWorkExperience: List<WorkExperience>,
+    val requiredSkills: List<Skill>,
+    val publicationStatus: PublicationStatus,
+    val imageUrl: String? = null
 )
