@@ -1,15 +1,8 @@
-package com.kiryuha21.jobsearchplatformclient.data.domain.filters
+package com.kiryuha21.jobsearchplatformclient.data.domain.pagination
 
 enum class SortingDirection {
     ASC,
     DESC
-}
-
-enum class MoreItemsState {
-    Available,
-    Unavailable,
-    Unreachable,
-    Undefined
 }
 
 const val DEFAULT_SORT_PROPERTY = "placedAt"

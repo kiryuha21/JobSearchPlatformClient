@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.DEFAULT_PAGE_SIZE
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.MoreItemsState
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.START_PAGE
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.DEFAULT_PAGE_SIZE
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.START_PAGE
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.MoreItemsState
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.resolveMoreItemsState
 import com.kiryuha21.jobsearchplatformclient.data.local.dao.VacancyDAO
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyEntity
@@ -64,17 +65,6 @@ class WorkerHomeViewModel(
             withContext(Dispatchers.Main) {
                 setState { copy(areOnlineRecommendationsReady = true) }
             }
-        }
-
-    private fun resolveMoreItemsState(vacanciesSize: Int, isOnlineLoad: Boolean) =
-        if (vacanciesSize < DEFAULT_PAGE_SIZE) {
-            if (isOnlineLoad) {
-                MoreItemsState.Unavailable
-            } else {
-                MoreItemsState.Unreachable
-            }
-        } else {
-            MoreItemsState.Available
         }
 
     private fun resolvePostLoadState(pageNumber: Int, isOnlineLoad: Boolean, newVacancies: List<Vacancy>?) {

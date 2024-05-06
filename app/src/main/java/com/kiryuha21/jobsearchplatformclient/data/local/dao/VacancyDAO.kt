@@ -3,7 +3,7 @@ package com.kiryuha21.jobsearchplatformclient.data.local.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.DEFAULT_PAGE_SIZE
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.DEFAULT_PAGE_SIZE
 import com.kiryuha21.jobsearchplatformclient.data.local.EXPIRATION_TIME_SECONDS
 import com.kiryuha21.jobsearchplatformclient.data.local.entity.VacancyEntity
 

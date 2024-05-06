@@ -27,20 +27,6 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
 }
 
 @Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedEmployerHomeViewModel(
-    navController: NavController,
-    noinline openResumeCallback: (String) -> Unit
-): T {
-    val navGraphRoute = destination.parent?.route ?: return viewModel(
-        factory = EmployerHomeViewModel.provideFactory(openResumeCallback)
-    )
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return viewModel(parentEntry, factory = EmployerHomeViewModel.provideFactory(openResumeCallback))
-}
-
-@Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedResumeDetailsViewModel(
     navController: NavController,
     noinline navigateToProfile: () -> Unit,

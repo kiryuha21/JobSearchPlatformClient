@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.DEFAULT_SORT_PROPERTY
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.SortingDirection
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.DEFAULT_SORT_PROPERTY
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.SortingDirection
 
 data class PageRequestFilterDTO(
     @SerializedName("pageNumber")

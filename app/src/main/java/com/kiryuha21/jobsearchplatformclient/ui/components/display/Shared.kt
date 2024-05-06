@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.MoreItemsState
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.MoreItemsState
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.TrailingCard
 

@@ -2,6 +2,7 @@ package com.kiryuha21.jobsearchplatformclient.data.domain.filters
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
 
 data class ResumeFilters(
     val placedAt: Long? = null,

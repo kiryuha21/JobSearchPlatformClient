@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.ui.contract
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.MoreItemsState
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.MoreItemsState
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewIntent
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ViewState
 

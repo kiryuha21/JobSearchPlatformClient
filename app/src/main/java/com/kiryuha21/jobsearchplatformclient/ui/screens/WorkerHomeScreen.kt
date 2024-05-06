@@ -7,15 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableVacancyCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.LastPaginationListItem
@@ -38,7 +38,7 @@ fun WorkerHomeScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         listState.scrollToItem(0)
         resetPage()
     }
@@ -52,9 +52,7 @@ fun WorkerHomeScreen(
                     loadFiltered(it.copy(pageRequestFilter = PageRequestFilter()))
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
         )
 
         AnimatedVisibility(visible = state.areOnlineRecommendationsReady) {
@@ -65,7 +63,7 @@ fun WorkerHomeScreen(
                         switchToOnlineRecommendations()
                     }
                 },
-                shape = RoundedCornerShape(10),
+                shape = RectangleShape,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Найдены новые вакансии! Показать?")

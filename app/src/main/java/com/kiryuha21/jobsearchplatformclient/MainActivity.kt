@@ -21,8 +21,10 @@ class MainActivity : ComponentActivity() {
         val db = AppDatabase.getDatabase(this)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            db.vacancyDAO.deleteExpiredVacancies(Instant.now().epochSecond)
-            // db.resumeDAO.deleteExpiredResumes() TODO: uncomment
+            val now = Instant.now().epochSecond
+
+            db.vacancyDAO.deleteExpiredVacancies(now)
+            db.resumeDAO.deleteExpiredResumes(now)
         }
 
         setContent {

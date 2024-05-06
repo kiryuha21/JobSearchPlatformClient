@@ -23,8 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.FilterSortOption
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.SortingDirection
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.SortingDirection
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

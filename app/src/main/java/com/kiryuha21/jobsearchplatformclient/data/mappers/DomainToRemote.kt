@@ -6,7 +6,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.PageRequestFilter
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.VacancyFilters
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO

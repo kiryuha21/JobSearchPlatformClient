@@ -36,7 +36,7 @@ fun NavGraphBuilder.addCommonDestinations(
     onNavigateBack: () -> Unit,
     onNavigationForward: (String) -> Unit
 ) = with(NavigationGraph.MainApp) {
-    composable(HOME_SCREEN) { backStack ->
+    composable(HOME_SCREEN) {
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
@@ -73,24 +73,30 @@ fun NavGraphBuilder.addCommonDestinations(
             }
 
             UserRole.Employer -> {
-                val vm : EmployerHomeViewModel = backStack.sharedEmployerHomeViewModel(
-                    navController = navController,
+                val vm : EmployerHomeViewModel = viewModel(factory = EmployerHomeViewModel.provideFactory(
                     openResumeCallback = { resumeId ->
                         navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
                         onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
-                    }
-                )
+                    },
+                    resumeDAO = AppDatabase.getDatabase(LocalContext.current).resumeDAO
+                ))
 
                 EmployerHomeScreen(
                     state = vm.viewState,
-                    loadFiltered = { filters ->
-                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(filters))
-                    },
                     openResumeDetails = { resumeId ->
                         vm.processIntent(EmployerHomeContract.Intent.OpenResumeDetails(resumeId))
                     },
+                    loadFiltered = { filters ->
+                        vm.processIntent(EmployerHomeContract.Intent.LoadResumes(filters))
+                    },
                     loadRecommended = { page ->
                         vm.processIntent(EmployerHomeContract.Intent.LoadRecommendations(page))
+                    },
+                    switchToOnlineRecommendations = {
+                        vm.processIntent(EmployerHomeContract.Intent.SwitchToOnlineRecommendations)
+                    },
+                    resetPage = {
+                        vm.processIntent(EmployerHomeContract.Intent.ResetPage)
                     }
                 )
             }

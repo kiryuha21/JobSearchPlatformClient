@@ -5,31 +5,39 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.DEFAULT_PAGE_SIZE
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.MoreItemsState
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.DEFAULT_PAGE_SIZE
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
-import com.kiryuha21.jobsearchplatformclient.data.domain.filters.START_PAGE
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.START_PAGE
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.MoreItemsState
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.resolveMoreItemsState
+import com.kiryuha21.jobsearchplatformclient.data.local.dao.ResumeDAO
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeEntity
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeFiltersDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class EmployerHomeViewModel(
-    private val openResumeCallback: (String) -> Unit
+    private val openResumeCallback: (String) -> Unit,
+    private val resumeDAO: ResumeDAO,
 ) : BaseViewModel<EmployerHomeContract.Intent, EmployerHomeContract.State>() {
+    private var isCacheShown = true
+    private var onlineSilentResumes = emptyList<Resume>()
+    private var fetchOnlineResumesJob = getSilentFetchJob()
     override fun initialState(): EmployerHomeContract.State {
         return EmployerHomeContract.State(
             isLoading = true,
             moreItemsState = MoreItemsState.Undefined,
             areRecommendationsShown = true,
-            pageNumber = 0,
-            resumes = null,
+            areOnlineRecommendationsReady = false,
+            nextLoadPage = 0,
+            resumes = emptyList(),
             filters = ResumeFilters()
         )
     }
@@ -39,22 +47,63 @@ class EmployerHomeViewModel(
             is EmployerHomeContract.Intent.LoadResumes -> loadResumes(intent.filters)
             is EmployerHomeContract.Intent.OpenResumeDetails -> openResumeCallback(intent.resumeId)
             is EmployerHomeContract.Intent.LoadRecommendations -> loadRecommendations(intent.pageNumber)
+            is EmployerHomeContract.Intent.SwitchToOnlineRecommendations -> switchToOnlineRecommendations()
+            is EmployerHomeContract.Intent.ResetPage -> resetPage()
         }
     }
 
-    private fun resolvePostLoadState(isFirstLoad: Boolean, newResumes: List<Resume>?) {
+    private fun getSilentFetchJob() =
+        viewModelScope.launch(Dispatchers.IO) {
+            onlineSilentResumes = networkCallWithReturnWrapper(networkCall = {
+                resumeRetrofit.getResumeRecommendations(
+                    authToken = "Bearer ${AuthToken.getToken()}",
+                    pageNumber = START_PAGE
+                ).map { it.toDomainResume() }
+            }) ?: emptyList()
+
+            withContext(Dispatchers.Main) {
+                setState { copy(areOnlineRecommendationsReady = true) }
+            }
+        }
+
+    private fun resolvePostLoadState(pageNumber: Int, isOnlineLoad: Boolean, newResumes: List<Resume>?) {
+        val isFirstLoad = pageNumber == START_PAGE
+
         if (newResumes != null) {
             setState { copy(
                 isLoading = false,
                 resumes = if (isFirstLoad) {
                     newResumes
                 } else {
-                    (viewState.resumes ?: throw Exception("resumes can't be null here")) + newResumes
+                    viewState.resumes + newResumes
                 },
-                moreItemsState = if (newResumes.size < DEFAULT_PAGE_SIZE) MoreItemsState.Unavailable else MoreItemsState.Available
+                nextLoadPage = pageNumber + 1,
+                moreItemsState = resolveMoreItemsState(newResumes.size, isOnlineLoad)
             ) }
         } else {
             setState { copy(isLoading = false) }
+        }
+    }
+
+    private fun resetPage() {
+        isCacheShown = true
+        fetchOnlineResumesJob.cancel()
+        fetchOnlineResumesJob = getSilentFetchJob()
+        loadRecommendations(START_PAGE)
+    }
+
+    private fun switchToOnlineRecommendations() {
+        isCacheShown = false
+        setState { copy(
+            resumes = onlineSilentResumes,
+            areOnlineRecommendationsReady = false,
+            moreItemsState = resolveMoreItemsState(onlineSilentResumes.size, true),
+            nextLoadPage = 1,
+            isLoading = false
+        ) }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            resumeDAO.upsertResumes(onlineSilentResumes.map { it.toResumeEntity() })
         }
     }
 
@@ -63,9 +112,9 @@ class EmployerHomeViewModel(
             val isFirstLoad = filters.pageRequestFilter.pageNumber == START_PAGE
 
             if (isFirstLoad) {
-                setState { copy(isLoading = true, filters = filters, pageNumber = START_PAGE, areRecommendationsShown = false) }
+                setState { copy(isLoading = true, filters = filters, areRecommendationsShown = false) }
             } else {
-                setState { copy(filters = filters, pageNumber = filters.pageRequestFilter.pageNumber, areRecommendationsShown = false) }
+                setState { copy(filters = filters, areRecommendationsShown = false) }
             }
 
             val resumesResult = withContext(Dispatchers.IO) {
@@ -74,47 +123,78 @@ class EmployerHomeViewModel(
                 )
             }
 
-            resolvePostLoadState(isFirstLoad, resumesResult)
+            resolvePostLoadState(
+                pageNumber = filters.pageRequestFilter.pageNumber,
+                isOnlineLoad = true,
+                newResumes = resumesResult
+            )
         }
     }
 
     private fun loadRecommendations(pageNumber: Int) {
-        val token = viewModelScope.async(Dispatchers.IO) {
-            networkCallWithReturnWrapper(
-                networkCall = { "Bearer ${AuthToken.getToken()}" }
-            )
-        }
-
         val isFirstLoad = pageNumber == START_PAGE
+
         viewModelScope.launch {
             if (isFirstLoad) {
-                setState { copy(isLoading = true, pageNumber = pageNumber, areRecommendationsShown = true) }
+                setState { copy(isLoading = true, areRecommendationsShown = true) }
             } else {
-                setState { copy(pageNumber = pageNumber, areRecommendationsShown = true) }
+                setState { copy(areRecommendationsShown = true) }
             }
 
-            val resumesResult = withContext(Dispatchers.IO) {
-                networkCallWithReturnWrapper(
-                    networkCall = { resumeRetrofit.getResumeRecommendations(
-                        authToken = token.await() ?: throw Exception("token can't be null here"),
-                        pageNumber = pageNumber
-                    ) }
-                )?.map { it.toDomainResume() }
-            }
+            if (isCacheShown) {
+                val cachedResumes = withContext(Dispatchers.IO) {
+                    resumeDAO.getUserResumes(CurrentUser.info.username, pageNumber * DEFAULT_PAGE_SIZE)
+                }
 
-            resolvePostLoadState(isFirstLoad, resumesResult)
+                if (isFirstLoad && cachedResumes.isEmpty()) {
+                    fetchOnlineResumesJob.join()
+                    switchToOnlineRecommendations()
+                } else {
+                    resolvePostLoadState(
+                        pageNumber = pageNumber,
+                        isOnlineLoad = false,
+                        newResumes = cachedResumes.map { it.toDomainResume() }
+                    )
+                }
+            } else {
+                val loadedResumes = withContext(Dispatchers.IO) {
+                    networkCallWithReturnWrapper(networkCall = {
+                        resumeRetrofit.getResumeRecommendations(
+                            authToken = "Bearer ${AuthToken.getToken()}",
+                            pageNumber = pageNumber
+                        )
+                    })
+                }
+
+                resolvePostLoadState(
+                    pageNumber = pageNumber,
+                    isOnlineLoad = true,
+                    newResumes = loadedResumes?.map { it.toDomainResume() }
+                )
+
+                if (loadedResumes != null) {
+                    withContext(Dispatchers.IO) {
+                        resumeDAO.upsertResumes(loadedResumes.map { it.toResumeEntity() })
+                    }
+                }
+            }
         }
     }
 
+    override fun onCleared() {
+        fetchOnlineResumesJob.cancel()
+        super.onCleared()
+    }
+
     companion object {
-        fun provideFactory(openResumeCallback: (String) -> Unit) =
+        fun provideFactory(openResumeCallback: (String) -> Unit, resumeDAO: ResumeDAO) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return EmployerHomeViewModel(openResumeCallback) as T
+                    return EmployerHomeViewModel(openResumeCallback, resumeDAO) as T
                 }
             }
     }
