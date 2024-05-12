@@ -38,33 +38,33 @@ fun SignUpForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DefaultTextField(
+            text = state.username,
             icon = Icons.Filled.Abc,
             placeholder = "Логин",
             onUpdate = onLoginFieldUpdated,
-            initString = state.username,
             modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 10.dp, bottom = 10.dp)
         )
         DefaultTextField(
+            text = state.email,
             icon = Icons.Filled.Email,
             placeholder = "E-mail",
             onUpdate = onEmailFieldUpdated,
-            initString = state.email,
             modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 10.dp)
         )
         PasswordTextField(
+            text = state.password,
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
             onUpdate = onPasswordFieldUpdated,
-            initString = state.password,
             isError = false,
             supportingText = "",
             modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 5.dp)
         )
         PasswordTextField(
+            text = state.passwordRepeat,
             icon = Icons.Filled.Password,
             placeholder = "Повторите пароль",
             onUpdate = onPasswordRepeatFieldUpdated,
-            initString = state.passwordRepeat,
             isError = passwordRepeatNotMatches,
             supportingText = passwordRepeatSupportingText,
             modifier = Modifier.padding(5.dp)

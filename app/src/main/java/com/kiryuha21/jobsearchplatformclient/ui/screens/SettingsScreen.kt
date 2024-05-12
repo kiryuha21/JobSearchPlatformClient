@@ -51,17 +51,18 @@ fun SettingsScreen(
         }
         Title(text = "Настройки", fontSize = 30.sp)
         PasswordConfirmation(
-            modifier = Modifier.fillMaxWidth(),
-            onConfirmClicked = onShowPasswordDialog
+            isVisible = !state.areFieldsEnabled,
+            onConfirmClicked = onShowPasswordDialog,
+            modifier = Modifier.fillMaxWidth()
         )
         SecuredFields(
             enabled = state.areFieldsEnabled,
             onLoginFieldEdit = onUsernameFieldEdited,
             onEmailFieldEdit = onEmailFieldEdited,
             onPasswordFieldEdit = onPasswordFieldEdited,
-            initUsername = state.username,
-            initEmail = state.email,
-            initPassword = state.password
+            username = state.username,
+            email = state.email,
+            password = state.password
         )
         SecuredButton(
             text = "Подтвердить изменения",

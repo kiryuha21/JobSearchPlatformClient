@@ -31,6 +31,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PhoneVisualTransformation
 import com.kiryuha21.jobsearchplatformclient.ui.theme.interFontFamily
+import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import kotlin.math.min
 
 @Composable
@@ -132,44 +133,14 @@ fun ClickableResumeCard(resume: Resume, onClick: () -> Unit, modifier: Modifier 
 @Composable
 fun ClickableCardPreview() {
     ClickableResumeCard(
-        resume = Resume(
-            "12khe12nj1nek",
-            "John",
-            "Smit",
-            20,
-            "12909483",
-            "hey@gmail.com",
-            "Senior C++ developer",
-            listOf(
-                Skill(
-                    "C++ development",
-                    SkillLevel.HasCommercialProjects
-                ),
-                Skill(
-                    "Drinking Tea",
-                    SkillLevel.AwareOf
-                ),
-                Skill(
-                    "Sleeping well",
-                    SkillLevel.AwareOf
-                ),
-                Skill(
-                    "Dropping prod",
-                    SkillLevel.AwareOf
-                )
-            ),
-            listOf(
-                WorkExperience(
-                    Company(
-                        "yandex",
-                    ),
-                    "C++ developer",
-                    PositionLevel.Lead,
-                    100500,
-                    420
-                )
-            ),
-            PublicationStatus.Published
-        ), {}, modifier = Modifier.fillMaxWidth()
+        resume = PreviewObjects.previewResume1, {}, modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ResumeDetailsPreview() {
+    ResumeDetails(
+        resume = PreviewObjects.previewResume1, modifier = Modifier.fillMaxWidth()
     )
 }

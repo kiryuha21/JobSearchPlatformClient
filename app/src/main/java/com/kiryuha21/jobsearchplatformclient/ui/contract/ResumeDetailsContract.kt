@@ -13,11 +13,11 @@ sealed class ResumeDetailsContract {
         val loadingText: String
     ) : ViewState
 
-    sealed class Intent : ViewIntent {
-        data class EditResume(val resume: Resume, val bitmap: Bitmap?) : Intent()
-        data class CreateResume(val resume: Resume, val bitmap: Bitmap?) : Intent()
-        data class LoadResume(val resumeId: String) : Intent()
-        data object OpenEdit : Intent()
-        data object DeleteResume : Intent()
+    sealed interface Intent : ViewIntent {
+        data class EditResume(val resume: Resume, val bitmap: Bitmap?) : Intent
+        data class CreateResume(val resume: Resume, val bitmap: Bitmap?) : Intent
+        data class LoadResume(val resumeId: String) : Intent
+        data object OpenEdit : Intent
+        data object DeleteResume : Intent
     }
 }

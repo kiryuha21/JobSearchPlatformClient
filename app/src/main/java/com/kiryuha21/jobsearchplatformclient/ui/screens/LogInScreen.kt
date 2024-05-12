@@ -73,8 +73,8 @@ fun LogInScreen(
                     onResetPassword = onResetPassword,
                     onUsernameFieldEdited = onUsernameFieldEdited,
                     onPasswordFieldEdited = onPasswordFieldEdited,
-                    initUsername = state.username,
-                    initPassword = state.password
+                    username = state.username,
+                    password = state.password
                 )
                 NotSignedUpHelper(
                     onClick = onSignUp,

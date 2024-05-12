@@ -70,9 +70,9 @@ fun SecureConfirmAlertDialog(
                 Column {
                     Text(text = "Введите пароль для подтверждения")
                     PasswordTextField(
+                        text = password,
                         icon = Icons.Rounded.Password,
                         placeholder = "Ваш пароль",
-                        initString = "",
                         isError = isError,
                         supportingText = "Введен неверный пароль",
                         onUpdate = { password = it }

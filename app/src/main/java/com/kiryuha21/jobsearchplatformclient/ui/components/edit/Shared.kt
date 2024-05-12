@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidateableTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBox
@@ -149,7 +149,7 @@ fun SkillForm(
             ComboBox(items = comboBoxItems)
         }
 
-        ValidateableTextField(
+        ValidatedTextField(
             icon = Icons.Default.Abc,
             placeholder = "Названия навыка",
             initString = "",

@@ -10,9 +10,9 @@ sealed class WorkerProfileContract {
         val resumes: List<Resume>?,
     ): ViewState
 
-    sealed class Intent : ViewIntent {
-        data object LoadResumes : Intent()
-        data object CreateResume : Intent()
-        data class OpenResumeDetails(val resumeId : String) : Intent()
+    sealed interface Intent : ViewIntent {
+        data object LoadResumes : Intent
+        data object CreateResume : Intent
+        data class OpenResumeDetails(val resumeId : String) : Intent
     }
 }

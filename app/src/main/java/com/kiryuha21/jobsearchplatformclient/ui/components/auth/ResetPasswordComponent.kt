@@ -16,7 +16,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 fun ResetPasswordForm(
     onReset: () -> Unit,
     onEmailFieldEdited: (String) -> Unit,
-    initEmail: String,
+    email: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -25,9 +25,9 @@ fun ResetPasswordForm(
         verticalArrangement = Arrangement.Top
     ) {
         DefaultTextField(
+            text = email,
             icon = Icons.Filled.Email,
             placeholder = "Ваша почта",
-            initString = initEmail,
             onUpdate = onEmailFieldEdited
         )
         DefaultButton(

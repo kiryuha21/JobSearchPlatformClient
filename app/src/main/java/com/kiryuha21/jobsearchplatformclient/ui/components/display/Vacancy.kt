@@ -29,6 +29,7 @@ import coil.compose.AsyncImage
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -162,15 +163,6 @@ fun ShimmeringVacancyListItem(
 @Composable
 fun ClickableVacancyCardPreview() {
     ClickableVacancyCard(
-        vacancy = Vacancy(
-            id = "3",
-            title = "Cave Digger",
-            description = "In this good company you will have everything you want and even money",
-            company = Company("Gold rocks"),
-            minSalary = 15000,
-            maxSalary = 20000,
-            publicationStatus = PublicationStatus.Published,
-            imageUrl = "https://fakeimg.pl/350x200/?text=World&font=lobster",
-        ),
+        vacancy = PreviewObjects.previewVacancy1,
         onClick = { })
 }

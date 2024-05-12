@@ -75,21 +75,21 @@ fun TextBox(
 
 @Composable
 fun SecuredTextField(
+    text: String,
     icon: ImageVector?,
     enabled: Boolean,
     placeholder: String,
-    initString: String,
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier,
+    label: String = placeholder
 ) {
     val focusManager = LocalFocusManager.current
-    var text by remember { mutableStateOf(initString) }
 
     OutlinedTextField(
         value = text,
         modifier = modifier,
         enabled = enabled,
-        label = { Text(placeholder) },
+        label = { Text(label) },
         leadingIcon = if (icon != null) {
             { Icon(imageVector = icon, contentDescription = "icon") }
         } else null,
@@ -98,39 +98,37 @@ fun SecuredTextField(
         keyboardActions = KeyboardActions(onNext = {
             focusManager.moveFocus(FocusDirection.Down)
         }),
-        onValueChange = {
-            text = it
-            onUpdate(text)
-        }
+        onValueChange = { onUpdate(it) }
     )
 }
 
 @Composable
 fun DefaultTextField(
+    text: String,
     icon: ImageVector?,
     placeholder: String,
-    initString: String,
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SecuredTextField(
+        text = text,
         icon = icon,
         enabled = true,
         placeholder = placeholder,
-        initString = initString,
         onUpdate = onUpdate,
         modifier = modifier
     )
 }
 
 @Composable
-fun ValidateableTextField(
+fun ValidatedTextField(
     placeholder: String,
     initString: String,
     onUpdate: (String, Boolean) -> Unit,
     isValid: (String) -> Boolean,
     errorMessage: String,
     modifier: Modifier = Modifier,
+    label: String = placeholder,
     icon: ImageVector? = null,
     maxLength: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -143,7 +141,7 @@ fun ValidateableTextField(
     OutlinedTextField(
         value = text,
         modifier = modifier,
-        label = { Text(placeholder) },
+        label = { Text(label) },
         placeholder = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions(onNext = {
@@ -168,26 +166,23 @@ fun ValidateableTextField(
 
 @Composable
 fun SecuredPasswordTextField(
+    text: String,
     icon: ImageVector,
     enabled: Boolean,
     placeholder: String,
-    initString: String,
     isError: Boolean,
     supportingText: String,
     onUpdate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    label: String = placeholder
 ) {
-    var text by remember { mutableStateOf(initString) }
     var visible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = text,
         modifier = modifier,
-        label = { Text(placeholder) },
-        onValueChange = {
-            text = it
-            onUpdate(text)
-        },
+        label = { Text(label) },
+        onValueChange = { onUpdate(it) },
         enabled = enabled,
         isError = isError,
         supportingText = {
@@ -216,19 +211,19 @@ fun SecuredPasswordTextField(
 
 @Composable
 fun PasswordTextField(
+    text: String,
     icon: ImageVector,
     placeholder: String,
-    initString: String,
     isError: Boolean,
     supportingText: String,
     onUpdate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SecuredPasswordTextField(
+        text = text,
         icon = icon,
         enabled = true,
         placeholder = placeholder,
-        initString = initString,
         isError = isError,
         supportingText = supportingText,
         onUpdate = onUpdate,
@@ -250,7 +245,7 @@ fun PhoneField(
 ) {
     val transformation = PhoneVisualTransformation(mask, maskNumber)
 
-    ValidateableTextField(
+    ValidatedTextField(
         placeholder = placeholder,
         initString = initString,
         onUpdate = { text, valid ->

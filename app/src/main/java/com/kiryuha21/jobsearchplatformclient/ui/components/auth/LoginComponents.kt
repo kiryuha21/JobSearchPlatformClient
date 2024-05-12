@@ -26,8 +26,8 @@ fun LoginForm(
     onResetPassword: () -> Unit,
     onUsernameFieldEdited: (String) -> Unit,
     onPasswordFieldEdited: (String) -> Unit,
-    initUsername: String,
-    initPassword: String,
+    username: String,
+    password: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -35,17 +35,17 @@ fun LoginForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DefaultTextField(
+            text = username,
             icon = Icons.Filled.Abc,
             placeholder = "Логин",
             onUpdate = onUsernameFieldEdited,
-            initString = initUsername,
             modifier = Modifier.padding(5.dp).testTag("login_username")
         )
         PasswordTextField(
+            text = password,
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
             onUpdate = onPasswordFieldEdited,
-            initString = initPassword,
             isError = false,
             supportingText = "",
             modifier = Modifier.padding(5.dp).testTag("login_password")

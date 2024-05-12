@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components.settings
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -18,17 +19,20 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredTextFi
 
 @Composable
 fun PasswordConfirmation(
-    modifier: Modifier = Modifier,
-    onConfirmClicked: () -> Unit
+    isVisible: Boolean,
+    onConfirmClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(start = 10.dp, end = 10.dp, top = 20.dp)
-    ) {
-        Text(text = "Подтвердите пароль для изменения данных")
-        TextButton(onClick = onConfirmClicked) {
-            Text(text = "Подтвердить")
+    AnimatedVisibility(visible = isVisible) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .padding(start = 10.dp, end = 10.dp, top = 20.dp)
+        ) {
+            Text(text = "Подтвердите пароль для изменения данных")
+            TextButton(onClick = onConfirmClicked) {
+                Text(text = "Подтвердить")
+            }
         }
     }
 }
@@ -39,9 +43,9 @@ fun SecuredFields(
     onLoginFieldEdit: (String) -> Unit,
     onEmailFieldEdit: (String) -> Unit,
     onPasswordFieldEdit: (String) -> Unit,
-    initUsername: String,
-    initEmail: String,
-    initPassword: String,
+    username: String,
+    email: String,
+    password: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -50,24 +54,27 @@ fun SecuredFields(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         SecuredTextField(
+            text = username,
             icon = Icons.Filled.Abc,
             enabled = enabled,
             placeholder = "my_login",
-            initString = initUsername,
+            label = "Новый логин",
             onUpdate = onLoginFieldEdit
         )
         SecuredTextField(
+            text = email,
             icon = Icons.Filled.Email,
             enabled = enabled,
+            label = "Новый e-mail",
             placeholder = "example@gmail.com",
-            initString = initEmail,
             onUpdate = onEmailFieldEdit
         )
         SecuredPasswordTextField(
+            text = password,
             icon = Icons.Filled.Password,
             enabled = enabled,
             placeholder = "",
-            initString = initPassword,
+            label = "Новый пароль",
             isError = false,
             supportingText = "",
             onUpdate = onPasswordFieldEdit

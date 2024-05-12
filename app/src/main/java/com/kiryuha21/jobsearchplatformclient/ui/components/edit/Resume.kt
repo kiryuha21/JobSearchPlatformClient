@@ -35,15 +35,12 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PhoneField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidateableTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBox
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultDatePickerDialog
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import com.kiryuha21.jobsearchplatformclient.util.toFormattedDateTime
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -110,7 +107,7 @@ fun ResumeEditForm(
 
     HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
-    ValidateableTextField(
+    ValidatedTextField(
         placeholder = "Имя",
         initString = resume.firstName,
         isValid = { it.isNotBlank() },
@@ -120,7 +117,7 @@ fun ResumeEditForm(
         icon = Icons.Default.Abc,
         onUpdate = onFirstNameUpdate
     )
-    ValidateableTextField(
+    ValidatedTextField(
         placeholder = "Фамилия",
         initString = resume.lastName,
         isValid = { it.isNotBlank() },
@@ -140,7 +137,7 @@ fun ResumeEditForm(
         isValid = { it.isNotBlank() && it.isNumeric() },
         modifier = Modifier.fillMaxWidth()
     )
-    ValidateableTextField(
+    ValidatedTextField(
         placeholder = "E-mail",
         initString = resume.contactEmail,
         isValid = { it.isNotBlank() },
@@ -150,7 +147,7 @@ fun ResumeEditForm(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
         onUpdate = onEmailUpdate
     )
-    ValidateableTextField(
+    ValidatedTextField(
         placeholder = "Позиция",
         initString = resume.applyPosition,
         isValid = { it.isNotBlank() },
@@ -203,7 +200,7 @@ fun ResumeWorkExperienceForm(
             ComboBox(items = comboBoxItems)
         }
 
-        ValidateableTextField(
+        ValidatedTextField(
             icon = Icons.Default.Abc,
             placeholder = "Название компании",
             initString = "",
@@ -219,7 +216,7 @@ fun ResumeWorkExperienceForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        ValidateableTextField(
+        ValidatedTextField(
             icon = Icons.Default.Abc,
             placeholder = "Позиция",
             initString = "",
@@ -235,7 +232,7 @@ fun ResumeWorkExperienceForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        ValidateableTextField(
+        ValidatedTextField(
             placeholder = "Зарплата (₽)",
             initString = "",
             onUpdate = { text, valid ->
@@ -250,7 +247,7 @@ fun ResumeWorkExperienceForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        ValidateableTextField(
+        ValidatedTextField(
             placeholder = "Месяцев проработано",
             initString = "",
             onUpdate = { text, valid ->

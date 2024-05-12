@@ -54,7 +54,7 @@ class SettingsViewModel: BaseViewModel<SettingsContract.Intent, SettingsContract
             )
 
             if (validPassword) {
-                setState { copy(isDialogLoading = false, isPasswordDialogShown = false, areFieldsEnabled = true) }
+                setState { copy(isDialogLoading = false, isPasswordDialogShown = false, areFieldsEnabled = true, password = password) }
             } else {
                 setState { copy(isDialogLoading = false, isPasswordError = true) }
             }

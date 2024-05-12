@@ -35,7 +35,7 @@ fun ResetPasswordScreen(
             false -> ResetPasswordForm(
                 onReset = onReset,
                 onEmailFieldEdited = onEmailFieldEdited,
-                initEmail = state.email,
+                email = state.email,
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()

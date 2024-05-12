@@ -54,6 +54,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ClickableAsyncUriImage
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
+import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.kiryuha21.jobsearchplatformclient.util.getBitmap
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.coroutines.launch
@@ -286,32 +287,6 @@ fun ResumeEditScreen(
 @Preview(showBackground = true)
 fun ResumeEditScreenPreview() {
     ResumeEditScreen(
-        initResume = Resume(
-            "",
-            "first",
-            "second",
-            Instant.now().toEpochMilli(),
-            "89661081500",
-            "test@gmail.com",
-            "C++ programmer",
-            listOf(
-                Skill(
-                    "C++ development",
-                    SkillLevel.HasCommercialProjects
-                )
-            ),
-            listOf(
-                WorkExperience(
-                    Company(
-                        "yandex",
-                    ),
-                    "C++ developer",
-                    PositionLevel.Lead,
-                    100500,
-                    420
-                )
-            ),
-            PublicationStatus.Published
-        ), false, ""
+        initResume = PreviewObjects.previewResume1, false, ""
     ) { _, _ -> }
 }

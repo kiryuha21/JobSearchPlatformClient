@@ -28,7 +28,7 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidateableTextField
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBox
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
@@ -54,7 +54,7 @@ fun VacancyEditForm(
             Text(text = "Статус Вакансии")
             ComboBox(items = comboBoxItems)
         }
-        ValidateableTextField(
+        ValidatedTextField(
             placeholder = "Название вакансии",
             initString = vacancy.title,
             isValid = { it.isNotBlank() },
@@ -64,7 +64,7 @@ fun VacancyEditForm(
             icon = Icons.Default.Abc,
             onUpdate = onTitleUpdate
         )
-        ValidateableTextField(
+        ValidatedTextField(
             placeholder = "Название компании",
             initString = vacancy.company.name,
             isValid = { it.isNotBlank() },
@@ -89,7 +89,7 @@ fun VacancyEditForm(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                ValidateableTextField(
+                ValidatedTextField(
                     placeholder = "Минимум, ₽",
                     initString = vacancy.minSalary.toString(),
                     isValid = { it.isNotBlank() && it.isNumeric() },
@@ -109,7 +109,7 @@ fun VacancyEditForm(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                ValidateableTextField(
+                ValidatedTextField(
                     placeholder = "Максимум, ₽",
                     initString = vacancy.maxSalary.toString(),
                     isValid = { it.isNotBlank() && it.isNumeric() },
@@ -160,7 +160,7 @@ fun VacancyWorkExperienceForm(
             ComboBox(items = comboBoxItems)
         }
 
-        ValidateableTextField(
+        ValidatedTextField(
             icon = Icons.Default.Abc,
             placeholder = "Желаемая Позиция",
             initString = "",
@@ -176,7 +176,7 @@ fun VacancyWorkExperienceForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        ValidateableTextField(
+        ValidatedTextField(
             placeholder = "Минимум месяцев проработано",
             initString = "",
             onUpdate = { text, valid ->
