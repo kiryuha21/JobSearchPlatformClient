@@ -22,6 +22,6 @@ sealed class EmployerHomeContract {
         data class LoadRecommendations(val pageNumber: Int): Intent
         data class OpenResumeDetails(val resumeId: String): Intent
         data object SwitchToOnlineRecommendations: Intent
-        data object ResetPage: Intent
+        data object RefreshPage: Intent
     }
 }

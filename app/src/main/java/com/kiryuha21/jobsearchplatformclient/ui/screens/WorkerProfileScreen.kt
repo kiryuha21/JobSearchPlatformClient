@@ -69,6 +69,7 @@ fun WorkerProfileScreen(
                     items(state.resumes) {
                         ClickableResumeCard(
                             resume = it,
+                            isStatusShown = true,
                             onClick = {
                                 openResumeDetails(it.id)
                             },

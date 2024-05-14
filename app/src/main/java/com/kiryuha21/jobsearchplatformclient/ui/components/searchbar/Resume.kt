@@ -204,21 +204,6 @@ fun ResumeSearchBar(
                 }
             }
 
-            AnimatedVisibility(visible = visibleSkillForm) {
-                SkillForm(
-                    skillLevelText = "Нужный навык",
-                    onSubmit = {
-                        resumeFilters = resumeFilters.copy(skills = resumeFilters.skills?.let { skills -> skills + it } ?: listOf(it))
-                        visibleSkillForm = !visibleSkillForm
-                    },
-                    onCancel = { visibleSkillForm = !visibleSkillForm }
-                )
-            }
-
-            TextButton(onClick = { visibleSkillForm = !visibleSkillForm }) {
-                Text(text = "+ нужный навык", fontSize = 20.sp)
-            }
-
             resumeFilters.workExperience?.let {
                 ClickableWorkExperienceList(
                     description = "Нужный опыт работы:",
@@ -230,8 +215,30 @@ fun ResumeSearchBar(
                 }
             }
 
+            TextButton(onClick = { visibleSkillForm = !visibleSkillForm }) {
+                Text(text = "+ нужный навык", fontSize = 20.sp)
+            }
+
+            AnimatedVisibility(visible = visibleSkillForm) {
+                SkillForm(
+                    skillLevelText = "Минимальный уровень навыка:",
+                    onSubmit = {
+                        resumeFilters = resumeFilters.copy(skills = resumeFilters.skills?.let { skills -> skills + it } ?: listOf(it))
+                        visibleSkillForm = !visibleSkillForm
+                    },
+                    onCancel = { visibleSkillForm = !visibleSkillForm }
+                )
+            }
+
+            TextButton(onClick = { visibleWorkExperienceForm = !visibleWorkExperienceForm }) {
+                Text(text = "+ нужный опыт работы", fontSize = 20.sp)
+            }
+
             AnimatedVisibility(visible = visibleWorkExperienceForm) {
                 VacancyWorkExperienceForm(
+                    positionLevelText = "Минимальный уровень позиции:",
+                    positionText = "Позиция",
+                    monthsText = "Минимальное количество месяцев",
                     onSubmit = {
                         resumeFilters = resumeFilters.copy(
                             workExperience = resumeFilters.workExperience?.let { exp -> exp + it } ?: listOf(it)
@@ -242,13 +249,9 @@ fun ResumeSearchBar(
                 )
             }
 
-            TextButton(onClick = { visibleWorkExperienceForm = !visibleWorkExperienceForm }) {
-                Text(text = "+ нужный опыт работы", fontSize = 20.sp)
-            }
-
             var datePickerShown by remember { mutableStateOf(false) }
             TextButton(onClick = { datePickerShown = !datePickerShown }) {
-                Text(text = "+ минимальный срок публикации", fontSize = 20.sp)
+                Text(text = "+ Самый поздний срок публикации", fontSize = 20.sp)
             }
 
             if (datePickerShown) {

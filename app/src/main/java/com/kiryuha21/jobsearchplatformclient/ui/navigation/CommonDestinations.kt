@@ -66,8 +66,8 @@ fun NavGraphBuilder.addCommonDestinations(
                     switchToOnlineRecommendations = {
                         vm.processIntent(WorkerHomeContract.Intent.SwitchToOnlineRecommendations)
                     },
-                    resetPage = {
-                        vm.processIntent(WorkerHomeContract.Intent.ResetPage)
+                    refreshRecommendations = {
+                        vm.processIntent(WorkerHomeContract.Intent.RefreshRecommendations)
                     }
                 )
             }
@@ -95,8 +95,8 @@ fun NavGraphBuilder.addCommonDestinations(
                     switchToOnlineRecommendations = {
                         vm.processIntent(EmployerHomeContract.Intent.SwitchToOnlineRecommendations)
                     },
-                    resetPage = {
-                        vm.processIntent(EmployerHomeContract.Intent.ResetPage)
+                    refreshRecommendations = {
+                        vm.processIntent(EmployerHomeContract.Intent.RefreshPage)
                     }
                 )
             }

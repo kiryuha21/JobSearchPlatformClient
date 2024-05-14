@@ -65,6 +65,7 @@ fun EmployerProfileScreen(
                         items(state.vacancies) {
                             ClickableVacancyCard(
                                 vacancy = it,
+                                isStatusShown = true,
                                 onClick = {
                                     openVacancyDetails(it.id)
                                 },

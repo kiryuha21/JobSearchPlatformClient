@@ -37,7 +37,7 @@ class WorkerHomeViewModel(
             moreItemsState = MoreItemsState.Undefined,
             areRecommendationsShown = true,
             areOnlineRecommendationsReady = false,
-            nextLoadPage = 0,
+            nextLoadPage = START_PAGE,
             vacancies = emptyList(),
             filters = VacancyFilters()
         )
@@ -49,8 +49,12 @@ class WorkerHomeViewModel(
             is WorkerHomeContract.Intent.LoadRecommendations -> loadRecommendations(intent.pageNumber)
             is WorkerHomeContract.Intent.OpenVacancyDetails -> openVacancyCallback(intent.vacancyId)
             is WorkerHomeContract.Intent.SwitchToOnlineRecommendations -> switchToOnlineRecommendations()
-            is WorkerHomeContract.Intent.ResetPage -> resetPage()
+            is WorkerHomeContract.Intent.RefreshRecommendations -> refreshPage()
         }
+    }
+
+    init {
+        loadRecommendations(START_PAGE)
     }
 
     private fun getSilentFetchJob() =
@@ -86,11 +90,15 @@ class WorkerHomeViewModel(
         }
     }
 
-    private fun resetPage() {
-        isCacheShown = true
-        fetchOnlineVacanciesJob.cancel()
-        fetchOnlineVacanciesJob = getSilentFetchJob()
-        loadRecommendations(START_PAGE)
+    private fun refreshPage() {
+        isCacheShown = false
+        setState { copy(areOnlineRecommendationsReady = false) }
+
+        if (viewState.areRecommendationsShown) {
+            loadRecommendations(START_PAGE)
+        } else {
+            loadVacancies(filters = viewState.filters.copy(pageRequestFilter = viewState.filters.pageRequestFilter.copy(pageNumber = START_PAGE)))
+        }
     }
 
     private fun switchToOnlineRecommendations() {

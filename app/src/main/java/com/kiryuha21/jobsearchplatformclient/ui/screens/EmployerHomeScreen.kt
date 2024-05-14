@@ -1,22 +1,29 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
+import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.filters.ResumeFilters
+import com.kiryuha21.jobsearchplatformclient.data.domain.pagination.PageRequestFilter
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ClickableResumeCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.LastPaginationListItem
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ShimmeringVacancyListItem
@@ -28,7 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EmployerHomeScreen(
     state: EmployerHomeContract.State,
-    resetPage: () -> Unit,
+    refreshRecommendations: () -> Unit,
     loadFiltered: (ResumeFilters) -> Unit,
     loadRecommended: (Int) -> Unit,
     openResumeDetails: (String) -> Unit,
@@ -37,11 +44,6 @@ fun EmployerHomeScreen(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        listState.scrollToItem(0)
-        resetPage()
-    }
 
     Column(modifier = modifier) {
         ResumeSearchBar(
@@ -70,6 +72,30 @@ fun EmployerHomeScreen(
             }
         }
 
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (state.areRecommendationsShown) "Резюме для вас" else "Результаты поиска",
+                fontSize = 24.sp
+            )
+
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        listState.scrollToItem(0)
+                        refreshRecommendations()
+                    }
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = "refresh")
+            }
+        }
+
         LazyColumn(state = listState) {
             when (state.isLoading) {
                 true -> {
@@ -83,6 +109,7 @@ fun EmployerHomeScreen(
                         items(state.resumes, key = { resume -> resume.id }) {
                             ClickableResumeCard(
                                 resume = it,
+                                isStatusShown = false,
                                 onClick = { openResumeDetails(it.id) },
                                 modifier = Modifier.fillMaxWidth()
                             )

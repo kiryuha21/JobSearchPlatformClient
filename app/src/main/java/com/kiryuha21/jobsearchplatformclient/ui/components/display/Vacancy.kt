@@ -5,13 +5,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Work
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -21,36 +24,126 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
+import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultAsyncImageCornered
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun VacancyDetails(vacancy: Vacancy, modifier: Modifier = Modifier) {
+fun VacancyDetails(
+    vacancy: Vacancy,
+    isStatusShown: Boolean,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = modifier
+        modifier = modifier.padding(10.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
+        if (vacancy.imageUrl != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                DefaultAsyncImageCornered(
+                    imageUrl = vacancy.imageUrl,
+                    defaultImageId = R.drawable.default_vacancy
+                )
+            }
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = vacancy.title)
+            Text(text = vacancy.title, fontSize = 28.sp)
+            if (isStatusShown) {
+                Text(
+                    text = vacancy.publicationStatus.toString(),
+                    fontStyle = FontStyle.Italic
+                )
+            }
         }
-        Text(text = vacancy.company.name)
-        Text(text = "${vacancy.minSalary} - ${vacancy.maxSalary}")
-        Text(text = vacancy.description)
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Column {
+                Text(text = "Компания", fontStyle = FontStyle.Italic)
+                Text(text = vacancy.company.name)
+            }
+
+            Column {
+                Text(text = "Зарплатная вилка, ₽", fontStyle = FontStyle.Italic)
+                Text(text = "${vacancy.minSalary} - ${vacancy.maxSalary}")
+            }
+
+            Column {
+                Text(text = "Описание от работодателя:", fontStyle = FontStyle.Italic)
+                Text(text = vacancy.description)
+            }
+
+            if (vacancy.requiredSkills.isNotEmpty()) {
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            modifier = Modifier.padding(5.dp)
+                        )
+
+                        Text(text = "Необходимые навыки:", fontStyle = FontStyle.Italic)
+                    }
+
+                    vacancy.requiredSkills.forEach { skill ->
+                        Row {
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = "${Typography.bullet} ${skill.asRequirement()}")
+                        }
+                    }
+                }
+            }
+
+            if (vacancy.requiredWorkExperience.isNotEmpty()) {
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Handyman,
+                            contentDescription = null,
+                            modifier = Modifier.padding(5.dp)
+                        )
+
+                        Text(text = "Необходимый опыт работы:", fontStyle = FontStyle.Italic)
+                    }
+
+                    vacancy.requiredWorkExperience.forEach { workExperience ->
+                        Row {
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = "${Typography.bullet} $workExperience")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun ClickableVacancyCard(
+    vacancy: Vacancy,
+    isStatusShown: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         shape = RoundedCornerShape(10.dp),
         onClick = onClick,
@@ -60,12 +153,19 @@ fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifi
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(10.dp)
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth(0.7f)
             ) {
+                if (isStatusShown) {
+                    Text(
+                        text = vacancy.publicationStatus.toString(),
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+
                 Text(
                     text = vacancy.title,
                     style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -79,18 +179,11 @@ fun ClickableVacancyCard(vacancy: Vacancy, onClick: () -> Unit, modifier: Modifi
                 Text(text = salaryText, fontFamily = FontFamily.Cursive)
             }
 
-            if (vacancy.imageUrl == null) {
-                Icon(
-                    imageVector = Icons.Rounded.Work,
-                    contentDescription = "work",
-                    modifier = Modifier.size(64.dp),
-                    tint = Color.Gray
-                )
-            } else {
-                AsyncImage(
-                    model = vacancy.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp)
+            if (vacancy.imageUrl != null) {
+                DefaultAsyncImageCornered(
+                    imageUrl = vacancy.imageUrl,
+                    defaultImageId = R.drawable.default_vacancy,
+                    imageSize = DpSize(width = 128.dp, height = 128.dp)
                 )
             }
         }
@@ -164,5 +257,14 @@ fun ShimmeringVacancyListItem(
 fun ClickableVacancyCardPreview() {
     ClickableVacancyCard(
         vacancy = PreviewObjects.previewVacancy1,
-        onClick = { })
+        isStatusShown = true,
+        onClick = { },
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun VacancyDetailsPreview() {
+    VacancyDetails(vacancy = PreviewObjects.previewVacancy1, true)
 }

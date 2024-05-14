@@ -3,5 +3,13 @@ package com.kiryuha21.jobsearchplatformclient.data.domain
 enum class PublicationStatus {
     Draft,
     Published,
-    Hidden
+    Hidden;
+
+    override fun toString(): String {
+        return when (this) {
+            Draft -> "Черновик"
+            Published -> "Опубликовано"
+            Hidden -> "Скрыто"
+        }
+    }
 }

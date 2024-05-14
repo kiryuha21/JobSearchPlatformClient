@@ -36,7 +36,7 @@ class EmployerHomeViewModel(
             moreItemsState = MoreItemsState.Undefined,
             areRecommendationsShown = true,
             areOnlineRecommendationsReady = false,
-            nextLoadPage = 0,
+            nextLoadPage = START_PAGE,
             resumes = emptyList(),
             filters = ResumeFilters()
         )
@@ -48,8 +48,12 @@ class EmployerHomeViewModel(
             is EmployerHomeContract.Intent.OpenResumeDetails -> openResumeCallback(intent.resumeId)
             is EmployerHomeContract.Intent.LoadRecommendations -> loadRecommendations(intent.pageNumber)
             is EmployerHomeContract.Intent.SwitchToOnlineRecommendations -> switchToOnlineRecommendations()
-            is EmployerHomeContract.Intent.ResetPage -> resetPage()
+            is EmployerHomeContract.Intent.RefreshPage -> refreshPage()
         }
+    }
+
+    init {
+        loadRecommendations(START_PAGE)
     }
 
     private fun getSilentFetchJob() =
@@ -85,11 +89,15 @@ class EmployerHomeViewModel(
         }
     }
 
-    private fun resetPage() {
-        isCacheShown = true
-        fetchOnlineResumesJob.cancel()
-        fetchOnlineResumesJob = getSilentFetchJob()
-        loadRecommendations(START_PAGE)
+    private fun refreshPage() {
+        isCacheShown = false
+        setState { copy(areOnlineRecommendationsReady = false) }
+
+        if (viewState.areRecommendationsShown) {
+            loadRecommendations(START_PAGE)
+        } else {
+            loadResumes(filters = viewState.filters.copy(pageRequestFilter = viewState.filters.pageRequestFilter.copy(pageNumber = START_PAGE)))
+        }
     }
 
     private fun switchToOnlineRecommendations() {

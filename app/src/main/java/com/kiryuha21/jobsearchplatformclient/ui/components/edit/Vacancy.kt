@@ -124,6 +124,9 @@ fun VacancyEditForm(
 
 @Composable
 fun VacancyWorkExperienceForm(
+    positionLevelText: String,
+    positionText: String,
+    monthsText: String,
     onSubmit: (WorkExperience) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
@@ -156,13 +159,13 @@ fun VacancyWorkExperienceForm(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Минимальный уровень позиции")
+            Text(text = positionLevelText)
             ComboBox(items = comboBoxItems)
         }
 
         ValidatedTextField(
             icon = Icons.Default.Abc,
-            placeholder = "Желаемая Позиция",
+            placeholder = positionText,
             initString = "",
             onUpdate = { value, valid ->
                 if (valid) {
@@ -177,7 +180,7 @@ fun VacancyWorkExperienceForm(
         )
 
         ValidatedTextField(
-            placeholder = "Минимум месяцев проработано",
+            placeholder = monthsText,
             initString = "",
             onUpdate = { text, valid ->
                 if (valid) {

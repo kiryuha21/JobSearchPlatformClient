@@ -261,6 +261,9 @@ fun VacancyEditScreen(
 
                 AnimatedVisibility(visible = experienceFormVisible) {
                     VacancyWorkExperienceForm(
+                        positionLevelText = "Минимальный уровень позиции",
+                        positionText = "Позиция",
+                        monthsText = "Минимальное количество месяцев",
                         onSubmit = {
                             vacancy = vacancy.copy(requiredWorkExperience = vacancy.requiredWorkExperience + it)
                             experienceFormVisible = false
