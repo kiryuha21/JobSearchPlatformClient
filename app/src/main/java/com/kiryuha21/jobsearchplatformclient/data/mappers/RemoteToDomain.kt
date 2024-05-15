@@ -1,12 +1,14 @@
 package com.kiryuha21.jobsearchplatformclient.data.mappers
 
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
+import com.kiryuha21.jobsearchplatformclient.data.domain.JobApplication
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.User
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
+import com.kiryuha21.jobsearchplatformclient.data.remote.dto.JobApplicationDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.SkillDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
@@ -69,4 +71,14 @@ fun VacancyDTO.VacancyResponseDTO.toDomainVacancy() =
         requiredWorkExperience = requiredWorkExperience.map { it.toDomainWorkExperience() },
         requiredSkills = requiredSkills.map { it.toDomainSkill() },
         imageUrl = imageUrl
+    )
+
+fun JobApplicationDTO.toDomainJobApplication() =
+    JobApplication(
+        id = id,
+        senderUsername = senderUsername,
+        referenceVacancyId = referenceVacancyId,
+        referenceResumeId = referenceResumeId,
+        message = message,
+        seen = seen
     )

@@ -6,8 +6,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import com.kiryuha21.jobsearchplatformclient.data.domain.NavigationDrawerItem
 
-val navigationDrawerItems = listOf(
-    NavigationDrawerItem(Icons.Filled.Home, "Вакансии", NavigationGraph.MainApp.HOME_SCREEN),
-    NavigationDrawerItem(Icons.Filled.AccountCircle, "Профиль", NavigationGraph.MainApp.PROFILE),
-    NavigationDrawerItem(Icons.Filled.Settings, "Настройки", NavigationGraph.MainApp.SETTINGS)
+var navigationDrawerItems = listOf(
+    NavigationDrawerItem(Icons.Default.Home, "Вакансии", NavigationGraph.MainApp.HOME_SCREEN),
+    NavigationDrawerItem(Icons.Default.AccountCircle, "Профиль", NavigationGraph.MainApp.PROFILE),
+    NavigationDrawerItem(Icons.Default.Settings, "Настройки", NavigationGraph.MainApp.SETTINGS)
 )

@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.di
 
+import com.kiryuha21.jobsearchplatformclient.data.remote.api.JobApplicationAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.ResumeAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.UserAPI
 import com.kiryuha21.jobsearchplatformclient.data.remote.api.VacancyAPI
@@ -18,4 +19,5 @@ object RetrofitObject {
     val userRetrofit: UserAPI by lazy { retrofit.create(UserAPI::class.java) }
     val resumeRetrofit: ResumeAPI by lazy { retrofit.create(ResumeAPI::class.java) }
     val vacancyRetrofit: VacancyAPI by lazy { retrofit.create(VacancyAPI::class.java) }
+    val jobApplicationRetrofit: JobApplicationAPI by lazy { retrofit.create(JobApplicationAPI::class.java) }
 }
