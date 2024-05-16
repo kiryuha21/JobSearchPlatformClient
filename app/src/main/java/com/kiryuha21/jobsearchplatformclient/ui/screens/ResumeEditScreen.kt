@@ -37,13 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.R
-import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
-import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
-import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
-import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ImageHintCard
@@ -58,7 +53,6 @@ import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.kiryuha21.jobsearchplatformclient.util.getBitmap
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.coroutines.launch
-import java.time.Instant
 
 @Composable
 fun ResumeEditScreen(

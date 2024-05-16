@@ -18,19 +18,19 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerOffersContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerOffersScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.JobApplicationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerProfileViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.SettingsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerOffersViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.JobApplicationViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
 
 fun NavGraphBuilder.addCommonDestinations(
@@ -191,33 +191,27 @@ fun NavGraphBuilder.addCommonDestinations(
             onAreYouSureDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HideAreYouSureDialog) }
         )
     }
-    composable(WORKER_OFFERS) {
+    composable(JOB_APPLICATIONS) {
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = true
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val vm: WorkerOffersViewModel = viewModel(factory = WorkerOffersViewModel.provideFactory(
+        val vm: JobApplicationViewModel = viewModel(factory = JobApplicationViewModel.provideFactory(
             navigateToVacancyDetails = { vacancyId ->
                 navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
                 onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
             }
         ))
 
-        WorkerOffersScreen(
+        JobApplicationScreen(
             state = vm.viewState,
             showVacancyDetails = {
-                vm.processIntent(WorkerOffersContract.Intent.ShowVacancyDetails(it))
+                vm.processIntent(JobApplicationContract.Intent.ShowVacancyDetails(it))
             },
             markChecked = {
-                vm.processIntent(WorkerOffersContract.Intent.MarkSeen(it))
+                vm.processIntent(JobApplicationContract.Intent.MarkSeen(it))
             }
         )
-    }
-    composable(EMPLOYER_RESPONSES) {
-        LaunchedEffect(Unit) {
-            shouldShowAppBar.value = true
-        }
-        OnBackPressedWithSuper(onNavigateBack)
     }
 }

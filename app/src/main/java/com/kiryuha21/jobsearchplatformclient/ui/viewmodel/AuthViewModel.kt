@@ -1,13 +1,10 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChatBubble
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
-import com.kiryuha21.jobsearchplatformclient.data.domain.NavigationDrawerItem
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
@@ -15,7 +12,6 @@ import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
-import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import kotlinx.coroutines.Dispatchers
@@ -72,14 +68,6 @@ class AuthViewModel(
     }
 
     private fun navigateToMainApp() {
-        val newItem = if (CurrentUser.info.role == UserRole.Worker) {
-            NavigationDrawerItem(Icons.Default.ChatBubble, "Офферы", NavigationGraph.MainApp.WORKER_OFFERS)
-        } else {
-            NavigationDrawerItem(Icons.Default.ChatBubble, "Отклики", NavigationGraph.MainApp.EMPLOYER_RESPONSES)
-        }
-
-        navigationDrawerItems = navigationDrawerItems.slice(0..navigationDrawerItems.size - 2) + newItem + navigationDrawerItems.last()
-
         navController.navigate(NavigationGraph.MainApp.NAV_ROUTE) {
             popUpTo(NavigationGraph.Authentication.NAV_ROUTE) {
                 inclusive = true
