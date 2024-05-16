@@ -29,7 +29,8 @@ import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 @Composable
 fun JobApplicationCard(
     jobApplication: JobApplication,
-    showVacancyDetails: (String) -> Unit,
+    isReceived: Boolean,
+    showReferencePublicationDetails: (String) -> Unit,
     markChecked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,32 +42,34 @@ fun JobApplicationCard(
         Column(
             modifier = Modifier.padding(10.dp),
         ) {
-            var isLabelShown by remember { mutableStateOf(!jobApplication.seen) }
+            if (isReceived) {
+                var isLabelShown by remember { mutableStateOf(!jobApplication.seen) }
 
-            AnimatedVisibility(visible = isLabelShown) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = if (isWorker) "Новый оффер" else "Новый отклик",
-                        style = TextStyle(color = Color(0xFFF39A22))
-                    )
-
+                AnimatedVisibility(visible = isLabelShown) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Просмотрено: ")
-
-                        Checkbox(
-                            checked = !isLabelShown,
-                            onCheckedChange = {
-                                isLabelShown = !isLabelShown
-                                markChecked(jobApplication.id)
-                            },
-                            enabled = isLabelShown
+                        Text(
+                            text = if (isWorker) "Новый оффер" else "Новый отклик",
+                            style = TextStyle(color = Color(0xFFF39A22))
                         )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Просмотрено: ")
+
+                            Checkbox(
+                                checked = !isLabelShown,
+                                onCheckedChange = {
+                                    isLabelShown = !isLabelShown
+                                    markChecked(jobApplication.id)
+                                },
+                                enabled = isLabelShown
+                            )
+                        }
                     }
                 }
             }
@@ -80,7 +83,13 @@ fun JobApplicationCard(
 
             Text(text = jobApplication.message)
 
-            TextButton(onClick = { showVacancyDetails(jobApplication.id) }) {
+            val referencePublicationId = if (isWorker) {
+                jobApplication.referenceVacancyId
+            } else {
+                jobApplication.referenceResumeId
+            }
+
+            TextButton(onClick = { showReferencePublicationDetails(referencePublicationId) }) {
                 Text(text = "Посмотреть вакансию")
             }
         }
@@ -99,7 +108,8 @@ fun JobOfferCardPreview() {
             message = "Мега ждем вас",
             seen = false
         ),
-        showVacancyDetails = {},
+        isReceived = true,
+        showReferencePublicationDetails = {},
         markChecked = {},
         modifier = Modifier
             .fillMaxWidth()

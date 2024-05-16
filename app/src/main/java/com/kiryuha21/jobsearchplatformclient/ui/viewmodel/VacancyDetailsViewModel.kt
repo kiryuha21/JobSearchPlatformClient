@@ -142,7 +142,10 @@ class VacancyDetailsViewModel(
             setState { copy(isLoadingVacancy = true) }
             val vacancy = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = { vacancyRetrofit.getVacancyById(vacancyId).toDomainVacancy() }
+                    networkCall = { vacancyRetrofit.getPrivateVacancyById(
+                        authToken = "Bearer ${AuthToken.getToken()}",
+                        vacancyId = vacancyId
+                    ).toDomainVacancy() }
                 )
             }
             setState { copy(isLoadingVacancy = false, openedVacancy = vacancy) }

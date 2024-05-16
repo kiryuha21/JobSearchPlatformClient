@@ -34,6 +34,7 @@ import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultAsyncImageCornered
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
+import com.kiryuha21.jobsearchplatformclient.util.asFormattedSalary
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -80,7 +81,7 @@ fun VacancyDetails(
 
             Column {
                 Text(text = "Зарплатная вилка, ₽", fontStyle = FontStyle.Italic)
-                Text(text = "${vacancy.minSalary} - ${vacancy.maxSalary}")
+                Text(text = "${vacancy.minSalary.asFormattedSalary()} - ${vacancy.maxSalary.asFormattedSalary()}")
             }
 
             Column {
@@ -174,8 +175,8 @@ fun ClickableVacancyCard(
                 Text(text = vacancy.company.name, modifier = Modifier.padding(end = 20.dp))
 
                 val salaryText =
-                    if (vacancy.minSalary == vacancy.maxSalary) "${vacancy.minSalary}"
-                    else "От ${vacancy.minSalary} до ${vacancy.maxSalary}"
+                    if (vacancy.minSalary == vacancy.maxSalary) vacancy.minSalary.asFormattedSalary()
+                    else "От ${vacancy.minSalary.asFormattedSalary()} до ${vacancy.maxSalary.asFormattedSalary()}"
                 Text(text = salaryText, fontFamily = FontFamily.Cursive)
             }
 

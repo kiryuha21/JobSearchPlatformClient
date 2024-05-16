@@ -1,6 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
+import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import com.kiryuha21.jobsearchplatformclient.util.toRequestBody
@@ -101,22 +103,18 @@ class ResumeDetailsViewModel(
     }
 
     private fun createResume(resume: Resume, bitmap: Bitmap?) {
-        val token = viewModelScope.async(Dispatchers.IO) {
-            networkCallWithReturnWrapper(
-                networkCall = { "Bearer ${AuthToken.getToken()}" }
-            )
-        }
-
         viewModelScope.launch {
             setState { copy(isSavingResume = true, loadingText = "Создание резюме...") }
 
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
                     networkCall = {
-                        resumeRetrofit.createNewResume(token.await().toString(), resume.toResumeDTO())
+                        resumeRetrofit.createNewResume("Bearer ${AuthToken.getToken()}", resume.toResumeDTO())
                     }
                 )
             }
+
+            Log.d(DEBUG_TAG, resumeResult.toString())
 
             if (bitmap != null && resumeResult != null) {
                 val body = MultipartBody.Part.createFormData(
@@ -127,7 +125,7 @@ class ResumeDetailsViewModel(
                 withContext(Dispatchers.IO) {
                     networkCallWrapper(
                         networkCall = {
-                            resumeRetrofit.setPicture(token.await().toString(), resumeResult.id, body)
+                            resumeRetrofit.setPicture("Bearer ${AuthToken.getToken()}", resumeResult.id, body)
                         }
                     )
                 }
@@ -143,7 +141,10 @@ class ResumeDetailsViewModel(
             setState { copy(isLoadingResume = true, loadingText = "Загрузка резюме...") }
             val resumeResult = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(
-                    networkCall = { resumeRetrofit.getResumeById(resumeId).toDomainResume() }
+                    networkCall = { resumeRetrofit.getPrivateResumeById(
+                        authToken = "Bearer ${AuthToken.getToken()}",
+                        resumeId = resumeId
+                    ).toDomainResume() }
                 )
             }
             setState { copy(isLoadingResume = false, openedResume = resumeResult) }

@@ -17,10 +17,21 @@ import retrofit2.http.Query
 
 interface VacancyAPI {
     @GET("vacancy/employer_username/{login}")
-    suspend fun getVacanciesByEmployerLogin(@Path("login") login: String): List<VacancyDTO.VacancyResponseDTO>
+    suspend fun getAllVacanciesByEmployerLogin(
+        @Header("Authorization") authToken: String,
+        @Path("login") login: String
+    ): List<VacancyDTO.VacancyResponseDTO>
+
+    suspend fun getPublicVacanciesByEmployerLogin(@Path("login") login: String): List<VacancyDTO.VacancyResponseDTO>
 
     @GET("vacancy/{vacancyId}")
-    suspend fun getVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO.VacancyResponseDTO
+    suspend fun getPrivateVacancyById(
+        @Header("Authorization") authToken: String,
+        @Path("vacancyId") vacancyId: String
+    ): VacancyDTO.VacancyResponseDTO
+
+    @GET("vacancy/{vacancyId}")
+    suspend fun getPublicVacancyById(@Path("vacancyId") vacancyId: String): VacancyDTO.VacancyResponseDTO
 
     @POST("vacancy/filter")
     suspend fun getFilteredVacancies(@Body filters: VacancyFiltersDTO): List<VacancyDTO.VacancyResponseDTO>

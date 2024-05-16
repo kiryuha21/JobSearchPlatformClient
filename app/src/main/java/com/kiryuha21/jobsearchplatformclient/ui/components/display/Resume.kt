@@ -108,7 +108,7 @@ fun ResumeDetails(
                     resume.skills.forEach { skill ->
                         Row {
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "${Typography.bullet} ${skill.asRequirement()}")
+                            Text(text = "${Typography.bullet} $skill")
                         }
                     }
                 }

@@ -25,6 +25,7 @@ import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.JobApplicationCard
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.HintCard
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.NoItemsCard
 import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import kotlinx.coroutines.launch
@@ -84,21 +85,32 @@ fun JobApplicationScreen(
             }
 
             HorizontalPager(state = pagerState, userScrollEnabled = false) {
+                val showedItems = if (it == receivedIndex) state.receivedApplications else state.sentApplications
+
                 LazyColumn(
                     modifier = Modifier.padding(10.dp)
                 ) {
                     items(
-                        items = if (it == receivedIndex) state.receivedApplications else state.sentApplications,
-                        key = { it.id }
+                        items = showedItems,
+                        key = { jobApplication -> jobApplication.id }
                     ) { jobApplication ->
                         JobApplicationCard(
                             jobApplication = jobApplication,
-                            showVacancyDetails = { showVacancyDetails(it) },
-                            markChecked = { markChecked(it) },
+                            isReceived = it == receivedIndex,
+                            showReferencePublicationDetails = { id -> showVacancyDetails(id) },
+                            markChecked = { id -> markChecked(id) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 10.dp)
                         )
+                    }
+
+                    if (showedItems.isEmpty()) {
+                        item {
+                            NoItemsCard(
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp)
+                            )
+                        }
                     }
 
                     if (it == sentIndex) {

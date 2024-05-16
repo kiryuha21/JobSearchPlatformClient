@@ -17,10 +17,22 @@ import retrofit2.http.Query
 
 interface ResumeAPI {
     @GET("resume/worker_username/{login}")
-    suspend fun getResumesByWorkerLogin(@Path("login") login: String): List<ResumeDTO.ResumeResponseDTO>
+    suspend fun getAllResumesByWorkerLogin(
+        @Header("Authorization") authToken: String,
+        @Path("login") login: String
+    ): List<ResumeDTO.ResumeResponseDTO>
+
+    @GET("resume/worker_username/{login}")
+    suspend fun getPublicResumesByWorkerLogin(@Path("login") login: String): List<ResumeDTO.ResumeResponseDTO>
 
     @GET("resume/{resumeId}")
-    suspend fun getResumeById(@Path("resumeId") resumeId: String): ResumeDTO.ResumeResponseDTO
+    suspend fun getPrivateResumeById(
+        @Header("Authorization") authToken: String,
+        @Path("resumeId") resumeId: String
+    ): ResumeDTO.ResumeResponseDTO
+
+    @GET("resume/{resumeId}")
+    suspend fun getPublicResumeById(@Path("resumeId") resumeId: String): ResumeDTO.ResumeResponseDTO
 
     @POST("resume/filter")
     suspend fun getFilteredResumes(@Body filters: ResumeFiltersDTO): List<ResumeDTO.ResumeResponseDTO>

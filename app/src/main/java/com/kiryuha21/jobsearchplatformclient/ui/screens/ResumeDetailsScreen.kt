@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -48,8 +52,25 @@ fun ResumeDetailsScreen(
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp)
                     ) {
-                        StyledDefaultButton(text = "Редактировать", onClick = { onEdit(state.openedResume.id) })
-                        StyledDefaultButton(text = "Удалить", onClick = onDelete)
+                        Button(onClick = { onEdit(state.openedResume.id) }) {
+                            Text(text = "Редактировать")
+                        }
+                        Button(onClick = { onDelete() }) {
+                            Text(text = "Удалить")
+                        }
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.fillMaxWidth(0.7f),
+                            shape = RoundedCornerShape(10)
+                        ) {
+                            Text(text = "Отправить оффер")
+                        }
                     }
                 }
 
