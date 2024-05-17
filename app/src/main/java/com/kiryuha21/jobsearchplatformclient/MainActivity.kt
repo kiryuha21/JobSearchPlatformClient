@@ -9,8 +9,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.kiryuha21.jobsearchplatformclient.data.local.AppDatabase
+import com.kiryuha21.jobsearchplatformclient.data.service.createNotificationChannel
+import com.kiryuha21.jobsearchplatformclient.data.service.enqueueTask
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationController
 import com.kiryuha21.jobsearchplatformclient.ui.theme.JobSearchPlatformClientTheme
+import com.kiryuha21.jobsearchplatformclient.util.askNotificationsPermission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -26,6 +29,10 @@ class MainActivity : ComponentActivity() {
             db.vacancyDAO.deleteExpiredVacancies(now)
             db.resumeDAO.deleteExpiredResumes(now)
         }
+
+        askNotificationsPermission(this)
+        createNotificationChannel(this)
+        enqueueTask(this)
 
         setContent {
             JobSearchPlatformClientTheme {

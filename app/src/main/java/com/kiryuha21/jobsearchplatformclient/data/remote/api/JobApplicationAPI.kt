@@ -11,8 +11,11 @@ interface JobApplicationAPI {
     @POST("job-application")
     suspend fun createNewJobApplication(@Header("Authorization") authToken: String, @Body jobApplicationDTO: JobApplicationDTO)
 
-    @GET("job-application/count")
-    suspend fun getNewJobApplicationsCount(@Header("Authorization") authToken: String) : Int
+    @GET("job-application/received/count_unseen")
+    suspend fun countUnseenJobApplications(@Header("Authorization") authToken: String) : Int
+
+    @GET("job-application/received/count_unnotified")
+    suspend fun countUnnotifiedJobApplications(@Header("Authorization") authToken: String) : Int
 
     @GET("job-application/received")
     suspend fun getReceivedApplications(@Header("Authorization") authToken: String) : List<JobApplicationDTO>
