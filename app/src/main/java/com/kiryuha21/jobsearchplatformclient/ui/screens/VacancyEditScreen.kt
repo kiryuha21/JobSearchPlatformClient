@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.R
@@ -116,7 +118,11 @@ fun VacancyEditScreen(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth(0.4f)
+                modifier = if (enabled) {
+                    Modifier.fillMaxWidth(0.4f).testTag("enabled")
+                } else {
+                    Modifier.fillMaxWidth(0.4f).testTag("disabled")
+                }
             ) {
                 Text(text = "Сохранить")
             }

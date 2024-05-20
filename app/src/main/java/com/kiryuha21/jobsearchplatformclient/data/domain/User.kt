@@ -12,6 +12,9 @@ enum class UserStatus {
     Banned,
     Undefined
 }
+
+const val MIN_PASSWORD_LENGTH = 8
+
 class User(
     val email: String,
     val username: String,

@@ -39,6 +39,20 @@ fun ResumeDTO.ResumeResponseDTO.toDomainResume() =
         imageUrl = imageUrl
     )
 
+fun ResumeDTO.ResumeRequestDTO.toDomainResume() =
+    Resume(
+        id = id,
+        firstName = firstName,
+        lastName = lastName,
+        birthDate = birthDate,
+        phoneNumber = phoneNumber,
+        contactEmail = contactEmail,
+        applyPosition = applyPosition,
+        skills = skills.map { it.toDomainSkill() },
+        publicationStatus = publicationStatus,
+        workExperience = workExperience.map { it.toDomainWorkExperience() },
+    )
+
 fun SkillDTO.toDomainSkill() =
     Skill(
         name = name,
@@ -71,6 +85,19 @@ fun VacancyDTO.VacancyResponseDTO.toDomainVacancy() =
         requiredWorkExperience = requiredWorkExperience.map { it.toDomainWorkExperience() },
         requiredSkills = requiredSkills.map { it.toDomainSkill() },
         imageUrl = imageUrl
+    )
+
+fun VacancyDTO.VacancyRequestDTO.toDomainVacancy() =
+    Vacancy(
+        id = id,
+        title = title,
+        description = description,
+        company = company.toDomainCompany(),
+        minSalary = minSalary,
+        maxSalary = maxSalary,
+        publicationStatus = publicationStatus,
+        requiredWorkExperience = requiredWorkExperience.map { it.toDomainWorkExperience() },
+        requiredSkills = requiredSkills.map { it.toDomainSkill() },
     )
 
 fun JobApplicationDTO.toDomainJobApplication() =

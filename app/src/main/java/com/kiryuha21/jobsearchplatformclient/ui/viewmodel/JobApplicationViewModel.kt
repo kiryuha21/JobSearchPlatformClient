@@ -15,7 +15,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class JobApplicationViewModel(
-    private val navigateToVacancyDetails: (String) -> Unit
+    private val navigateToVacancyDetails: (String) -> Unit,
+    private val navigateToResumeDetails: (String) -> Unit
 ) : BaseViewModel<JobApplicationContract.Intent, JobApplicationContract.State>() {
     override fun initialState(): JobApplicationContract.State {
         return JobApplicationContract.State(
@@ -30,6 +31,7 @@ class JobApplicationViewModel(
             is JobApplicationContract.Intent.LoadApplications -> loadApplications()
             is JobApplicationContract.Intent.MarkSeen -> markSeen(intent.jobApplicationId)
             is JobApplicationContract.Intent.ShowVacancyDetails -> navigateToVacancyDetails(intent.vacancyId)
+            is JobApplicationContract.Intent.ShowResumeDetails -> navigateToResumeDetails(intent.resumeId)
         }
     }
 
@@ -83,14 +85,20 @@ class JobApplicationViewModel(
     }
 
     companion object {
-        fun provideFactory(navigateToVacancyDetails: (String) -> Unit) =
+        fun provideFactory(
+            navigateToVacancyDetails: (String) -> Unit,
+            navigateToResumeDetails: (String) -> Unit
+        ) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
                     extras: CreationExtras
                 ): T {
-                    return JobApplicationViewModel(navigateToVacancyDetails) as T
+                    return JobApplicationViewModel(
+                        navigateToVacancyDetails = navigateToVacancyDetails,
+                        navigateToResumeDetails = navigateToResumeDetails
+                    ) as T
                 }
             }
     }

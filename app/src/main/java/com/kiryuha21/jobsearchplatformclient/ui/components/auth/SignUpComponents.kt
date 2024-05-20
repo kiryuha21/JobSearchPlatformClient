@@ -11,7 +11,9 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.data.domain.MIN_PASSWORD_LENGTH
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
@@ -28,8 +30,6 @@ fun SignUpForm(
     onPasswordFieldUpdated: (String) -> Unit,
     onPasswordRepeatFieldUpdated: (String) -> Unit,
     onRoleToggled: (ToggleButtonElement) -> Unit,
-    passwordRepeatNotMatches: Boolean,
-    passwordRepeatSupportingText: String,
     state: AuthContract.AuthState,
     modifier: Modifier = Modifier
 ) {
@@ -51,23 +51,27 @@ fun SignUpForm(
             onUpdate = onEmailFieldUpdated,
             modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 10.dp)
         )
+
+        val passwordTooShort = state.password.length < MIN_PASSWORD_LENGTH
         PasswordTextField(
             text = state.password,
             icon = Icons.Filled.Password,
             placeholder = "Пароль",
             onUpdate = onPasswordFieldUpdated,
-            isError = false,
-            supportingText = "",
-            modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 5.dp)
+            isError = passwordTooShort,
+            supportingText = if (passwordTooShort) "Пароль слишком короткий" else "",
+            modifier = Modifier.padding(start = 5.dp, end = 5.dp, top = 15.dp, bottom = 5.dp).testTag("signup_password")
         )
+
+        val passwordsNotMatch = state.password != state.passwordRepeat
         PasswordTextField(
             text = state.passwordRepeat,
             icon = Icons.Filled.Password,
             placeholder = "Повторите пароль",
             onUpdate = onPasswordRepeatFieldUpdated,
-            isError = passwordRepeatNotMatches,
-            supportingText = passwordRepeatSupportingText,
-            modifier = Modifier.padding(5.dp)
+            isError = passwordsNotMatch,
+            supportingText = if (passwordsNotMatch) "Пароли не совпадают" else "",
+            modifier = Modifier.padding(5.dp).testTag("signup_password_repeat")
         )
         MultiToggleButton(
             toggleStates = roleToggleItems,
@@ -77,10 +81,11 @@ fun SignUpForm(
         SecuredButton(
             text = "Зарегистрироваться",
             onClick = { onRegister() },
-            enabled = !passwordRepeatNotMatches,
+            enabled = !passwordTooShort && !passwordsNotMatch,
             modifier = Modifier
                 .padding(top = 20.dp)
                 .defaultMinSize(minWidth = 200.dp)
+                .testTag("signup_button")
         )
     }
 }

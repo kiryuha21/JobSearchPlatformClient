@@ -103,6 +103,7 @@ data class ComboBoxItem(
     val onClick: () -> Unit
 )
 
+// TODO: add start index as parameter
 @Composable
 fun ComboBox(items: List<ComboBoxItem>, modifier: Modifier = Modifier) {
     var currentIndex by remember { mutableIntStateOf(0) }

@@ -13,6 +13,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredPasswordTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredTextField
@@ -30,7 +31,7 @@ fun PasswordConfirmation(
                 .padding(start = 10.dp, end = 10.dp, top = 20.dp)
         ) {
             Text(text = "Подтвердите пароль для изменения данных")
-            TextButton(onClick = onConfirmClicked) {
+            TextButton(onClick = onConfirmClicked, modifier = Modifier.testTag("settings_show_form_button")) {
                 Text(text = "Подтвердить")
             }
         }
@@ -59,7 +60,8 @@ fun SecuredFields(
             enabled = enabled,
             placeholder = "my_login",
             label = "Новый логин",
-            onUpdate = onLoginFieldEdit
+            onUpdate = onLoginFieldEdit,
+            modifier = Modifier.testTag("settings_username")
         )
         SecuredTextField(
             text = email,
@@ -67,7 +69,8 @@ fun SecuredFields(
             enabled = enabled,
             label = "Новый e-mail",
             placeholder = "example@gmail.com",
-            onUpdate = onEmailFieldEdit
+            onUpdate = onEmailFieldEdit,
+            modifier = Modifier.testTag("settings_email")
         )
         SecuredPasswordTextField(
             text = password,
@@ -77,7 +80,8 @@ fun SecuredFields(
             label = "Новый пароль",
             isError = false,
             supportingText = "",
-            onUpdate = onPasswordFieldEdit
+            onUpdate = onPasswordFieldEdit,
+            modifier = Modifier.testTag("settings_password")
         )
     }
 }

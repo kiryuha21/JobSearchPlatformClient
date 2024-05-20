@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun ErrorComponent(
@@ -29,7 +30,7 @@ fun FixableErrorComponent(
     fixFunction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier.testTag("error"), horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(imageVector = errorImage, contentDescription = text)
         Text(text = text)
         IconButton(onClick = fixFunction) {

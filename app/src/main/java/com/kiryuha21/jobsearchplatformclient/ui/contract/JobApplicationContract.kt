@@ -14,6 +14,7 @@ sealed class JobApplicationContract {
     sealed interface Intent : ViewIntent {
         data object LoadApplications : Intent
         data class ShowVacancyDetails(val vacancyId: String): Intent
+        data class ShowResumeDetails(val resumeId: String) : Intent
         data class MarkSeen(val jobApplicationId: String): Intent
     }
 }

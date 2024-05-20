@@ -10,7 +10,6 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
 import java.util.UUID
-import kotlin.random.Random
 
 object PreviewObjects {
     val previewResume1 = Resume(
@@ -69,6 +68,8 @@ object PreviewObjects {
         ),
         imageUrl = "https://fakeimg.pl/350x200/?text=World&font=lobster",
     )
+
+    val previewVacancy2 = previewVacancy1.copy(imageUrl = null)
 
     val jobApplication1 = JobApplication(
         id = UUID.randomUUID().toString(),

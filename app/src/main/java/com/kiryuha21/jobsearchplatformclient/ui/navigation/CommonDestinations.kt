@@ -16,21 +16,21 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingCompon
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.JobApplicationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
-import com.kiryuha21.jobsearchplatformclient.ui.screens.JobApplicationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerProfileViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.JobApplicationViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.SettingsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.JobApplicationViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
 
 fun NavGraphBuilder.addCommonDestinations(
@@ -201,6 +201,10 @@ fun NavGraphBuilder.addCommonDestinations(
             navigateToVacancyDetails = { vacancyId ->
                 navController.navigate("$VACANCY_DETAILS_BASE/$vacancyId")
                 onNavigationForward("$VACANCY_DETAILS_BASE/$vacancyId")
+            },
+            navigateToResumeDetails = { resumeId ->
+                navController.navigate("$RESUME_DETAILS_BASE/$resumeId")
+                onNavigationForward("$RESUME_DETAILS_BASE/$resumeId")
             }
         ))
 
@@ -208,6 +212,9 @@ fun NavGraphBuilder.addCommonDestinations(
             state = vm.viewState,
             showVacancyDetails = {
                 vm.processIntent(JobApplicationContract.Intent.ShowVacancyDetails(it))
+            },
+            showResumeDetails = {
+                vm.processIntent(JobApplicationContract.Intent.ShowResumeDetails(it))
             },
             markChecked = {
                 vm.processIntent(JobApplicationContract.Intent.MarkSeen(it))

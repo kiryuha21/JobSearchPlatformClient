@@ -8,11 +8,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitObject {
-    private const val BASE_URL = "https://job-search-platform.ru/api/"
+    const val BASE_URL = "https://job-search-platform.ru"
+    private const val API_URL = "${BASE_URL}/api/"
 
     val retrofit: Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

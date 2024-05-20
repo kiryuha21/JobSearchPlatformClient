@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.ui.components.auth.SignUpForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.FixableErrorComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.auth.SignUpForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.Title
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ToggleButtonElement
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
@@ -53,7 +53,6 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             else -> {
-                val passwordsNotMatch = state.password != state.passwordRepeat
                 SignUpForm(
                     onRegister = onRegister,
                     onLoginFieldUpdated = onLoginFieldUpdated,
@@ -62,8 +61,6 @@ fun SignUpScreen(
                     onPasswordRepeatFieldUpdated = onPasswordRepeatFieldUpdated,
                     onRoleToggled = onRoleToggled,
                     state = state,
-                    passwordRepeatNotMatches = passwordsNotMatch,
-                    passwordRepeatSupportingText = if (passwordsNotMatch) "Пароли не совпадают" else "",
                     modifier = Modifier.fillMaxWidth()
                 )
             }

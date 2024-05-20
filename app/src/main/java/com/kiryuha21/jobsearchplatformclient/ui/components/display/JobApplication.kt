@@ -30,7 +30,8 @@ import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 fun JobApplicationCard(
     jobApplication: JobApplication,
     isReceived: Boolean,
-    showReferencePublicationDetails: (String) -> Unit,
+    showResumeDetails: (String) -> Unit,
+    showVacancyDetails: (String) -> Unit,
     markChecked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,15 +84,19 @@ fun JobApplicationCard(
 
             Text(text = jobApplication.message)
 
-            val referencePublicationId = if (isWorker) {
-                jobApplication.referenceVacancyId
-            } else {
-                jobApplication.referenceResumeId
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = { showVacancyDetails(jobApplication.referenceVacancyId) }) {
+                    Text(text = "Посмотреть вакансию")
+                }
+
+                TextButton(onClick = { showResumeDetails(jobApplication.referenceResumeId) }) {
+                    Text(text = "Посмотреть резюме")
+                }
             }
 
-            TextButton(onClick = { showReferencePublicationDetails(referencePublicationId) }) {
-                Text(text = "Посмотреть вакансию")
-            }
         }
     }
 }
@@ -109,7 +114,8 @@ fun JobOfferCardPreview() {
             seen = false
         ),
         isReceived = true,
-        showReferencePublicationDetails = {},
+        showResumeDetails = {},
+        showVacancyDetails = {},
         markChecked = {},
         modifier = Modifier
             .fillMaxWidth()

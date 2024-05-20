@@ -1,7 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.viewmodel
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,7 +11,6 @@ import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.resumeRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
-import com.kiryuha21.jobsearchplatformclient.util.DEBUG_TAG
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import com.kiryuha21.jobsearchplatformclient.util.toRequestBody
@@ -113,8 +111,6 @@ class ResumeDetailsViewModel(
                     }
                 )
             }
-
-            Log.d(DEBUG_TAG, resumeResult.toString())
 
             if (bitmap != null && resumeResult != null) {
                 val body = MultipartBody.Part.createFormData(

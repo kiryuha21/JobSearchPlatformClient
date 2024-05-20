@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 fun JobApplicationScreen(
     state: JobApplicationContract.State,
     showVacancyDetails: (String) -> Unit,
+    showResumeDetails: (String) -> Unit,
     markChecked: (String) -> Unit
 ) {
     Column(
@@ -97,7 +98,8 @@ fun JobApplicationScreen(
                         JobApplicationCard(
                             jobApplication = jobApplication,
                             isReceived = it == receivedIndex,
-                            showReferencePublicationDetails = { id -> showVacancyDetails(id) },
+                            showResumeDetails = { id -> showResumeDetails(id) },
+                            showVacancyDetails = { id -> showVacancyDetails(id) },
                             markChecked = { id -> markChecked(id) },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -138,6 +140,7 @@ fun WorkerOffersScreenPreview() {
             sentApplications = listOf(PreviewObjects.jobApplication2)
         ),
         showVacancyDetails = {},
+        showResumeDetails = {},
         markChecked = {}
     )
 }
