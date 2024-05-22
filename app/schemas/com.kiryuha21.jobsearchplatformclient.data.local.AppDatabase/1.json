@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b8d550091cf54742dc9d1ec3935118a1",
+    "identityHash": "9bb987deee3ed00ed7a9e0d5e3e484f6",
     "entities": [
       {
         "tableName": "resume",
@@ -98,7 +98,7 @@
       },
       {
         "tableName": "vacancy",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `unixSeconds` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `company` TEXT NOT NULL, `minSalary` INTEGER NOT NULL, `maxSalary` INTEGER NOT NULL, `requiredWorkExperience` TEXT NOT NULL, `requiredSkills` TEXT NOT NULL, `publicationStatus` TEXT NOT NULL, `imageUrl` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `unixSeconds` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `company` TEXT NOT NULL, `minSalary` TEXT NOT NULL, `maxSalary` TEXT NOT NULL, `requiredWorkExperience` TEXT NOT NULL, `requiredSkills` TEXT NOT NULL, `publicationStatus` TEXT NOT NULL, `imageUrl` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -139,13 +139,13 @@
           {
             "fieldPath": "minSalary",
             "columnName": "minSalary",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "maxSalary",
             "columnName": "maxSalary",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -186,7 +186,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8d550091cf54742dc9d1ec3935118a1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9bb987deee3ed00ed7a9e0d5e3e484f6')"
     ]
   }
 }

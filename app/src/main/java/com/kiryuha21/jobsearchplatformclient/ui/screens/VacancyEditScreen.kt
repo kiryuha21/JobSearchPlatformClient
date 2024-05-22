@@ -66,11 +66,6 @@ fun VacancyEditScreen(
     loadingText: String,
     onUpdateVacancy: (Vacancy, Bitmap?) -> Unit
 ) {
-    var validTitle by remember { mutableStateOf(initVacancy.title.isNotBlank()) }
-    var validCompanyName by remember { mutableStateOf(initVacancy.company.name.isNotBlank()) }
-    var validMinSalary by remember { mutableStateOf(true) }
-    var validMaxSalary by remember { mutableStateOf(true) }
-
     var vacancy by remember { mutableStateOf(initVacancy) }
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
@@ -105,7 +100,7 @@ fun VacancyEditScreen(
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            val enabled = validTitle && validCompanyName && validMinSalary && validMaxSalary
+            val enabled = vacancy.isValid()
 
             ExtendedFloatingActionButton(
                 containerColor = if (enabled) FloatingActionButtonDefaults.containerColor else Color.LightGray,
@@ -167,30 +162,10 @@ fun VacancyEditScreen(
                 VacancyEditForm(
                     vacancy = vacancy,
                     comboBoxItems = comboBoxItems,
-                    onTitleUpdate = { value, valid ->
-                        if (valid) {
-                            vacancy = vacancy.copy(title = value)
-                        }
-                        validTitle = valid
-                    },
-                    onCompanyNameUpdate = { value, valid ->
-                        if (valid) {
-                            vacancy = vacancy.copy(company = Company(value))
-                        }
-                        validCompanyName = valid
-                    },
-                    onMinSalaryUpdate = { value, valid ->
-                        if (valid) {
-                            vacancy = vacancy.copy(minSalary = value.toInt())
-                        }
-                        validMinSalary = valid
-                    },
-                    onMaxSalaryUpdate = { value, valid ->
-                        if (valid) {
-                            vacancy = vacancy.copy(maxSalary = value.toInt())
-                        }
-                        validMaxSalary = valid
-                    },
+                    onTitleUpdate = { value, _ -> vacancy = vacancy.copy(title = value) },
+                    onCompanyNameUpdate = { value, _ -> vacancy = vacancy.copy(company = Company(value)) },
+                    onMinSalaryUpdate = { value, _ -> vacancy = vacancy.copy(minSalary = value) },
+                    onMaxSalaryUpdate = { value, _ -> vacancy = vacancy.copy(maxSalary = value) },
                 )
 
                 HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))

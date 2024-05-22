@@ -1,5 +1,7 @@
 package com.kiryuha21.jobsearchplatformclient.data.domain
 
+import com.kiryuha21.jobsearchplatformclient.util.isNumeric
+
 data class Resume(
     val id: String = "",
     val firstName: String = "",
@@ -14,4 +16,12 @@ data class Resume(
     val imageUrl: String? = null
 ) {
     fun fullName() = "$lastName $firstName"
+
+    fun isValid(): Boolean =
+        firstName.isNotBlank() &&
+        lastName.isNotBlank() &&
+        birthDate != null &&
+        phoneNumber.isNotBlank() && phoneNumber.isNumeric() &&
+        contactEmail.isNotBlank() &&
+        applyPosition.isNotBlank()
 }

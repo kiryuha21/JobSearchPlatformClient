@@ -44,8 +44,8 @@ fun WorkExperience.toWorkExperienceDTO() =
         company = company.toCompanyDTO(),
         position = position,
         positionLevel = positionLevel,
-        salary = salary,
-        months = months
+        salary = salary.toInt(),
+        months = months.toInt()
     )
 
 fun Company.toCompanyDTO() =
@@ -60,8 +60,8 @@ fun Vacancy.toVacancyDTO() =
         title = title,
         description = description,
         company = company.toCompanyDTO(),
-        minSalary = minSalary,
-        maxSalary = maxSalary,
+        minSalary = minSalary.toInt(),
+        maxSalary = maxSalary.toInt(),
         publicationStatus = publicationStatus,
         requiredSkills = requiredSkills.map { it.toSkillDTO() },
         requiredWorkExperience = requiredWorkExperience.map { it.toWorkExperienceDTO() }

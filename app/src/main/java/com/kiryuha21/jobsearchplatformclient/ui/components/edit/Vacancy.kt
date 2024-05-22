@@ -56,8 +56,8 @@ fun VacancyEditForm(
             ComboBox(items = comboBoxItems)
         }
         ValidatedTextField(
+            text = vacancy.title,
             placeholder = "Название вакансии",
-            initString = vacancy.title,
             isValid = { it.isNotBlank() },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Название вакансии не может быть пустым",
@@ -66,8 +66,8 @@ fun VacancyEditForm(
             onUpdate = onTitleUpdate
         )
         ValidatedTextField(
+            text = vacancy.company.name,
             placeholder = "Название компании",
-            initString = vacancy.company.name,
             isValid = { it.isNotBlank() },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Название компании не может быть пустым",
@@ -91,8 +91,8 @@ fun VacancyEditForm(
                 modifier = Modifier.weight(1f)
             ) {
                 ValidatedTextField(
+                    text = vacancy.minSalary,
                     placeholder = "Минимум, ₽",
-                    initString = vacancy.minSalary.toString(),
                     isValid = { it.isNotBlank() && it.isNumeric() },
                     errorMessage = "Некорректное число",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -112,8 +112,8 @@ fun VacancyEditForm(
                 modifier = Modifier.weight(1f)
             ) {
                 ValidatedTextField(
+                    text = vacancy.maxSalary,
                     placeholder = "Максимум, ₽",
-                    initString = vacancy.maxSalary.toString(),
                     isValid = { it.isNotBlank() && it.isNumeric() },
                     errorMessage = "Некорректное число",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -133,11 +133,8 @@ fun VacancyWorkExperienceForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var validMonths by remember { mutableStateOf(false) }
-    var validPosition by remember { mutableStateOf(false) }
-
     var workExperience by remember {
-        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
+        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, "", ""))
     }
     val comboBoxItems = listOf(
         ComboBoxItem("Джуниор") {
@@ -166,15 +163,10 @@ fun VacancyWorkExperienceForm(
         }
 
         ValidatedTextField(
+            text = workExperience.position,
             icon = Icons.Default.Abc,
             placeholder = positionText,
-            initString = "",
-            onUpdate = { value, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(position = value)
-                }
-                validPosition = valid
-            },
+            onUpdate = { value, _ -> workExperience = workExperience.copy(position = value) },
             isValid = { it.isNotBlank() },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Позиция не может быть пустой",
@@ -182,14 +174,9 @@ fun VacancyWorkExperienceForm(
         )
 
         ValidatedTextField(
+            text = workExperience.months,
             placeholder = monthsText,
-            initString = "",
-            onUpdate = { text, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(months = text.toInt())
-                }
-                validMonths = valid
-            },
+            onUpdate = { text, _ -> workExperience = workExperience.copy(months = text) },
             isValid = { it.isNotEmpty() && it.isNumeric() },
             errorMessage = "Введите корректное число",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -202,12 +189,10 @@ fun VacancyWorkExperienceForm(
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         ) {
-            val valid = validPosition && validMonths
-
             SecuredButton(
                 text = "Сохранить",
                 onClick = { onSubmit(workExperience) },
-                enabled = valid
+                enabled = workExperience.isValidForVacancy()
             )
             DefaultButton(text = "Отменить", onClick = onCancel)
         }

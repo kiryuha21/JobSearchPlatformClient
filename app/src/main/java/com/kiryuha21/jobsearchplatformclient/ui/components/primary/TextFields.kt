@@ -122,8 +122,8 @@ fun DefaultTextField(
 
 @Composable
 fun ValidatedTextField(
+    text: String,
     placeholder: String,
-    initString: String,
     onUpdate: (String, Boolean) -> Unit,
     isValid: (String) -> Boolean,
     errorMessage: String,
@@ -135,8 +135,7 @@ fun ValidatedTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     val focusManager = LocalFocusManager.current
-    var text by remember { mutableStateOf(initString) }
-    var supportingText by remember { mutableStateOf(if (isValid(initString)) "" else errorMessage) }
+    var supportingText by remember { mutableStateOf(if (isValid(text)) "" else errorMessage) }
 
     OutlinedTextField(
         value = text,
@@ -156,9 +155,8 @@ fun ValidatedTextField(
         visualTransformation = visualTransformation,
         onValueChange = {
             if (it.length <= maxLength) {
-                text = it
                 supportingText = if (isValid(it)) "" else errorMessage
-                onUpdate(text, supportingText.isEmpty())
+                onUpdate(it, supportingText.isEmpty())
             }
         }
     )
@@ -233,7 +231,7 @@ fun PasswordTextField(
 
 @Composable
 fun PhoneField(
-    initString: String,
+    text: String,
     placeholder: String,
     isValid: (String) -> Boolean,
     errorMessage: String,
@@ -246,10 +244,10 @@ fun PhoneField(
     val transformation = PhoneVisualTransformation(mask, maskNumber)
 
     ValidatedTextField(
+        text = text,
         placeholder = placeholder,
-        initString = initString,
-        onUpdate = { text, valid ->
-            onUpdate(text.take(mask.count { it == maskNumber }), valid)
+        onUpdate = { newText, valid ->
+            onUpdate(newText.take(mask.count { it == maskNumber }), valid)
         },
         icon = icon,
         isValid = isValid,

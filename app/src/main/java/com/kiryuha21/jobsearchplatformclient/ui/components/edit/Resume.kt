@@ -108,8 +108,8 @@ fun ResumeEditForm(
     HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
     ValidatedTextField(
+        text = resume.firstName,
         placeholder = "Имя",
-        initString = resume.firstName,
         isValid = { it.isNotBlank() },
         errorMessage = "Имя не может быть пустым",
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -118,8 +118,8 @@ fun ResumeEditForm(
         onUpdate = onFirstNameUpdate
     )
     ValidatedTextField(
+        text = resume.lastName,
         placeholder = "Фамилия",
-        initString = resume.lastName,
         isValid = { it.isNotBlank() },
         errorMessage = "Фамилия не может быть пустой",
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -128,7 +128,7 @@ fun ResumeEditForm(
         onUpdate = onLastNameUpdate
     )
     PhoneField(
-        initString = resume.phoneNumber,
+        text = resume.phoneNumber,
         placeholder = "Номер телефона",
         icon = Icons.Default.Phone,
         mask = "0-(000)-000-00-00",
@@ -138,8 +138,8 @@ fun ResumeEditForm(
         modifier = Modifier.fillMaxWidth()
     )
     ValidatedTextField(
+        text = resume.contactEmail,
         placeholder = "E-mail",
-        initString = resume.contactEmail,
         isValid = { it.isNotBlank() },
         errorMessage = "E-mail не может быть пустой",
         modifier = Modifier.fillMaxWidth(),
@@ -148,8 +148,8 @@ fun ResumeEditForm(
         onUpdate = onEmailUpdate
     )
     ValidatedTextField(
+        text = resume.applyPosition,
         placeholder = "Позиция",
-        initString = resume.applyPosition,
         isValid = { it.isNotBlank() },
         errorMessage = "Позиция не может быть пустой",
         modifier = Modifier.fillMaxWidth(),
@@ -166,13 +166,8 @@ fun ResumeWorkExperienceForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var validSalary by remember { mutableStateOf(false) }
-    var validMonths by remember { mutableStateOf(false) }
-    var validCompany by remember { mutableStateOf(false) }
-    var validPosition by remember { mutableStateOf(false) }
-
     var workExperience by remember {
-        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, 0, 0))
+        mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, "", ""))
     }
     val comboBoxItems = listOf(
         ComboBoxItem("Джуниор") {
@@ -201,15 +196,10 @@ fun ResumeWorkExperienceForm(
         }
 
         ValidatedTextField(
+            text = workExperience.company.name,
             icon = Icons.Default.Abc,
             placeholder = "Название компании",
-            initString = "",
-            onUpdate = { value, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(company = Company(value))
-                }
-                validCompany = valid
-            },
+            onUpdate = { value, _ -> workExperience = workExperience.copy(company = Company(value)) },
             isValid = { it.isNotBlank() },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Название не может быть пустым",
@@ -217,15 +207,10 @@ fun ResumeWorkExperienceForm(
         )
 
         ValidatedTextField(
+            text = workExperience.position,
             icon = Icons.Default.Abc,
             placeholder = "Позиция",
-            initString = "",
-            onUpdate = { value, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(position = value)
-                }
-                validPosition = valid
-            },
+            onUpdate = { value, _ -> workExperience = workExperience.copy(position = value) },
             isValid = { it.isNotBlank() },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             errorMessage = "Позиция не может быть пустой",
@@ -233,14 +218,9 @@ fun ResumeWorkExperienceForm(
         )
 
         ValidatedTextField(
+            text = workExperience.salary,
             placeholder = "Зарплата (₽)",
-            initString = "",
-            onUpdate = { text, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(salary = text.toInt())
-                }
-                validSalary = valid
-            },
+            onUpdate = { text, _ -> workExperience = workExperience.copy(salary = text) },
             isValid = { it.isNotEmpty() && it.isNumeric() },
             errorMessage = "Введите корректное число",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
@@ -248,14 +228,9 @@ fun ResumeWorkExperienceForm(
         )
 
         ValidatedTextField(
+            text = workExperience.months,
             placeholder = "Месяцев проработано",
-            initString = "",
-            onUpdate = { text, valid ->
-                if (valid) {
-                    workExperience = workExperience.copy(months = text.toInt())
-                }
-                validMonths = valid
-            },
+            onUpdate = { text, _ -> workExperience = workExperience.copy(months = text) },
             isValid = { it.isNotEmpty() && it.isNumeric() },
             errorMessage = "Введите корректное число",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -268,7 +243,7 @@ fun ResumeWorkExperienceForm(
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         ) {
-            val valid = validCompany && validPosition && validMonths && validSalary
+            val valid = workExperience.isValidForResume()
 
             SecuredButton(
                 text = "Сохранить",

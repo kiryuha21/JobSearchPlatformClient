@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -16,17 +15,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -50,6 +42,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsL
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.VacancyWorkExperienceForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultDatePickerDialog
 import com.kiryuha21.jobsearchplatformclient.util.isValidNullableNum
 
@@ -140,60 +133,36 @@ fun VacancySearchBar(
             HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
             Text(text = "Фильтры", fontSize = 18.sp, fontWeight = FontWeight(700), modifier = Modifier.padding(bottom = 10.dp))
 
-            val focusManager = LocalFocusManager.current
-
             var minSalaryText by remember { mutableStateOf(vacancyFilters.minSalary?.toString() ?: "") }
-            var minSalarySupportingText by remember {
-                mutableStateOf(if ((vacancyFilters.minSalary?.toString() ?: "").isValidNullableNum()) "" else "Введите корректное число")
-            }
-
-            OutlinedTextField(
-                value = minSalaryText,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Минимальная зарплата") },
-                placeholder = { Text(text = "Минимальная зарплата") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                singleLine = true,
-                isError = minSalarySupportingText.isNotEmpty(),
-                supportingText = { Text(text = minSalarySupportingText, color = Color.Red) },
-                onValueChange = {
-                    minSalaryText = it
-
-                    if (it.isValidNullableNum()) {
-                        minSalarySupportingText = ""
-                        vacancyFilters = vacancyFilters.copy(minSalary = if (it.isEmpty()) null else it.toInt())
-                    } else {
-                        minSalarySupportingText = "Введите корректное число"
+            ValidatedTextField(
+                text = minSalaryText,
+                placeholder = "Минимальная зарплата",
+                onUpdate = { text, valid ->
+                    minSalaryText = text
+                    if (valid) {
+                        vacancyFilters = vacancyFilters.copy(minSalary = if (text.isEmpty()) null else text.toInt())
                     }
-                }
+                },
+                isValid = { it.isValidNullableNum() },
+                errorMessage = "Введите корректное число",
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
             )
 
             var maxSalaryText by remember { mutableStateOf(vacancyFilters.maxSalary?.toString() ?: "") }
-            var maxSalarySupportingText by remember {
-                mutableStateOf(if ((vacancyFilters.maxSalary?.toString() ?: "").isValidNullableNum()) "" else "Введите корректное число")
-            }
-
-            OutlinedTextField(
-                value = maxSalaryText,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Максимальная зарплата") },
-                placeholder = { Text(text = "Максимальная зарплата") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                singleLine = true,
-                isError = maxSalarySupportingText.isNotEmpty(),
-                supportingText = { Text(text = maxSalarySupportingText, color = Color.Red) },
-                onValueChange = {
-                    maxSalaryText = it
-
-                    if (it.isValidNullableNum()) {
-                        maxSalarySupportingText = ""
-                        vacancyFilters = vacancyFilters.copy(maxSalary = if (it.isEmpty()) null else it.toInt())
-                    } else {
-                        maxSalarySupportingText = "Введите корректное число"
+            ValidatedTextField(
+                text = maxSalaryText,
+                placeholder = "Максимальная зарплата",
+                onUpdate = { text, valid ->
+                    maxSalaryText = text
+                    if (valid) {
+                        vacancyFilters = vacancyFilters.copy(maxSalary = if (text.isEmpty()) null else text.toInt())
                     }
-                }
+                },
+                isValid = { it.isValidNullableNum() },
+                errorMessage = "Введите корректное число",
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
 
             HorizontalDivider()

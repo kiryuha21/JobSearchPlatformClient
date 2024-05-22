@@ -14,6 +14,9 @@ data class Skill(
     val name: String,
     val skillLevel: SkillLevel
 ) {
+    fun isValid() =
+        name.isNotBlank()
+
     override fun toString(): String =
         when (skillLevel) {
             SkillLevel.AwareOf -> "Ознакомлен с навыком/технологией"

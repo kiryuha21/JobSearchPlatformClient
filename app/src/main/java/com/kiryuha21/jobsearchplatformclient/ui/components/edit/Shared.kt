@@ -120,7 +120,6 @@ fun SkillForm(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var validName by remember { mutableStateOf(false) }
     var skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
 
     val comboBoxItems = listOf(
@@ -150,17 +149,10 @@ fun SkillForm(
         }
 
         ValidatedTextField(
+            text = skill.name,
             icon = Icons.Default.Abc,
             placeholder = "Названия навыка",
-            initString = "",
-            onUpdate = { value, valid ->
-                if (valid) {
-                    validName = true
-                    skill = skill.copy(name = value)
-                } else {
-                    validName = false
-                }
-            },
+            onUpdate = { value, _ -> skill = skill.copy(name = value) },
             isValid = { it.isNotBlank() },
             errorMessage = "Название навыка не может быть пустым",
             modifier = Modifier.fillMaxWidth()
@@ -170,7 +162,7 @@ fun SkillForm(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            SecuredButton(text = "Сохранить", onClick = { onSubmit(skill) }, enabled = validName)
+            SecuredButton(text = "Сохранить", onClick = { onSubmit(skill) }, enabled = skill.isValid())
             DefaultButton(text = "Отменить", onClick = onCancel)
         }
     }

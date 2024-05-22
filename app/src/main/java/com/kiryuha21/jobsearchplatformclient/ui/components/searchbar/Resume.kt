@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -20,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,9 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +42,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsL
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.SkillForm
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.VacancyWorkExperienceForm
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultDatePickerDialog
 import com.kiryuha21.jobsearchplatformclient.util.isValidNullableAge
 
@@ -136,60 +132,36 @@ fun ResumeSearchBar(
             HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
             Text(text = "Фильтры", fontSize = 18.sp, fontWeight = FontWeight(700), modifier = Modifier.padding(bottom = 10.dp))
 
-            val focusManager = LocalFocusManager.current
-
             var minAgeText by remember { mutableStateOf(resumeFilters.olderThan?.toString() ?: "") }
-            var minAgeSupportingText by remember {
-                mutableStateOf(if ((resumeFilters.olderThan?.toString() ?: "").isValidNullableAge()) "" else "Введите корректный возраст")
-            }
-
-            OutlinedTextField(
-                value = minAgeText,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Минимальный возраст") },
-                placeholder = { Text(text = "Минимальный возраст") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                singleLine = true,
-                isError = minAgeSupportingText.isNotEmpty(),
-                supportingText = { Text(text = minAgeSupportingText, color = Color.Red) },
-                onValueChange = {
-                    minAgeText = it
-
-                    if (it.isValidNullableAge()) {
-                        minAgeSupportingText = ""
-                        resumeFilters = resumeFilters.copy(olderThan = if (it.isEmpty()) null else it.toInt())
-                    } else {
-                        minAgeSupportingText = "Введите корректный возраст"
+            ValidatedTextField(
+                text = minAgeText,
+                placeholder = "Минимальный возраст",
+                onUpdate = { text, valid ->
+                    minAgeText = text
+                    if (valid) {
+                        resumeFilters = resumeFilters.copy(olderThan = if (text.isEmpty()) null else text.toInt())
                     }
-                }
+                },
+                isValid = { it.isValidNullableAge() },
+                errorMessage = "Введите корректный возраст",
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
             )
 
             var maxAgeText by remember { mutableStateOf(resumeFilters.youngerThan?.toString() ?: "") }
-            var maxAgeSupportingText by remember {
-                mutableStateOf(if ((resumeFilters.youngerThan?.toString() ?: "").isValidNullableAge()) "" else "Введите корректный возраст")
-            }
-
-            OutlinedTextField(
-                value = maxAgeText,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Максимальный возраст") },
-                placeholder = { Text(text = "Максимальный возраст") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-                singleLine = true,
-                isError = maxAgeSupportingText.isNotEmpty(),
-                supportingText = { Text(text = maxAgeSupportingText, color = Color.Red) },
-                onValueChange = {
-                    maxAgeText = it
-
-                    if (it.isValidNullableAge()) {
-                        maxAgeSupportingText = ""
-                        resumeFilters = resumeFilters.copy(youngerThan = if (it.isEmpty()) null else it.toInt())
-                    } else {
-                        maxAgeSupportingText = "Введите корректный возраст"
+            ValidatedTextField(
+                text = maxAgeText,
+                placeholder = "Максимальный возраст",
+                onUpdate = { text, valid ->
+                    maxAgeText = text
+                    if (valid) {
+                        resumeFilters = resumeFilters.copy(youngerThan = if (text.isEmpty()) null else text.toInt())
                     }
-                }
+                },
+                isValid = { it.isValidNullableAge() },
+                errorMessage = "Введите корректный возраст",
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
 
             HorizontalDivider()

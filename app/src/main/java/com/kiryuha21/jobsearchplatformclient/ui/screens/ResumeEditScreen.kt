@@ -51,7 +51,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.special.ClickableAsyn
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ComboBoxItem
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.kiryuha21.jobsearchplatformclient.util.getBitmap
-import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.coroutines.launch
 
 @Composable
@@ -61,13 +60,6 @@ fun ResumeEditScreen(
     loadingText: String,
     onUpdateResume: (Resume, Bitmap?) -> Unit
 ) {
-    var validName by remember { mutableStateOf(initResume.firstName.isNotBlank()) }
-    var validSurname by remember { mutableStateOf(initResume.lastName.isNotBlank()) }
-    var validEmail by remember { mutableStateOf(initResume.contactEmail.isNotBlank()) }
-    var validPosition by remember { mutableStateOf(initResume.applyPosition.isNotBlank()) }
-    var validPhone by remember { mutableStateOf(initResume.phoneNumber.isNotBlank() && initResume.phoneNumber.isNumeric()) }
-    var validBirthDate by remember { mutableStateOf(initResume.birthDate != null) }
-
     var resume by remember { mutableStateOf(initResume) }
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
@@ -102,7 +94,7 @@ fun ResumeEditScreen(
     Scaffold(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            val enabled = validName && validSurname && validEmail && validPosition && validPhone && validBirthDate
+            val enabled = resume.isValid()
 
             ExtendedFloatingActionButton(
                 containerColor = if (enabled) FloatingActionButtonDefaults.containerColor else Color.LightGray,
@@ -158,40 +150,12 @@ fun ResumeEditScreen(
                 ResumeEditForm(
                     resume = resume,
                     comboBoxItems = comboBoxItems,
-                    onFirstNameUpdate = { value, valid ->
-                        if (valid) {
-                            resume = resume.copy(firstName = value)
-                        }
-                        validName = valid
-                    },
-                    onLastNameUpdate = { value, valid ->
-                        if (valid) {
-                            resume = resume.copy(lastName = value)
-                        }
-                        validSurname = valid
-                    },
-                    onBirthDateUpdate = { date ->
-                        validBirthDate = date != null
-                        resume = resume.copy(birthDate = date)
-                    },
-                    onPhoneUpdate = { value, valid ->
-                        if (valid) {
-                            resume = resume.copy(phoneNumber = value)
-                        }
-                        validPhone = valid
-                    },
-                    onEmailUpdate = { value, valid ->
-                        if (valid) {
-                            resume = resume.copy(contactEmail = value)
-                        }
-                        validEmail = valid
-                    },
-                    onPositionUpdate = { value, valid ->
-                        if (valid) {
-                            resume = resume.copy(applyPosition = value)
-                        }
-                        validPosition = valid
-                    }
+                    onFirstNameUpdate = { value, _ -> resume = resume.copy(firstName = value) },
+                    onLastNameUpdate = { value, _ -> resume = resume.copy(lastName = value) },
+                    onBirthDateUpdate = { date -> resume = resume.copy(birthDate = date) },
+                    onPhoneUpdate = { value, _ -> resume = resume.copy(phoneNumber = value) },
+                    onEmailUpdate = { value, _ -> resume = resume.copy(contactEmail = value) },
+                    onPositionUpdate = { value, _ -> resume = resume.copy(applyPosition = value) }
                 )
 
                 ClickableSkillsList(
