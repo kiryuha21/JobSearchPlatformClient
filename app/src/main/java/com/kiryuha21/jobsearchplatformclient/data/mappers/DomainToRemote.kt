@@ -21,7 +21,6 @@ import com.kiryuha21.jobsearchplatformclient.data.remote.dto.WorkExperienceDTO
 fun Resume.toResumeDTO() =
     ResumeDTO.ResumeRequestDTO(
         id = id,
-        workerLogin = CurrentUser.info.username,
         firstName = firstName,
         lastName = lastName,
         birthDate = birthDate ?: throw Exception("birth date should be chosen"),
@@ -56,7 +55,6 @@ fun Company.toCompanyDTO() =
 fun Vacancy.toVacancyDTO() =
     VacancyDTO.VacancyRequestDTO(
         id = id,
-        employerLogin = CurrentUser.info.username,
         title = title,
         description = description,
         company = company.toCompanyDTO(),

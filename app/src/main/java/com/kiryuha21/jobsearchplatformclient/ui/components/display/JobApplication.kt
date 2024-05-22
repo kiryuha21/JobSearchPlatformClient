@@ -79,7 +79,7 @@ fun JobApplicationCard(
                 modifier = Modifier.padding(bottom = 10.dp)
             ) {
                 Text(text = "Отправитель:", fontStyle = FontStyle.Italic)
-                Text(text = jobApplication.senderUsername)
+                Text(text = jobApplication.senderInitials)
             }
 
             Text(text = jobApplication.message)
@@ -107,7 +107,7 @@ fun JobOfferCardPreview() {
     JobApplicationCard(
         jobApplication = JobApplication(
             id = "0",
-            senderUsername = "Важнич",
+            senderInitials = "Важнич",
             referenceResumeId = "",
             referenceVacancyId = "",
             message = "Мега ждем вас",

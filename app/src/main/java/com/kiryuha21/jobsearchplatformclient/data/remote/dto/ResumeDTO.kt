@@ -7,8 +7,6 @@ sealed class ResumeDTO {
     data class ResumeRequestDTO(
         @SerializedName("id")
         val id: String,
-        @SerializedName("workerUsername")
-        val workerLogin: String,
         @SerializedName("firstName")
         val firstName: String,
         @SerializedName("lastName")

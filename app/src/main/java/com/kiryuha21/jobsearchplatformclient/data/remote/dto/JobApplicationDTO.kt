@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class JobApplicationDTO(
     @SerializedName("id")
     val id: String,
-    @SerializedName("senderUsername")
-    val senderUsername: String,
+    @SerializedName("senderInitials")
+    val senderInitials: String,
     @SerializedName("referenceResumeId")
     val referenceResumeId: String,
     @SerializedName("referenceVacancyId")

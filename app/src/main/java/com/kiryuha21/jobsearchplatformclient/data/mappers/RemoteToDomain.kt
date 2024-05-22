@@ -103,7 +103,7 @@ fun VacancyDTO.VacancyRequestDTO.toDomainVacancy() =
 fun JobApplicationDTO.toDomainJobApplication() =
     JobApplication(
         id = id,
-        senderUsername = senderUsername,
+        senderInitials = senderInitials,
         referenceVacancyId = referenceVacancyId,
         referenceResumeId = referenceResumeId,
         message = message,

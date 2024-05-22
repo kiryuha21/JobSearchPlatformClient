@@ -34,13 +34,12 @@ object FakeData {
         )
     }
 
-    fun randomVacancy(employerLogin: String) : VacancyDTO.VacancyRequestDTO {
+    fun randomVacancy() : VacancyDTO.VacancyRequestDTO {
         val minSalary = Random.nextInt(500000)
         val maxSalary = minSalary + Random.nextInt(500000)
 
         return VacancyDTO.VacancyRequestDTO(
             id = "",
-            employerLogin = employerLogin,
             title = randomString(10),
             description = randomString(30),
             company = CompanyDTO(randomString(20)),
@@ -50,10 +49,9 @@ object FakeData {
         )
     }
 
-    fun randomResume(workerLogin: String) : ResumeDTO.ResumeRequestDTO {
+    fun randomResume() : ResumeDTO.ResumeRequestDTO {
         return ResumeDTO.ResumeRequestDTO(
             id = "",
-            workerLogin = workerLogin,
             firstName = randomString(10),
             lastName = randomString(10),
             birthDate = 0,
@@ -67,7 +65,7 @@ object FakeData {
     fun randomJobApplication(senderUsername: String, resumeId: String, vacancyId: String) =
         JobApplicationDTO(
             id = "",
-            senderUsername = senderUsername,
+            senderInitials = senderUsername,
             referenceResumeId = resumeId,
             referenceVacancyId = vacancyId,
             message = randomString(10),

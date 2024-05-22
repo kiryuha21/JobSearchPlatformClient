@@ -7,8 +7,6 @@ sealed class VacancyDTO {
     data class VacancyRequestDTO(
         @SerializedName("id")
         val id: String,
-        @SerializedName("employerUsername")
-        val employerLogin: String,
         @SerializedName("title")
         val title: String,
         @SerializedName("description")

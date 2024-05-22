@@ -60,8 +60,8 @@ class ApiTesting {
 
     @Test
     fun createGetDeleteVacancy() = runTest {
-        withUser(UserRole.Employer) { token, user ->
-            val vacancy = randomVacancy(user.username)
+        withUser(UserRole.Employer) { token, _ ->
+            val vacancy = randomVacancy()
             val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $token", vacancy)
             val vacancyWithId = vacancy.copy(id = createdVacancy.id)
 
@@ -80,8 +80,8 @@ class ApiTesting {
 
     @Test
     fun createGetDeleteResume() = runTest {
-        withUser(UserRole.Worker) { token, user ->
-            val resume = randomResume(user.username)
+        withUser(UserRole.Worker) { token, _ ->
+            val resume = randomResume()
             val createdResume = resumeRetrofit.createNewResume("Bearer $token", resume)
             val resumeWithId = resume.copy(id = createdResume.id)
 
@@ -112,11 +112,9 @@ class ApiTesting {
         AuthToken.createToken(employer.username, employer.password)
         val employerToken = AuthToken.getToken()
 
-        val resume = randomResume(worker.username)
-        val createdResume = resumeRetrofit.createNewResume("Bearer $workerToken", resume)
+        val createdResume = resumeRetrofit.createNewResume("Bearer $workerToken", randomResume())
 
-        val vacancy = randomVacancy(employer.username)
-        val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $employerToken", vacancy)
+        val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $employerToken", randomVacancy())
 
         jobApplicationRetrofit.createNewJobApplication(
             authToken = "Bearer $employerToken",

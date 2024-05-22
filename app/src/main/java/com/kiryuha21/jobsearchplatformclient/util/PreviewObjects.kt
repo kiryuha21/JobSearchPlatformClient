@@ -79,7 +79,7 @@ object PreviewObjects {
 
     val jobApplication1 = JobApplication(
         id = UUID.randomUUID().toString(),
-        senderUsername = "Важнич",
+        senderInitials = "Важнич",
         referenceResumeId = "",
         referenceVacancyId = "",
         message = "Мега ждем вас",
@@ -88,7 +88,7 @@ object PreviewObjects {
 
     val jobApplication2 = JobApplication(
         id = UUID.randomUUID().toString(),
-        senderUsername = "Гениальныч",
+        senderInitials = "Гениальныч",
         referenceResumeId = "",
         referenceVacancyId = "",
         message = "Мега хочу к вам",
@@ -106,7 +106,7 @@ object PreviewObjects {
 
         return JobApplication(
             id = UUID.randomUUID().toString(),
-            senderUsername = username,
+            senderInitials = username,
             referenceResumeId = "",
             referenceVacancyId = "",
             message = message,
