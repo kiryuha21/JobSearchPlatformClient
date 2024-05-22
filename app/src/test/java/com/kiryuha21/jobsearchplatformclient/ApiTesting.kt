@@ -68,13 +68,13 @@ class ApiTesting {
             assertEquals(vacancyWithId.toDomainVacancy(), createdVacancy.toDomainVacancy())
 
             vacancyRetrofit.deleteVacancy("Bearer $token", createdVacancy.id)
-//            val exception = try {
-//                val notExisting = vacancyRetrofit.getPublicVacancyById(createdVacancy.id)
-//                null
-//            } catch (e: Exception) {
-//                e
-//            }
-//            assertNotNull(exception)
+            val exception = try {
+                vacancyRetrofit.getPublicVacancyById(createdVacancy.id)
+                null
+            } catch (e: Exception) {
+                e
+            }
+            assertNotNull(exception)
         }
     }
 
@@ -88,13 +88,13 @@ class ApiTesting {
             assertEquals(resumeWithId.toDomainResume(), createdResume.toDomainResume())
 
             resumeRetrofit.deleteResume("Bearer $token", createdResume.id)
-//            val exception = try {
-//                resumeRetrofit.getPublicResumeById(createdResume.id)
-//                null
-//            } catch (e: Exception) {
-//                e
-//            }
-//            assertNotNull(exception)
+            val exception = try {
+                resumeRetrofit.getPublicResumeById(createdResume.id)
+                null
+            } catch (e: Exception) {
+                e
+            }
+            assertNotNull(exception)
         }
     }
 
