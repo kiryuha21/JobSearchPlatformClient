@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components.display
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultAsyncImageCornered
+import com.kiryuha21.jobsearchplatformclient.ui.theme.SelectedCardColor
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.kiryuha21.jobsearchplatformclient.util.asFormattedSalary
 import com.valentinilk.shimmer.shimmer
@@ -143,12 +145,14 @@ fun ClickableVacancyCard(
     vacancy: Vacancy,
     isStatusShown: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isChosen: Boolean = false
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
         onClick = onClick,
-        modifier = modifier.padding(5.dp)
+        modifier = modifier.padding(5.dp),
+        border = if (isChosen) BorderStroke(2.dp, SelectedCardColor) else null
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

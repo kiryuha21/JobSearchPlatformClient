@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -17,18 +18,21 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressed
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.JobApplicationScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.OfferCreationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerProfileViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.JobApplicationViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.OfferViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.SettingsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
@@ -220,5 +224,43 @@ fun NavGraphBuilder.addCommonDestinations(
                 vm.processIntent(JobApplicationContract.Intent.MarkSeen(it))
             }
         )
+    }
+    composable(OFFER_CREATION) {backStack ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+        OnBackPressedWithSuper(onNavigateBack)
+
+        val resumeId = backStack.arguments?.getString("resumeId") ?: throw Exception("resumeId should be passed via backstack!")
+
+        val ctx = LocalContext.current
+        val vm: OfferViewModel = viewModel(factory = OfferViewModel.provideFactory(
+            resumeId = resumeId,
+            navigateBackToResume = {
+                navController.popBackStack()
+                onNavigateBack()
+            },
+            showToast = { text ->
+                Toast.makeText(ctx, text, Toast.LENGTH_SHORT).show()
+            }
+        ))
+
+        OfferCreationScreen(
+            selectVacancy = { vm.processIntent(OfferContract.Intent.ChooseVacancy(it)) },
+            updateText = { vm.processIntent(OfferContract.Intent.UpdateMessage(it)) },
+            setStage = { vm.processIntent(OfferContract.Intent.SetOfferStage(it)) },
+            saveOffer = { vm.processIntent(OfferContract.Intent.CreateOffer) },
+            state = vm.viewState
+        )
+    }
+    composable(RESUME_CREATION) { backStack ->
+        LaunchedEffect(Unit) {
+            shouldShowAppBar.value = false
+        }
+        OnBackPressedWithSuper(onNavigateBack)
+
+        val vacancyId = backStack.arguments?.getString("vacancyId") ?: throw Exception("vacancyId should be passed via backstack!")
+
+        // TODO
     }
 }

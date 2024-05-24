@@ -75,7 +75,7 @@ object PreviewObjects {
         imageUrl = "https://fakeimg.pl/350x200/?text=World&font=lobster",
     )
 
-    val previewVacancy2 = previewVacancy1.copy(imageUrl = null)
+    val previewVacancy2 = previewVacancy1.copy(imageUrl = null, id = "4")
 
     val jobApplication1 = JobApplication(
         id = UUID.randomUUID().toString(),

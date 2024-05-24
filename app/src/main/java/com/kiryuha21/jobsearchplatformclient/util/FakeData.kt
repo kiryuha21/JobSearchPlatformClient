@@ -62,14 +62,11 @@ object FakeData {
         )
     }
 
-    fun randomJobApplication(senderUsername: String, resumeId: String, vacancyId: String) =
-        JobApplicationDTO(
-            id = "",
-            senderInitials = senderUsername,
+    fun randomJobApplication(resumeId: String, vacancyId: String) =
+        JobApplicationDTO.JobApplicationRequestDTO(
             referenceResumeId = resumeId,
             referenceVacancyId = vacancyId,
             message = randomString(10),
-            seen = false
         )
 
     suspend fun withUser(role: UserRole, testBody: suspend (String, UserDTO.SignUpUserDTO) -> Unit) {

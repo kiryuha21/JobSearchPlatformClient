@@ -119,7 +119,6 @@ class ApiTesting {
         jobApplicationRetrofit.createNewJobApplication(
             authToken = "Bearer $employerToken",
             jobApplicationDTO = randomJobApplication(
-                senderUsername = employer.username,
                 resumeId = createdResume.id,
                 vacancyId = createdVacancy.id
             ),

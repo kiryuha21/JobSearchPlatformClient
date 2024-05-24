@@ -29,6 +29,7 @@ fun VacancyDetailsScreen(
     editable: Boolean,
     onEdit: (Vacancy) -> Unit,
     onDelete: (Vacancy) -> Unit,
+    onCreateResponse: (String) -> Unit,
     state: VacancyDetailsContract.State
 ) {
     when {
@@ -67,7 +68,7 @@ fun VacancyDetailsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = { onCreateResponse(state.openedVacancy.id) },
                             modifier = Modifier.fillMaxWidth(0.7f),
                             shape = RoundedCornerShape(10)
                         ) {

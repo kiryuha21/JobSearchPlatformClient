@@ -22,5 +22,9 @@ object NavigationGraph {
         const val RESUME_EDIT = "ResumeEdit"
         const val RESUME_CREATION = "ResumeCreation"
         const val JOB_APPLICATIONS = "JobApplications"
+        const val OFFER_CREATION_BASE = "CreateOffer"
+        const val OFFER_CREATION = "$OFFER_CREATION_BASE/{resumeId}"
+        const val RESPONSE_CREATION_BASE = "CreateResponse"
+        const val RESPONSE_CREATION = "$RESPONSE_CREATION_BASE/{vacancyId}"
     }
 }

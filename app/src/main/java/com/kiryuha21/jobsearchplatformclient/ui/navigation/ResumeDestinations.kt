@@ -109,6 +109,10 @@ fun NavGraphBuilder.addResumeDestinations(
             editable = CurrentUser.info.role == UserRole.Worker,
             onEdit = { viewModel.processIntent(ResumeDetailsContract.Intent.OpenEdit) },
             onDelete = { viewModel.processIntent(ResumeDetailsContract.Intent.DeleteResume) },
+            onCreateOffer = {
+                navController.navigate("$OFFER_CREATION_BASE/$resumeId")
+                onNavigationForward("$OFFER_CREATION_BASE/$resumeId")
+            },
             state = viewModel.viewState
         )
     }

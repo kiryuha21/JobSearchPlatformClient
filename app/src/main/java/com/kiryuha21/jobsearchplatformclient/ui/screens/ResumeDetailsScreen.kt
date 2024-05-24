@@ -27,6 +27,7 @@ fun ResumeDetailsScreen(
     editable: Boolean,
     onEdit: (String) -> Unit,
     onDelete: () -> Unit,
+    onCreateOffer: (String) -> Unit,
     state: ResumeDetailsContract.State
 ) {
     when {
@@ -65,7 +66,7 @@ fun ResumeDetailsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = { onCreateOffer(state.openedResume.id) },
                             modifier = Modifier.fillMaxWidth(0.7f),
                             shape = RoundedCornerShape(10)
                         ) {

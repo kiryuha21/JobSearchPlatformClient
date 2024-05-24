@@ -85,7 +85,7 @@ fun JobApplicationScreen(
                 }
             }
 
-            HorizontalPager(state = pagerState, userScrollEnabled = false) {
+            HorizontalPager(state = pagerState) {
                 val showedItems = if (it == receivedIndex) state.receivedApplications else state.sentApplications
 
                 LazyColumn(

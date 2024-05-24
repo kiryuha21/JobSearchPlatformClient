@@ -109,6 +109,10 @@ fun NavGraphBuilder.addVacancyDestinations(
             editable = CurrentUser.info.role == UserRole.Employer,
             onEdit = { viewModel.processIntent(VacancyDetailsContract.Intent.OpenEdit) },
             onDelete = { viewModel.processIntent(VacancyDetailsContract.Intent.DeleteVacancy) },
+            onCreateResponse = {
+                navController.navigate("$RESPONSE_CREATION_BASE/$vacancyId")
+                onNavigationForward("$RESPONSE_CREATION_BASE/$vacancyId")
+            },
             state = viewModel.viewState
         )
     }

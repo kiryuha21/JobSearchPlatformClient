@@ -9,7 +9,7 @@ import retrofit2.http.Path
 
 interface JobApplicationAPI {
     @POST("job-application")
-    suspend fun createNewJobApplication(@Header("Authorization") authToken: String, @Body jobApplicationDTO: JobApplicationDTO)
+    suspend fun createNewJobApplication(@Header("Authorization") authToken: String, @Body jobApplicationDTO: JobApplicationDTO.JobApplicationRequestDTO)
 
     @GET("job-application/received/count_unseen")
     suspend fun countUnseenJobApplications(@Header("Authorization") authToken: String) : Int
@@ -18,10 +18,10 @@ interface JobApplicationAPI {
     suspend fun countUnnotifiedJobApplications(@Header("Authorization") authToken: String) : Int
 
     @GET("job-application/received")
-    suspend fun getReceivedApplications(@Header("Authorization") authToken: String) : List<JobApplicationDTO>
+    suspend fun getReceivedApplications(@Header("Authorization") authToken: String) : List<JobApplicationDTO.JobApplicationResponseDTO>
 
     @GET("job-application/sent")
-    suspend fun getSentApplications(@Header("Authorization") authToken: String) : List<JobApplicationDTO>
+    suspend fun getSentApplications(@Header("Authorization") authToken: String) : List<JobApplicationDTO.JobApplicationResponseDTO>
 
     @POST("job-application/mark/{applicationId}")
     suspend fun markSeen(

@@ -22,6 +22,7 @@ interface VacancyAPI {
         @Path("login") login: String
     ): List<VacancyDTO.VacancyResponseDTO>
 
+    @GET("vacancy/employer_username/{login}")
     suspend fun getPublicVacanciesByEmployerLogin(@Path("login") login: String): List<VacancyDTO.VacancyResponseDTO>
 
     @GET("vacancy/{vacancyId}")

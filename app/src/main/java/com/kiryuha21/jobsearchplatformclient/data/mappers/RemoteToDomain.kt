@@ -100,7 +100,7 @@ fun VacancyDTO.VacancyRequestDTO.toDomainVacancy() =
         requiredSkills = requiredSkills.map { it.toDomainSkill() },
     )
 
-fun JobApplicationDTO.toDomainJobApplication() =
+fun JobApplicationDTO.JobApplicationResponseDTO.toDomainJobApplication() =
     JobApplication(
         id = id,
         senderInitials = senderInitials,
