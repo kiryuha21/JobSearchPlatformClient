@@ -105,8 +105,12 @@ data class ComboBoxItem(
 
 // TODO: add start index as parameter
 @Composable
-fun ComboBox(items: List<ComboBoxItem>, modifier: Modifier = Modifier) {
-    var currentIndex by remember { mutableIntStateOf(0) }
+fun ComboBox(
+    items: List<ComboBoxItem>,
+    modifier: Modifier = Modifier,
+    startIndex: Int = 0
+) {
+    var currentIndex by remember { mutableIntStateOf(startIndex) }
     var expanded by remember { mutableStateOf(false) }
 
     Box(

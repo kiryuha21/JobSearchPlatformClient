@@ -12,6 +12,8 @@ import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.jobApplicationRetrofit
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.vacancyRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OFFER_SAVING_TEXT
+import com.kiryuha21.jobsearchplatformclient.ui.contract.OFFER_SENT_ERROR
+import com.kiryuha21.jobsearchplatformclient.ui.contract.OFFER_SENT_SUCCESS
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferStages
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VACANCIES_LOADING_TEXT
@@ -69,16 +71,16 @@ class OfferViewModel(
 
             navigateBackToResume()
             if (isSavedSuccessfully) {
-                showToast("Оффер отправлен")
+                showToast(OFFER_SENT_SUCCESS)
             } else {
-                showToast("При отправке оффера произошла ошибка")
+                showToast(OFFER_SENT_ERROR)
             }
         }
     }
 
     private fun loadVacancies() {
         viewModelScope.launch {
-            setState { copy(isLoading = true) }
+            setState { copy(isLoading = true, loadingText = VACANCIES_LOADING_TEXT) }
 
             val publicVacancies = withContext(Dispatchers.IO) {
                 networkCallWithReturnWrapper(

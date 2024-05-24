@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,8 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.Company
-import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPublicationStatus
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.ClickableAsyncUriImage
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
@@ -70,17 +69,9 @@ fun VacancyEditScreen(
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
 
-    val comboBoxItems = listOf(
-        ComboBoxItem("Опубликовано") {
-            vacancy = vacancy.copy(publicationStatus = PublicationStatus.Published)
-        },
-        ComboBoxItem("Черновик") {
-            vacancy = vacancy.copy(publicationStatus = PublicationStatus.Draft)
-        },
-        ComboBoxItem("Скрыто") {
-            vacancy = vacancy.copy(publicationStatus = PublicationStatus.Hidden)
-        },
-    )
+    val comboBoxItems = descriptionToPublicationStatus.map { entry ->
+        ComboBoxItem(entry.key) { vacancy = vacancy.copy(publicationStatus = entry.value) }
+    }
 
     val context = LocalContext.current
     var selectedImageUri by remember {

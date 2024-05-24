@@ -37,8 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kiryuha21.jobsearchplatformclient.R
-import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPublicationStatus
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableSkillsList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ClickableWorkExperienceList
 import com.kiryuha21.jobsearchplatformclient.ui.components.edit.ImageHintCard
@@ -64,17 +64,9 @@ fun ResumeEditScreen(
     var skillFormVisible by remember { mutableStateOf(false) }
     var experienceFormVisible by remember { mutableStateOf(false) }
 
-    val comboBoxItems = listOf(
-        ComboBoxItem("Опубликовано") {
-            resume = resume.copy(publicationStatus = PublicationStatus.Published)
-        },
-        ComboBoxItem("Черновик") {
-            resume = resume.copy(publicationStatus = PublicationStatus.Draft)
-        },
-        ComboBoxItem("Скрыто") {
-            resume = resume.copy(publicationStatus = PublicationStatus.Hidden)
-        },
-    )
+    val comboBoxItems = descriptionToPublicationStatus.map { entry ->
+        ComboBoxItem(entry.key) { resume = resume.copy(publicationStatus = entry.value) }
+    }
 
     val context = LocalContext.current
     var selectedImageUri by remember {

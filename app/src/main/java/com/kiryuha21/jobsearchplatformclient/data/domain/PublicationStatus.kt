@@ -13,3 +13,9 @@ enum class PublicationStatus {
         }
     }
 }
+
+val descriptionToPublicationStatus = mapOf(
+    "Опубликовано" to PublicationStatus.Published,
+    "Черновик" to PublicationStatus.Draft,
+    "Скрыто" to PublicationStatus.Hidden
+)

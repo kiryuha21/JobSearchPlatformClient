@@ -3,10 +3,6 @@ package com.kiryuha21.jobsearchplatformclient.data.domain
 import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 import kotlinx.serialization.Serializable
 
-enum class PositionLevel {
-    Junior, Middle, Senior, Lead
-}
-
 @Serializable
 data class WorkExperience(
     val company: Company,

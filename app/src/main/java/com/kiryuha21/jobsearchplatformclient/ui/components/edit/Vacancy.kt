@@ -27,6 +27,8 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPositionLevel
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPublicationStatus
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
@@ -53,7 +55,10 @@ fun VacancyEditForm(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Статус Вакансии")
-            ComboBox(items = comboBoxItems)
+            ComboBox(
+                items = comboBoxItems,
+                startIndex = comboBoxItems.indexOfFirst { descriptionToPublicationStatus[it.text] == vacancy.publicationStatus }
+            )
         }
         ValidatedTextField(
             text = vacancy.title,
@@ -136,20 +141,9 @@ fun VacancyWorkExperienceForm(
     var workExperience by remember {
         mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, "", ""))
     }
-    val comboBoxItems = listOf(
-        ComboBoxItem("Джуниор") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Junior)
-        },
-        ComboBoxItem("Мидл") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Middle)
-        },
-        ComboBoxItem("Сеньор") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Senior)
-        },
-        ComboBoxItem("Лид") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Lead)
-        },
-    )
+    val comboBoxItems = descriptionToPositionLevel.map { entry ->
+        ComboBoxItem(entry.key) { workExperience = workExperience.copy(positionLevel = entry.value) }
+    }
 
     Column(
         modifier = modifier

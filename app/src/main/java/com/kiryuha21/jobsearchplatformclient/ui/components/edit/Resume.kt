@@ -32,6 +32,8 @@ import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PositionLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPositionLevel
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToPublicationStatus
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PhoneField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
@@ -61,7 +63,10 @@ fun ResumeEditForm(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = "Статус резюме")
-        ComboBox(items = comboBoxItems)
+        ComboBox(
+            items = comboBoxItems,
+            startIndex = comboBoxItems.indexOfFirst { descriptionToPublicationStatus[it.text] == resume.publicationStatus }
+        )
     }
 
     HorizontalDivider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
@@ -169,20 +174,9 @@ fun ResumeWorkExperienceForm(
     var workExperience by remember {
         mutableStateOf(WorkExperience(Company(""), "", PositionLevel.Junior, "", ""))
     }
-    val comboBoxItems = listOf(
-        ComboBoxItem("Джуниор") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Junior)
-        },
-        ComboBoxItem("Мидл") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Middle)
-        },
-        ComboBoxItem("Сеньор") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Senior)
-        },
-        ComboBoxItem("Лид") {
-            workExperience = workExperience.copy(positionLevel = PositionLevel.Lead)
-        },
-    )
+    val comboBoxItems = descriptionToPositionLevel.map { entry ->
+        ComboBoxItem(entry.key) { workExperience = workExperience.copy(positionLevel = entry.value) }
+    }
 
     Column(
         modifier = modifier

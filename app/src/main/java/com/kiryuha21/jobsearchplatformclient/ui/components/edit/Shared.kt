@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Skill
 import com.kiryuha21.jobsearchplatformclient.data.domain.SkillLevel
 import com.kiryuha21.jobsearchplatformclient.data.domain.WorkExperience
+import com.kiryuha21.jobsearchplatformclient.data.domain.descriptionToSkillLevel
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.ValidatedTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.DefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredButton
@@ -122,20 +123,9 @@ fun SkillForm(
 ) {
     var skill by remember { mutableStateOf(Skill("", SkillLevel.AwareOf)) }
 
-    val comboBoxItems = listOf(
-        ComboBoxItem("Имею представление") {
-            skill = skill.copy(skillLevel = SkillLevel.AwareOf)
-        },
-        ComboBoxItem("Имел дело") {
-            skill = skill.copy(skillLevel = SkillLevel.Tested)
-        },
-        ComboBoxItem("Есть пет-проекты") {
-            skill = skill.copy(skillLevel = SkillLevel.HasPetProjects)
-        },
-        ComboBoxItem("Есть коммерческие проекты") {
-            skill = skill.copy(skillLevel = SkillLevel.HasCommercialProjects)
-        },
-    )
+    val comboBoxItems = descriptionToSkillLevel.map { entry ->
+        ComboBoxItem(entry.key) { skill = skill.copy(skillLevel = entry.value) }
+    }
 
     Column(
         modifier = modifier

@@ -9,8 +9,10 @@ enum class OfferStages {
     WriteMessage
 }
 
-const val VACANCIES_LOADING_TEXT = "Загружаем вакансии..."
+const val VACANCIES_LOADING_TEXT = "Загружаем вакансии"
 const val OFFER_SAVING_TEXT = "Сохраняем оффер"
+const val OFFER_SENT_SUCCESS = "Оффер отпаравлен"
+const val OFFER_SENT_ERROR = "Ошибка при отправке оффера"
 
 sealed class OfferContract {
     data class State(
