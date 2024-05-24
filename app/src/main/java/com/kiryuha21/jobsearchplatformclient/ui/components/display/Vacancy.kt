@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Handyman
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.DefaultAsyncImageCornered
-import com.kiryuha21.jobsearchplatformclient.ui.theme.SelectedCardColor
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 import com.kiryuha21.jobsearchplatformclient.util.asFormattedSalary
 import com.valentinilk.shimmer.shimmer
@@ -152,7 +152,7 @@ fun ClickableVacancyCard(
         shape = RoundedCornerShape(10.dp),
         onClick = onClick,
         modifier = modifier.padding(5.dp),
-        border = if (isChosen) BorderStroke(2.dp, SelectedCardColor) else null
+        border = if (isChosen) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

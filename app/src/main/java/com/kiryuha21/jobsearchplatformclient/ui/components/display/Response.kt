@@ -21,12 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 
 @Composable
-fun SelectableVacanciesList(
-    vacancies: List<Vacancy>,
-    onSelect: (Vacancy) -> Unit,
+fun SelectableResumesList(
+    resumes: List<Resume>,
+    onSelect: (Resume) -> Unit,
     selectedId: String,
     modifier: Modifier = Modifier
 ) {
@@ -34,14 +34,14 @@ fun SelectableVacanciesList(
         modifier = modifier
     ) {
         items(
-            items = vacancies,
+            items = resumes,
             key = { it.id }
-        ) { vacancy ->
-            ClickableVacancyCard(
-                vacancy = vacancy,
+        ) { resume ->
+            ClickableResumeCard(
+                resume = resume,
                 isStatusShown = false,
-                onClick = { onSelect(vacancy) },
-                isChosen = vacancy.id == selectedId,
+                onClick = { onSelect(resume) },
+                isChosen = resume.id == selectedId,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -49,17 +49,17 @@ fun SelectableVacanciesList(
 }
 
 @Composable
-fun SelectVacancyPart(
+fun SelectResumePart(
     onNext: () -> Unit,
-    vacancies: List<Vacancy>,
-    selectedVacancy: Vacancy,
-    onSelect: (Vacancy) -> Unit
+    resumes: List<Resume>,
+    selectedResume: Resume,
+    onSelect: (Resume) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "Выберите вакансию для оффера",
+            text = "Выберите резюме для отклика",
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -67,18 +67,18 @@ fun SelectVacancyPart(
                 .padding(top = 10.dp, bottom = 10.dp)
         )
 
-        AnimatedVisibility(visible = selectedVacancy.id.isNotEmpty()) {
+        AnimatedVisibility(visible = selectedResume.id.isNotEmpty()) {
             Text(
-                text = "Выбранная вакансия: ${selectedVacancy.title}",
+                text = "Выбранное резюме: ${selectedResume.fullName()}, ${selectedResume.applyPosition}",
                 fontSize = 18.sp,
                 modifier = Modifier.padding(bottom = 10.dp)
             )
         }
 
-        SelectableVacanciesList(
-            vacancies = vacancies,
+        SelectableResumesList(
+            resumes = resumes,
             onSelect = onSelect,
-            selectedId = selectedVacancy.id,
+            selectedId = selectedResume.id,
             modifier = Modifier.fillMaxHeight(0.9f)
         )
 
@@ -89,7 +89,7 @@ fun SelectVacancyPart(
         ) {
             Button(
                 onClick = onNext,
-                enabled = selectedVacancy.id.isNotEmpty()
+                enabled = selectedResume.id.isNotEmpty()
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -97,7 +97,7 @@ fun SelectVacancyPart(
                     Text(text = "Далее")
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowRight,
-                        contentDescription = "to offer message"
+                        contentDescription = "to response message"
                     )
                 }
             }

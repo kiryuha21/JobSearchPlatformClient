@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient.ui.components.display
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.WorkOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -145,14 +147,14 @@ fun ClickableResumeCard(
     resume: Resume,
     isStatusShown: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isChosen: Boolean = false
 ) {
     Card(
         onClick = onClick,
         modifier = modifier.padding(10.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        )
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        border = if (isChosen) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
     ) {
         Row {
             Column(

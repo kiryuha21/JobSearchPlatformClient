@@ -12,22 +12,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
-import com.kiryuha21.jobsearchplatformclient.ui.components.display.SelectVacancyPart
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.ui.components.display.SelectResumePart
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.WriteMessagePart
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferContract
-import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferStages
-import com.kiryuha21.jobsearchplatformclient.ui.contract.VACANCIES_LOADING_TEXT
+import com.kiryuha21.jobsearchplatformclient.ui.contract.RESUMES_LOADING_TEXT
+import com.kiryuha21.jobsearchplatformclient.ui.contract.ResponseContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.ResponseStages
 import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 
 @Composable
-fun OfferCreationScreen(
-    selectVacancy: (Vacancy) -> Unit,
+fun ResponseCreationScreen(
+    selectResume: (Resume) -> Unit,
     updateText: (String) -> Unit,
-    setStage: (OfferStages) -> Unit,
-    saveOffer: () -> Unit,
-    state: OfferContract.State
+    setStage: (ResponseStages) -> Unit,
+    saveResponse: () -> Unit,
+    state: ResponseContract.State
 ) {
     Column(
         modifier = Modifier
@@ -35,7 +35,7 @@ fun OfferCreationScreen(
             .padding(10.dp)
     ) {
         Text(
-            text = "Создание оффера",
+            text = "Создание отклика",
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -51,21 +51,21 @@ fun OfferCreationScreen(
         } else {
             AnimatedContent(
                 targetState = state.stage,
-                label = "Animated offer creation",
+                label = "Animated response creation",
                 modifier = Modifier.fillMaxSize()
             ) {
-                if (it == OfferStages.ChooseVacancy) {
-                    SelectVacancyPart(
-                        onNext = { setStage(OfferStages.WriteMessage) },
-                        vacancies = state.vacancies,
-                        selectedVacancy = state.selectedVacancy,
-                        onSelect = selectVacancy
+                if (it == ResponseStages.ChooseResume) {
+                    SelectResumePart(
+                        onNext = { setStage(ResponseStages.WriteMessage) },
+                        resumes = state.resumes,
+                        selectedResume = state.selectedResume,
+                        onSelect = selectResume
                     )
                 } else {
                     WriteMessagePart(
-                        title = "Напишите текст оффера(необязательно)",
-                        onBack = { setStage(OfferStages.ChooseVacancy) },
-                        onSave = saveOffer,
+                        title = "Напишите текст отклика(необязательно)",
+                        onBack = { setStage(ResponseStages.ChooseResume) },
+                        onSave = saveResponse,
                         text = state.message,
                         updateText = updateText
                     )
@@ -77,18 +77,18 @@ fun OfferCreationScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun OfferCreationScreenPreview() {
-    OfferCreationScreen(
-        selectVacancy = {},
+fun ResponseCreationScreenPreview() {
+    ResponseCreationScreen(
+        selectResume = {},
         updateText = {},
-        saveOffer = {},
+        saveResponse = {},
         setStage = {},
-        state = OfferContract.State(
+        state = ResponseContract.State(
             isLoading = false,
-            loadingText = VACANCIES_LOADING_TEXT,
-            vacancies = listOf(PreviewObjects.previewVacancy1, PreviewObjects.previewVacancy2),
-            selectedVacancy = Vacancy(),
-            stage = OfferStages.WriteMessage,
+            loadingText = RESUMES_LOADING_TEXT,
+            resumes = listOf(PreviewObjects.previewResume1),
+            selectedResume = Resume(),
+            stage = ResponseStages.WriteMessage,
             message = ""
         )
     )

@@ -19,6 +19,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.EmployerProfileContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.JobApplicationContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferContract
+import com.kiryuha21.jobsearchplatformclient.ui.contract.ResponseContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerHomeContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.WorkerProfileContract
@@ -26,6 +27,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.EmployerProfileScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.JobApplicationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.OfferCreationScreen
+import com.kiryuha21.jobsearchplatformclient.ui.screens.ResponseCreationScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerHomeScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.WorkerProfileScreen
@@ -33,6 +35,7 @@ import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerProfileViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.JobApplicationViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.OfferViewModel
+import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResponseViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.SettingsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.WorkerProfileViewModel
@@ -253,7 +256,7 @@ fun NavGraphBuilder.addCommonDestinations(
             state = vm.viewState
         )
     }
-    composable(RESUME_CREATION) { backStack ->
+    composable(RESPONSE_CREATION) { backStack ->
         LaunchedEffect(Unit) {
             shouldShowAppBar.value = false
         }
@@ -261,6 +264,24 @@ fun NavGraphBuilder.addCommonDestinations(
 
         val vacancyId = backStack.arguments?.getString("vacancyId") ?: throw Exception("vacancyId should be passed via backstack!")
 
-        // TODO
+        val ctx = LocalContext.current
+        val vm: ResponseViewModel = viewModel(factory = ResponseViewModel.provideFactory(
+            vacancyId = vacancyId,
+            navigateBackToVacancy = {
+                navController.popBackStack()
+                onNavigateBack()
+            },
+            showToast = { text ->
+                Toast.makeText(ctx, text, Toast.LENGTH_SHORT).show()
+            }
+        ))
+
+        ResponseCreationScreen(
+            selectResume = { vm.processIntent(ResponseContract.Intent.ChooseResume(it)) },
+            updateText = { vm.processIntent(ResponseContract.Intent.UpdateMessage(it)) },
+            setStage = { vm.processIntent(ResponseContract.Intent.SetResponseStage(it)) },
+            saveResponse = { vm.processIntent(ResponseContract.Intent.CreateResponse) },
+            state = vm.viewState
+        )
     }
 }
