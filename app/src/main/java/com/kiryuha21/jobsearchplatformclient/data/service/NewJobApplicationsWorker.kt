@@ -8,12 +8,15 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.jobApplicationRetrofit
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 
 class NewJobApplicationsWorker(
@@ -23,8 +26,13 @@ class NewJobApplicationsWorker(
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     override suspend fun doWork(): Result {
+        val scope = CoroutineScope(Dispatchers.Default)
+
         for (i in 1L..15L * 60L / SECONDS_INTERVAL) {
-            if (CurrentUser.info.role != UserRole.Undefined) {
+            val areNotificationsOn = AppDataStore(context).getNotifications().stateIn(scope).value
+            val isUserAuthorized = CurrentUser.info.role != UserRole.Undefined
+
+            if (isUserAuthorized && areNotificationsOn) {
                 val unseenApplications = withContext(Dispatchers.IO) {
                     networkCallWithReturnWrapper(
                         networkCall = {

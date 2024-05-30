@@ -12,6 +12,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.local.AppDatabase
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
@@ -44,7 +45,8 @@ fun NavGraphBuilder.addCommonDestinations(
     navController: NavController,
     shouldShowAppBar: MutableState<Boolean>,
     onNavigateBack: () -> Unit,
-    onNavigationForward: (String) -> Unit
+    onNavigationForward: (String) -> Unit,
+    logOut: () -> Unit
 ) = with(NavigationGraph.MainApp) {
     composable(HOME_SCREEN) {
         LaunchedEffect(Unit) {
@@ -184,7 +186,10 @@ fun NavGraphBuilder.addCommonDestinations(
         }
         OnBackPressedWithSuper(onNavigateBack)
 
-        val viewModel: SettingsViewModel = viewModel()
+        val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.provideFactory(
+            tokenDatasourceProvider = AppDataStore(LocalContext.current),
+            logOut = logOut
+        ))
         SettingsScreen(
             state = viewModel.viewState,
             onUsernameFieldEdited = { viewModel.processIntent(SettingsContract.Intent.EditUsername(it)) },
@@ -193,9 +198,10 @@ fun NavGraphBuilder.addCommonDestinations(
             onShowPasswordDialog = { viewModel.processIntent(SettingsContract.Intent.ShowPasswordDialog) },
             onPasswordDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HidePasswordDialog) },
             onPasswordDialogConfirmed = { viewModel.processIntent(SettingsContract.Intent.CheckPassword(it)) },
-            onSaveChangesClicked = { viewModel.processIntent(SettingsContract.Intent.ShowAreYouSureDialog) },
+            showAreYouSureDialog = { viewModel.processIntent(SettingsContract.Intent.ShowAreYouSureDialog(it)) },
             onAreYouSureDialogConfirmed = { viewModel.processIntent(SettingsContract.Intent.CommitChanges) },
-            onAreYouSureDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HideAreYouSureDialog) }
+            onAreYouSureDialogDismissed = { viewModel.processIntent(SettingsContract.Intent.HideAreYouSureDialog) },
+            toggleNotifications = { viewModel.processIntent(SettingsContract.Intent.ToggleNotifications(it)) }
         )
     }
     composable(JOB_APPLICATIONS) {

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavController
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
@@ -15,12 +15,13 @@ import com.kiryuha21.jobsearchplatformclient.ui.navigation.NavigationGraph
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWithReturnWrapper
 import com.kiryuha21.jobsearchplatformclient.util.networkCallWrapper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AuthViewModel(
     private val navController: NavController,
-    private val tokenDatasourceProvider: TokenDataStore
+    private val tokenDatasourceProvider: AppDataStore
 ) : BaseViewModel<AuthContract.AuthIntent, AuthContract.AuthState>() {
 
     override fun initialState(): AuthContract.AuthState {
@@ -77,7 +78,10 @@ class AuthViewModel(
 
     private fun checkRefreshToken() {
         viewModelScope.launch {
-            val token = tokenDatasourceProvider.getRefreshToken(this).value
+            val token = tokenDatasourceProvider
+                .getRefreshToken()
+                .stateIn(this)
+                .value
             val username = if (token != null) {
                 withContext(Dispatchers.IO) {
                     networkCallWithReturnWrapper(
@@ -146,7 +150,7 @@ class AuthViewModel(
     }
 
     companion object {
-        fun provideFactory(navController: NavController, tokenDatasourceProvider: TokenDataStore) =
+        fun provideFactory(navController: NavController, tokenDatasourceProvider: AppDataStore) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.userRetrofit
 import com.kiryuha21.jobsearchplatformclient.ui.navigation.navigationDrawerItems
@@ -23,7 +23,7 @@ import okhttp3.MultipartBody
 import java.util.Stack
 
 class NavigationViewModel(
-    private val tokenDatasourceProvider : TokenDataStore,
+    private val tokenDatasourceProvider : AppDataStore,
     private val logoutCallback : () -> Unit
 ) : ViewModel() {
     private val navigationIndexStack = Stack<Int>()
@@ -87,7 +87,7 @@ class NavigationViewModel(
     }
 
     companion object {
-        fun provideFactory(tokenDatasourceProvider : TokenDataStore, logoutCallback: () -> Unit) =
+        fun provideFactory(tokenDatasourceProvider : AppDataStore, logoutCallback: () -> Unit) =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(

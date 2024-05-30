@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.NavigationViewModel
 
 @Composable
@@ -20,7 +20,7 @@ fun NavigationController() {
 
     val ctx = LocalContext.current
     val navigationVM: NavigationViewModel = viewModel(factory = NavigationViewModel.provideFactory(
-        tokenDatasourceProvider = TokenDataStore(ctx),
+        tokenDatasourceProvider = AppDataStore(ctx),
         logoutCallback = {
             navController.navigate(NavigationGraph.Authentication.LOG_IN) {
                 popUpTo(NavigationGraph.MainApp.NAV_ROUTE) {
@@ -60,7 +60,8 @@ fun NavigationController() {
                     navController = navController,
                     shouldShowAppBar = shouldShowTopBar,
                     onNavigateBack = { navigationVM.navigateBack() },
-                    onNavigationForward = { navigationVM.navigateTo(it) }
+                    onNavigationForward = { navigationVM.navigateTo(it) },
+                    logOut = { navigationVM.logOut() }
                 )
                 addResumeDestinations(
                     navController = navController,

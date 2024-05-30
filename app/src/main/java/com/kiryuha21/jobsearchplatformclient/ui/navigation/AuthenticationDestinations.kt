@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.contract.AuthContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.LogInScreen
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResetPasswordScreen
@@ -24,7 +24,7 @@ fun NavGraphBuilder.addAuthentication(
 
         val viewModel: AuthViewModel = it.sharedAuthViewModel(
             navController,
-            TokenDataStore(LocalContext.current)
+            AppDataStore(LocalContext.current)
         )
 
         LaunchedEffect(key1 = Unit) {
@@ -48,7 +48,7 @@ fun NavGraphBuilder.addAuthentication(
     composable(SIGN_UP) {
         val viewModel: AuthViewModel = it.sharedAuthViewModel(
             navController,
-            TokenDataStore(LocalContext.current)
+            AppDataStore(LocalContext.current)
         )
 
         SignUpScreen(
@@ -74,7 +74,7 @@ fun NavGraphBuilder.addAuthentication(
     composable(RESET_PASSWORD) {
         val viewModel: AuthViewModel = it.sharedAuthViewModel(
             navController,
-            TokenDataStore(LocalContext.current)
+            AppDataStore(LocalContext.current)
         )
 
         ResetPasswordScreen(

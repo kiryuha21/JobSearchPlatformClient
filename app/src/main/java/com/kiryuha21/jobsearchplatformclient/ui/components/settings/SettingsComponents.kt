@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredPasswordTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.SecuredTextField
 
@@ -30,9 +31,9 @@ fun PasswordConfirmation(
             modifier = modifier
                 .padding(start = 10.dp, end = 10.dp, top = 20.dp)
         ) {
-            Text(text = "Подтвердите пароль для изменения данных")
+            Text(text = "Подтвердите пароль для изменения данных", fontSize = 16.sp)
             TextButton(onClick = onConfirmClicked, modifier = Modifier.testTag("settings_show_form_button")) {
-                Text(text = "Подтвердить")
+                Text(text = "Подтвердить", fontSize = 16.sp)
             }
         }
     }

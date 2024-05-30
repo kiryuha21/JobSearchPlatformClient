@@ -6,16 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.kiryuha21.jobsearchplatformclient.data.local.datastore.TokenDataStore
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.AuthViewModel
-import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.EmployerHomeViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.ResumeDetailsViewModel
 import com.kiryuha21.jobsearchplatformclient.ui.viewmodel.VacancyDetailsViewModel
 
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedAuthViewModel(
     navController: NavController,
-    tokenDatasourceProvider: TokenDataStore
+    tokenDatasourceProvider: AppDataStore
 ): T {
     val navGraphRoute = destination.parent?.route ?: return viewModel(
         factory = AuthViewModel.provideFactory(navController, tokenDatasourceProvider)

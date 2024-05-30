@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
+import com.kiryuha21.jobsearchplatformclient.ui.components.primary.PasswordTextField
 
 @Composable
 fun SecureConfirmAlertDialog(

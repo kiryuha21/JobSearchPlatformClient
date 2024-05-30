@@ -37,9 +37,11 @@ class SettingsScreenTests {
                 onShowPasswordDialog = {},
                 onPasswordDialogDismissed = {},
                 onPasswordDialogConfirmed = {},
-                onSaveChangesClicked = {},
+                showAreYouSureDialog = {},
                 onAreYouSureDialogConfirmed = {},
-                onAreYouSureDialogDismissed = {})
+                onAreYouSureDialogDismissed = {},
+                toggleNotifications = {}
+            )
         }
 
         composeTestRule.onNodeWithTag("settings_username").assertIsNotEnabled()
@@ -60,9 +62,10 @@ class SettingsScreenTests {
                 onShowPasswordDialog = { vm.processIntent(SettingsContract.Intent.ShowPasswordDialog) },
                 onPasswordDialogDismissed = { vm.processIntent(SettingsContract.Intent.HidePasswordDialog) },
                 onPasswordDialogConfirmed = { vm.processIntent(SettingsContract.Intent.CheckPassword(it)) },
-                onSaveChangesClicked = {},
+                showAreYouSureDialog = {},
                 onAreYouSureDialogConfirmed = {},
-                onAreYouSureDialogDismissed = {}
+                onAreYouSureDialogDismissed = {},
+                toggleNotifications = {}
             )
         }
 
