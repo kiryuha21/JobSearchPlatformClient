@@ -11,10 +11,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,9 +40,7 @@ fun JobApplicationCard(
             modifier = Modifier.padding(10.dp),
         ) {
             if (isReceived) {
-                var isLabelShown by remember { mutableStateOf(!jobApplication.seen) }
-
-                AnimatedVisibility(visible = isLabelShown) {
+                AnimatedVisibility(visible = !jobApplication.seen) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -63,12 +57,11 @@ fun JobApplicationCard(
                             Text(text = "Просмотрено: ")
 
                             Checkbox(
-                                checked = !isLabelShown,
+                                checked = jobApplication.seen,
                                 onCheckedChange = {
-                                    isLabelShown = !isLabelShown
                                     markChecked(jobApplication.id)
                                 },
-                                enabled = isLabelShown
+                                enabled = !jobApplication.seen
                             )
                         }
                     }

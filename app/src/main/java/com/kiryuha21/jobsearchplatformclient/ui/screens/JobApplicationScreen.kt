@@ -1,8 +1,8 @@
 package com.kiryuha21.jobsearchplatformclient.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,6 +50,17 @@ fun JobApplicationScreen(
                 .padding(10.dp)
         )
 
+        AnimatedVisibility(visible = !state.isLoading) {
+            Text(
+                text = "Новых предложений: ${state.receivedApplications.count { !it.seen }}",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            )
+        }
+
         if (state.isLoading) {
             LoadingComponent(
                 modifier = Modifier.fillMaxSize(),
@@ -62,27 +73,28 @@ fun JobApplicationScreen(
             val receivedIndex = 0
             val sentIndex = 1
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                TabRow(selectedTabIndex = pagerState.currentPage) {
-                    Tab(
-                        selected = pagerState.currentPage == receivedIndex,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(receivedIndex)
-                            }
-                        },
-                        text = { Text(text = "Полученные предложения") },
-                    )
-                    Tab(
-                        selected = pagerState.currentPage == sentIndex,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(sentIndex)
-                            }
-                        },
-                        text = { Text(text = "Отправленные предложения") },
-                    )
-                }
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Tab(
+                    selected = pagerState.currentPage == receivedIndex,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(receivedIndex)
+                        }
+                    },
+                    text = { Text(text = "Полученные предложения") },
+                )
+                Tab(
+                    selected = pagerState.currentPage == sentIndex,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(sentIndex)
+                        }
+                    },
+                    text = { Text(text = "Отправленные предложения") },
+                )
             }
 
             HorizontalPager(state = pagerState) {

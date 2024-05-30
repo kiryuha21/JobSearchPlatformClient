@@ -82,6 +82,11 @@ class JobApplicationViewModel(
                 }
             )
         }
+
+        val newJobApplications = viewState.receivedApplications.map { application ->
+            if (application.id != jobApplicationId) application else application.copy(seen = true)
+        }
+        setState { copy(receivedApplications = newJobApplications) }
     }
 
     companion object {
