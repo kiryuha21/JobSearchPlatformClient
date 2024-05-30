@@ -12,21 +12,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.VacancyDetails
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VacancyDetailsContract
 
 @Composable
 fun VacancyDetailsScreen(
-    editable: Boolean,
     onEdit: (Vacancy) -> Unit,
     onDelete: (Vacancy) -> Unit,
     onCreateResponse: (String) -> Unit,
@@ -37,6 +36,9 @@ fun VacancyDetailsScreen(
             LoadingComponent(modifier = Modifier.fillMaxSize(), description = state.loadingText)
         }
         else -> {
+            val isOwner = state.openedVacancy.employerUsername == CurrentUser.info.username
+            val isWorker = CurrentUser.info.role == UserRole.Worker
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -44,11 +46,11 @@ fun VacancyDetailsScreen(
             ) {
                 VacancyDetails(
                     vacancy = state.openedVacancy,
-                    isStatusShown = editable,
+                    isStatusShown = isOwner,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                if (editable) {
+                if (isOwner) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
@@ -62,7 +64,7 @@ fun VacancyDetailsScreen(
                             Text(text = "Удалить")
                         }
                     }
-                } else {
+                } else if (isWorker) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()

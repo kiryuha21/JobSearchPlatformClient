@@ -29,7 +29,7 @@ sealed class VacancyDTO {
         @SerializedName("id")
         val id: String,
         @SerializedName("employerUsername")
-        val employerLogin: String,
+        val employerUsername: String,
         @SerializedName("title")
         val title: String,
         @SerializedName("description")

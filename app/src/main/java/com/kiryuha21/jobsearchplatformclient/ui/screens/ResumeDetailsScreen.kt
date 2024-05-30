@@ -12,19 +12,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.components.display.ResumeDetails
 import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingComponent
-import com.kiryuha21.jobsearchplatformclient.ui.components.primary.StyledDefaultButton
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
 
 @Composable
 fun ResumeDetailsScreen(
-    editable: Boolean,
     onEdit: (String) -> Unit,
     onDelete: () -> Unit,
     onCreateOffer: (String) -> Unit,
@@ -35,6 +34,9 @@ fun ResumeDetailsScreen(
             LoadingComponent(modifier = Modifier.fillMaxSize(), description = state.loadingText)
         }
         else -> {
+            val isOwner = state.openedResume.workerUsername == CurrentUser.info.username
+            val isEmployer = CurrentUser.info.role == UserRole.Employer
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -42,11 +44,11 @@ fun ResumeDetailsScreen(
             ) {
                 ResumeDetails(
                     resume = state.openedResume,
-                    isStatusShown = editable,
+                    isStatusShown = isOwner,
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                if (editable) {
+                if (isOwner) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
@@ -60,7 +62,7 @@ fun ResumeDetailsScreen(
                             Text(text = "Удалить")
                         }
                     }
-                } else {
+                } else if (isEmployer) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()

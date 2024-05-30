@@ -4,6 +4,7 @@ import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 
 data class Vacancy(
     val id: String = "",
+    val employerUsername: String = "",
     val title: String = "",
     val description: String = "",
     val company: Company = Company(""),

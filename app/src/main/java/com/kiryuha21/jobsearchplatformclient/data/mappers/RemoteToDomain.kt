@@ -27,6 +27,7 @@ fun UserDTO.UserDTO.toDomainUser() =
 fun ResumeDTO.ResumeResponseDTO.toDomainResume() =
     Resume(
         id = id,
+        workerUsername = workerUsername,
         firstName = firstName,
         lastName = lastName,
         birthDate = birthDate,
@@ -76,6 +77,7 @@ fun CompanyDTO.toDomainCompany() =
 fun VacancyDTO.VacancyResponseDTO.toDomainVacancy() =
     Vacancy(
         id = id,
+        employerUsername = employerUsername,
         title = title,
         description = description,
         company = company.toDomainCompany(),

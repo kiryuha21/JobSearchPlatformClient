@@ -4,6 +4,7 @@ import com.kiryuha21.jobsearchplatformclient.util.isNumeric
 
 data class Resume(
     val id: String = "",
+    val workerUsername: String = "",
     val firstName: String = "",
     val lastName: String = "",
     val birthDate: Long? = null,

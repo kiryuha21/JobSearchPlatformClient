@@ -8,9 +8,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
-import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.ui.components.special.OnBackPressedWithSuper
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResumeDetailsContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.ResumeDetailsScreen
@@ -106,7 +104,6 @@ fun NavGraphBuilder.addResumeDestinations(
         }
 
         ResumeDetailsScreen(
-            editable = CurrentUser.info.role == UserRole.Worker,
             onEdit = { viewModel.processIntent(ResumeDetailsContract.Intent.OpenEdit) },
             onDelete = { viewModel.processIntent(ResumeDetailsContract.Intent.DeleteResume) },
             onCreateOffer = {
