@@ -1,11 +1,15 @@
 package com.kiryuha21.jobsearchplatformclient.data.service
 
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.kiryuha21.jobsearchplatformclient.MainActivity
 import com.kiryuha21.jobsearchplatformclient.R
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
@@ -41,12 +45,22 @@ class NewJobApplicationsWorker(
                     )
                 }
 
+                val resultIntent = Intent(context, MainActivity::class.java)
+                val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                    addNextIntentWithParentStack(resultIntent)
+                    getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                }
+
                 if (unseenApplications != null && unseenApplications > 0) {
                     val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                         .setContentTitle("SkillSift")
                         .setContentText("Вам поступило новых предложений : $unseenApplications")
                         .setSmallIcon(IconCompat.createWithResource(context, R.drawable.suitcase))
                         .setAutoCancel(true)
+                        .setContentIntent(resultPendingIntent)
                         .build()
 
                     notificationManager.notify(NOTIFICATION_ID, notification)
