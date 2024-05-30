@@ -3,6 +3,8 @@ package com.kiryuha21.jobsearchplatformclient
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainResume
 import com.kiryuha21.jobsearchplatformclient.data.mappers.toDomainVacancy
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toResumeDTO
+import com.kiryuha21.jobsearchplatformclient.data.mappers.toVacancyDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject.jobApplicationRetrofit
@@ -62,10 +64,10 @@ class ApiTesting {
     fun createGetDeleteVacancy() = runTest {
         withUser(UserRole.Employer) { token, _ ->
             val vacancy = randomVacancy()
-            val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $token", vacancy)
-            val vacancyWithId = vacancy.copy(id = createdVacancy.id)
+            val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $token", vacancy.toVacancyDTO())
+            val vacancyWithId = vacancy.copy(id = createdVacancy.id, employerUsername = createdVacancy.employerUsername)
 
-            assertEquals(vacancyWithId.toDomainVacancy(), createdVacancy.toDomainVacancy())
+            assertEquals(vacancyWithId, createdVacancy.toDomainVacancy())
 
             vacancyRetrofit.deleteVacancy("Bearer $token", createdVacancy.id)
             val exception = try {
@@ -82,10 +84,10 @@ class ApiTesting {
     fun createGetDeleteResume() = runTest {
         withUser(UserRole.Worker) { token, _ ->
             val resume = randomResume()
-            val createdResume = resumeRetrofit.createNewResume("Bearer $token", resume)
-            val resumeWithId = resume.copy(id = createdResume.id)
+            val createdResume = resumeRetrofit.createNewResume("Bearer $token", resume.toResumeDTO())
+            val resumeWithId = resume.copy(id = createdResume.id, workerUsername = createdResume.workerUsername)
 
-            assertEquals(resumeWithId.toDomainResume(), createdResume.toDomainResume())
+            assertEquals(resumeWithId, createdResume.toDomainResume())
 
             resumeRetrofit.deleteResume("Bearer $token", createdResume.id)
             val exception = try {
@@ -112,9 +114,9 @@ class ApiTesting {
         AuthToken.createToken(employer.username, employer.password)
         val employerToken = AuthToken.getToken()
 
-        val createdResume = resumeRetrofit.createNewResume("Bearer $workerToken", randomResume())
+        val createdResume = resumeRetrofit.createNewResume("Bearer $workerToken", randomResume().toResumeDTO())
 
-        val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $employerToken", randomVacancy())
+        val createdVacancy = vacancyRetrofit.createNewVacancy("Bearer $employerToken", randomVacancy().toVacancyDTO())
 
         jobApplicationRetrofit.createNewJobApplication(
             authToken = "Bearer $employerToken",
@@ -131,6 +133,6 @@ class ApiTesting {
         assertEquals(unnotified, 1)
 
         userRetrofit.deleteUserByUsername(worker.username, "Bearer $workerToken")
-        userRetrofit.deleteUserByUsername(employer.username, "Bearer $workerToken")
+        userRetrofit.deleteUserByUsername(employer.username, "Bearer $employerToken")
     }
 }

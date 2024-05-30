@@ -1,5 +1,6 @@
 package com.kiryuha21.jobsearchplatformclient
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -9,6 +10,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
+import com.kiryuha21.jobsearchplatformclient.data.local.datastore.AppDataStore
 import com.kiryuha21.jobsearchplatformclient.di.CurrentUser
 import com.kiryuha21.jobsearchplatformclient.ui.contract.SettingsContract
 import com.kiryuha21.jobsearchplatformclient.ui.screens.SettingsScreen
@@ -27,7 +29,10 @@ class SettingsScreenTests {
     @Test
     fun settingsAreDisabledOnStart() {
         composeTestRule.setContent {
-            val vm: SettingsViewModel = viewModel()
+            val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.provideFactory(
+                notificationInfoProvider = AppDataStore(LocalContext.current),
+                logOut = {}
+            ))
 
             SettingsScreen(
                 state = vm.viewState,
@@ -52,7 +57,10 @@ class SettingsScreenTests {
     @Test
     fun settingsAreEnabledAfterCorrectPassword() {
         composeTestRule.setContent {
-            val vm: SettingsViewModel = viewModel()
+            val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.provideFactory(
+                notificationInfoProvider = AppDataStore(LocalContext.current),
+                logOut = {}
+            ))
 
             SettingsScreen(
                 state = vm.viewState,

@@ -187,7 +187,7 @@ fun NavGraphBuilder.addCommonDestinations(
         OnBackPressedWithSuper(onNavigateBack)
 
         val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.provideFactory(
-            tokenDatasourceProvider = AppDataStore(LocalContext.current),
+            notificationInfoProvider = AppDataStore(LocalContext.current),
             logOut = logOut
         ))
         SettingsScreen(

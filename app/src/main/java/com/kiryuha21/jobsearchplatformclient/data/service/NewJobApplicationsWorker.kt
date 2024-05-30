@@ -45,16 +45,16 @@ class NewJobApplicationsWorker(
                     )
                 }
 
-                val resultIntent = Intent(context, MainActivity::class.java)
-                val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-                    addNextIntentWithParentStack(resultIntent)
-                    getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
-                }
-
                 if (unseenApplications != null && unseenApplications > 0) {
+                    val resultIntent = Intent(context, MainActivity::class.java)
+                    val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                        addNextIntentWithParentStack(resultIntent)
+                        getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        )
+                    }
+
                     val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                         .setContentTitle("SkillSift")
                         .setContentText("Вам поступило новых предложений : $unseenApplications")

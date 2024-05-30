@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SettingsViewModel(
-    private val tokenDatasourceProvider: AppDataStore,
+    private val notificationInfoProvider: AppDataStore,
     private val logOut: () -> Unit
 ): BaseViewModel<SettingsContract.Intent, SettingsContract.State>() {
     override fun initialState(): SettingsContract.State {
@@ -56,14 +56,14 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             setState { copy(isScreenLoading = true) }
-            val notificationsOn = tokenDatasourceProvider.getNotifications().stateIn(this).value
+            val notificationsOn = notificationInfoProvider.getNotifications().stateIn(this).value
             setState { copy(isScreenLoading = false, areNotificationsOn = notificationsOn) }
         }
     }
 
     private fun toggleNotifications(newValue: Boolean) {
         viewModelScope.launch {
-            tokenDatasourceProvider.toggleNotifications(newValue)
+            notificationInfoProvider.toggleNotifications(newValue)
         }
         setState { copy(areNotificationsOn = newValue) }
     }
@@ -133,7 +133,7 @@ class SettingsViewModel(
 
     companion object {
         fun provideFactory(
-            tokenDatasourceProvider: AppDataStore,
+            notificationInfoProvider: AppDataStore,
             logOut: () -> Unit
         ) =
             object : ViewModelProvider.Factory {
@@ -143,7 +143,7 @@ class SettingsViewModel(
                     extras: CreationExtras
                 ): T {
                     return SettingsViewModel(
-                        tokenDatasourceProvider = tokenDatasourceProvider,
+                        notificationInfoProvider = notificationInfoProvider,
                         logOut = logOut
                     ) as T
                 }

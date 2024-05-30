@@ -1,12 +1,12 @@
 package com.kiryuha21.jobsearchplatformclient.util
 
+import com.kiryuha21.jobsearchplatformclient.data.domain.Company
 import com.kiryuha21.jobsearchplatformclient.data.domain.PublicationStatus
+import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
 import com.kiryuha21.jobsearchplatformclient.data.domain.UserRole
-import com.kiryuha21.jobsearchplatformclient.data.remote.dto.CompanyDTO
+import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.JobApplicationDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.dto.ResumeDTO
 import com.kiryuha21.jobsearchplatformclient.data.remote.dto.UserDTO
-import com.kiryuha21.jobsearchplatformclient.data.remote.dto.VacancyDTO
 import com.kiryuha21.jobsearchplatformclient.di.AuthToken
 import com.kiryuha21.jobsearchplatformclient.di.RetrofitObject
 import kotlin.random.Random
@@ -34,23 +34,23 @@ object FakeData {
         )
     }
 
-    fun randomVacancy() : VacancyDTO.VacancyRequestDTO {
+    fun randomVacancy() : Vacancy {
         val minSalary = Random.nextInt(500000)
         val maxSalary = minSalary + Random.nextInt(500000)
 
-        return VacancyDTO.VacancyRequestDTO(
+        return Vacancy(
             id = "",
             title = randomString(10),
             description = randomString(30),
-            company = CompanyDTO(randomString(20)),
-            minSalary = minSalary,
-            maxSalary = maxSalary,
+            company = Company(randomString(20)),
+            minSalary = minSalary.toString(),
+            maxSalary = maxSalary.toString(),
             publicationStatus = PublicationStatus.Published
         )
     }
 
-    fun randomResume() : ResumeDTO.ResumeRequestDTO {
-        return ResumeDTO.ResumeRequestDTO(
+    fun randomResume() : Resume {
+        return Resume(
             id = "",
             firstName = randomString(10),
             lastName = randomString(10),
