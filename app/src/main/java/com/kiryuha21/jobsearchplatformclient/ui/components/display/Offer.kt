@@ -22,13 +22,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Vacancy
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.HintCard
 
 @Composable
 fun SelectableVacanciesList(
     vacancies: List<Vacancy>,
     onSelect: (Vacancy) -> Unit,
     selectedId: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    noVacanciesText: String? = null
 ) {
     LazyColumn(
         modifier = modifier
@@ -44,6 +46,15 @@ fun SelectableVacanciesList(
                 isChosen = vacancy.id == selectedId,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+
+        if (vacancies.isEmpty() && !noVacanciesText.isNullOrBlank()) {
+            item {
+                HintCard(
+                    text = noVacanciesText,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -79,6 +90,7 @@ fun SelectVacancyPart(
             vacancies = vacancies,
             onSelect = onSelect,
             selectedId = selectedVacancy.id,
+            noVacanciesText = "Чтобы отправить оффер, сначала нужно создать хотя бы одну публичную вакансию в профиле",
             modifier = Modifier.fillMaxHeight(0.9f)
         )
 

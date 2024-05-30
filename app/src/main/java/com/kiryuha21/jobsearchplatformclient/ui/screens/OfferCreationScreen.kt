@@ -19,7 +19,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingCompon
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.OfferStages
 import com.kiryuha21.jobsearchplatformclient.ui.contract.VACANCIES_LOADING_TEXT
-import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 
 @Composable
 fun OfferCreationScreen(
@@ -86,9 +85,9 @@ fun OfferCreationScreenPreview() {
         state = OfferContract.State(
             isLoading = false,
             loadingText = VACANCIES_LOADING_TEXT,
-            vacancies = listOf(PreviewObjects.previewVacancy1, PreviewObjects.previewVacancy2),
+            vacancies = listOf(),
             selectedVacancy = Vacancy(),
-            stage = OfferStages.WriteMessage,
+            stage = OfferStages.ChooseVacancy,
             message = ""
         )
     )

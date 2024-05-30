@@ -22,13 +22,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kiryuha21.jobsearchplatformclient.data.domain.Resume
+import com.kiryuha21.jobsearchplatformclient.ui.components.special.HintCard
 
 @Composable
 fun SelectableResumesList(
     resumes: List<Resume>,
     onSelect: (Resume) -> Unit,
     selectedId: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    noResumesText: String? = null
 ) {
     LazyColumn(
         modifier = modifier
@@ -44,6 +46,15 @@ fun SelectableResumesList(
                 isChosen = resume.id == selectedId,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+
+        if (resumes.isEmpty() && !noResumesText.isNullOrBlank()) {
+            item {
+                HintCard(
+                    text = noResumesText,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -79,6 +90,7 @@ fun SelectResumePart(
             resumes = resumes,
             onSelect = onSelect,
             selectedId = selectedResume.id,
+            noResumesText = "Чтобы отправить отклик, сначала нужно создать хотя бы одно публичное резюме в профиле",
             modifier = Modifier.fillMaxHeight(0.9f)
         )
 

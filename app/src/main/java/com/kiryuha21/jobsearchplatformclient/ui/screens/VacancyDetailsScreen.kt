@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -57,10 +56,10 @@ fun VacancyDetailsScreen(
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp)
                     ) {
-                        OutlinedButton(onClick = { onEdit(state.openedVacancy) }) {
+                        Button(onClick = { onEdit(state.openedVacancy) }) {
                             Text(text = "Редактировать")
                         }
-                        OutlinedButton(onClick = { onDelete(state.openedVacancy) }) {
+                        Button(onClick = { onDelete(state.openedVacancy) }) {
                             Text(text = "Удалить")
                         }
                     }

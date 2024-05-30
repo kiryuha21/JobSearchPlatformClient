@@ -19,7 +19,6 @@ import com.kiryuha21.jobsearchplatformclient.ui.components.primary.LoadingCompon
 import com.kiryuha21.jobsearchplatformclient.ui.contract.RESUMES_LOADING_TEXT
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResponseContract
 import com.kiryuha21.jobsearchplatformclient.ui.contract.ResponseStages
-import com.kiryuha21.jobsearchplatformclient.util.PreviewObjects
 
 @Composable
 fun ResponseCreationScreen(
@@ -86,9 +85,9 @@ fun ResponseCreationScreenPreview() {
         state = ResponseContract.State(
             isLoading = false,
             loadingText = RESUMES_LOADING_TEXT,
-            resumes = listOf(PreviewObjects.previewResume1),
+            resumes = listOf(),
             selectedResume = Resume(),
-            stage = ResponseStages.WriteMessage,
+            stage = ResponseStages.ChooseResume,
             message = ""
         )
     )
